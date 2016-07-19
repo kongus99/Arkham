@@ -2,7 +2,7 @@ module BoardData exposing (..)
 
 type Neighborhood = Downtown | Easttown | French_Hill |
                     Merchant_District | Miskatonic_University | Northside |
-                    Rivertown | Southside | Uptown
+                    Rivertown | Southside | Uptown | XXX
 allNeighborhood = [Downtown, Easttown, French_Hill, Merchant_District, Miskatonic_University, Northside, Rivertown, Southside, Uptown]
 
 streetRectangle street =
