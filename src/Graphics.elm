@@ -6,10 +6,10 @@ import Svg.Attributes exposing (..)
 import List exposing (..)
 
 type alias Point = {x : Int, y : Int}
-type alias LineConnective shape = { shape | connector : Point }
+type alias LineConnective shape = { shape | middle : Point }
 type alias Circle = LineConnective {cx : Int, cy : Int, radius : Int}
 type alias Rectangle = LineConnective {x : Int, y : Int, width : Int, height : Int}
-
+type alias Color = String
 
 neighborhoodRectangle: Neighborhood -> Rectangle
 neighborhoodRectangle n =
@@ -28,7 +28,7 @@ neighborhoodRectangle n =
                 Uptown ->               {x = 469, y = 1669, width = 152, height = 84}
                 Southside ->            {x = 753, y = 1673, width = 180, height = 82}
     in
-        {x = round st.x, y = round st.y,  width =  round st.width, height = round st.height, connector = rectangleMiddle st}
+        {x = round st.x, y = round st.y,  width =  round st.width, height = round st.height, middle = rectangleMiddle st}
 
 
 locationCircle: Location -> Circle
@@ -65,7 +65,7 @@ locationCircle location =
                  Ye_Olde_Magick_Shoppe ->  {cx = 282,  cy = 1947, radius = 64}
                  _ ->                      {cx = 0,    cy = 0,    radius = 0}
     in
-        {cx = loc.cx, cy = loc.cy, radius = loc.radius, connector = circleMiddle loc}
+        {cx = loc.cx, cy = loc.cy, radius = loc.radius, middle = circleMiddle loc}
 
 localeCircle : (Location -> List(Attribute a)) -> Location -> Svg a
 localeCircle generator l =
@@ -84,3 +84,16 @@ streetRectangle generator n =
         generatedAttributes = generator n
     in
         rect (append commonAttributes generatedAttributes) []
+
+middle place =
+    case place of
+        Street s -> (neighborhoodRectangle s).middle
+        Locale l -> (locationCircle l).middle
+
+movement: Color -> (Place Neighborhood Location, Place Neighborhood Location) -> Svg a
+movement color (start, end) =
+    let
+        p1 = middle start
+        p2 = middle end
+    in
+        line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "5", strokeLinecap "round"] []

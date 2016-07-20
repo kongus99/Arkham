@@ -15,7 +15,7 @@ import Graphics exposing (..)
 
 
 -- MODEL
-type alias Color = String
+
 type alias Model = { start : (Place Neighborhood Location), path : List (Place Neighborhood Location), movementPoints : Int, isValid : Bool, obstructions : List (Place Neighborhood Location) }
 initialModel = { start = Locale Train_Station, path = [], movementPoints = 3, isValid = True, obstructions = [] }
 
@@ -101,7 +101,7 @@ localeMsg l =
 positionCircle : Place Neighborhood Location -> Bool -> Svg a
 positionCircle p isFilled =
     let
-        connector = connectorPoint p
+        connector = middle p
     in
         circle [cx <| toString connector.x, cy <| toString connector.y, r "12", strokeWidth "3", stroke "black", strokeOpacity "1.0", fillOpacity (if isFilled then "1.0" else "0.0")][]
 
@@ -118,17 +118,6 @@ movementLines model=
         lines = zip (model.start :: model.path) model.path
     in
         map (movement color) lines
-
-connectorPoint place =
-    case place of
-        Street s -> (neighborhoodRectangle s).connector
-        Locale l -> (locationCircle l).connector
-
-movement: Color -> (Place Neighborhood Location, Place Neighborhood Location) -> Svg a
-movement color (start, end) = drawLine (connectorPoint start) (connectorPoint end) color
-
-drawLine p1 p2 color=
-    line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "5", strokeLinecap "round"] []
 
 -- mouse position
 offsetPosition : Json.Decoder Point
