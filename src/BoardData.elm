@@ -1,5 +1,7 @@
 module BoardData exposing (..)
 
+import List exposing (member)
+
 type Neighborhood = Downtown | Easttown | French_Hill |
                     Merchant_District | Miskatonic_University | Northside |
                     Rivertown | Southside | Uptown
@@ -40,6 +42,15 @@ adjacent n =
         Rivertown -> [Easttown, Merchant_District, French_Hill]
         Southside -> [French_Hill, Uptown]
         Uptown -> [Southside, Miskatonic_University]
+
+isAdjacent : Place Neighborhood Location -> Place Neighborhood Location -> Bool
+isAdjacent p1 p2 =
+    case (p1, p2) of
+        (Street n1, Street n2) -> member n2 <| adjacent n1
+        (Street n, Locale l) -> n == parent l
+        (Locale l, Street n) -> n == parent l
+        (Locale l1, Locale l2) -> False
+
 
 parent : Location -> Neighborhood
 parent l =

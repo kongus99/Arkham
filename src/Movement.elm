@@ -28,13 +28,13 @@ path p1 p2 excluded =
                                 Locale l -> parent l
            start = getNeighborhood p1
            end = getNeighborhood p2
-           path =  if not (p1 == p2) then map Street (pathBFS (createPathData end adjacent excluded) start) else []
+           path = map Street (pathBFS (createPathData end adjacent excluded) start)
         in
           case (p1, p2) of
             (Street n1, Street n2) -> withDefault [] (tail path)
             (Street n, Locale l) -> append (withDefault [] (tail path)) [p2]
             (Locale l, Street n) -> path
-            (Locale l1, Locale l2) -> append path [p2]
+            (Locale l1, Locale l2) -> if path /= [] then append path [p2] else []
 
 -- Update
 
@@ -58,30 +58,20 @@ update msg model =
                     case p of
                         Street s -> Just s
                         _ -> Nothing
-                (firstPartOfPath, _) = break (\x -> x == place) model.path
-                startOfPath = withDefault model.start (head <| reverse firstPartOfPath)
-                secondPartOfPath = path startOfPath place (filterMap toNeighborhood firstPartOfPath)
-                mergedPath = merge firstPartOfPath secondPartOfPath
-                newPath = path model.start place []
-                minPath = if length newPath < length mergedPath then newPath else mergedPath
+                currentEnd = withDefault model.start (head <| reverse model.path)
+                newPath = if model.start == place then []
+                          else if member place model.path then append (fst <| break (\x -> x == place) model.path) [place]
+                          else if isAdjacent currentEnd place then
+                            append model.path [place]
+                          else
+                            path model.start place <| filterMap toNeighborhood model.obstructions
             in
-                ({model | path = minPath, isValid = length newPath <= model.movementPoints}, Cmd.none)
+                ({model | path = newPath, isValid = length newPath <= model.movementPoints}, Cmd.none)
         AddObstruction place ->
                 if member place model.obstructions then
                     ({model | obstructions = remove place model.obstructions}, Cmd.none)
                 else
                     ({model | obstructions = place :: model.obstructions}, Cmd.none)
-
-merge path1 path2 =
-    let
-        maxLength = length path1 + length path2
-        indexInPath1 elem = withDefault maxLength (elemIndex elem path1)
-        indexesInBothPaths index elem = (indexInPath1 elem, index)
-        indexPairs = indexedMap indexesInBothPaths path2
-        sum (a, b) = a + (length path2 - b)
-        (minPath1Index, minPath2Index) = withDefault (maxLength, maxLength) (minimumBy sum indexPairs)
-    in
-        if (sum (minPath1Index, minPath2Index)) < maxLength then append (take minPath1Index path1) (drop minPath2Index path2) else append path1 path2
 
 -- View
 view : Model -> Html Msg
@@ -90,9 +80,9 @@ view model = svg [ width "1606", height "2384" ] (concat
                                                 , [positionCircle model.start True]
                                                 , [positionCircle (withDefault model.start <| head <| reverse model.path) False]
                                                 , (map obstructionSquare model.obstructions)
+                                                , (movementLines model)
                                                 , (map (localeCircle localeMsg) allLocation)
                                                 , (map (streetRectangle streetMsg) allNeighborhood)
-                                                , (movementLines model)
                                                 ])
 
 boardImage =
