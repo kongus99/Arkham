@@ -16,8 +16,8 @@ import Graphics exposing (..)
 
 -- MODEL
 type alias Color = String
-type alias Model = { start : (Place Neighborhood Location), path : List (Place Neighborhood Location), movementPoints : Int, isValid : Bool }
-initialModel = { start = Locale Train_Station, path = [], movementPoints = 3, isValid = True }
+type alias Model = { start : (Place Neighborhood Location), path : List (Place Neighborhood Location), movementPoints : Int, isValid : Bool, obstructions : List (Place Neighborhood Location) }
+initialModel = { start = Locale Train_Station, path = [], movementPoints = 3, isValid = True, obstructions = [] }
 
 path : Place Neighborhood Location -> Place Neighborhood Location -> List Neighborhood -> List (Place Neighborhood Location)
 path p1 p2 excluded =
@@ -38,7 +38,7 @@ path p1 p2 excluded =
 
 -- Update
 
-type Msg = Show Point | Move (Place Neighborhood Location) | Submit
+type Msg = Show Point | Move (Place Neighborhood Location) | AddObstruction (Place Neighborhood Location)| Submit
 
 update msg model =
     case msg of
@@ -66,6 +66,7 @@ update msg model =
                 minPath = if length newPath < length mergedPath then newPath else mergedPath
             in
                 ({model | path = minPath, isValid = length newPath <= model.movementPoints}, Cmd.none)
+        AddObstruction place -> (model, Cmd.none)
 
 merge path1 path2 =
     let
@@ -79,10 +80,10 @@ merge path1 path2 =
         if (sum (minPath1Index, minPath2Index)) < maxLength then append (take minPath1Index path1) (drop minPath2Index path2) else append path1 path2
 
 -- View
-
+view : Model -> Html Msg
 view model = svg [ width "1606", height "2384" ] (concat
                                                 [ [boardImage]
-                                                , (map localeCircle allLocation)
+                                                , (map (localeCircle localeMsg) allLocation)
                                                 , (map streetRectangle allNeighborhood)
                                                 , (movementLines model)
                                                 , [positionCircle model.start True]
@@ -92,13 +93,9 @@ boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map Show offsetPosition)][]
 
 --Location circles
-
-localeCircle : Location -> Svg Msg
-localeCircle l =
-    circle (circleParams (locationCircle l) l) []
-
-circleParams c l =
-    [cx <| toString c.cx, cy <| toString c.cy, r <| toString c.radius, strokeWidth "1", strokeOpacity "0.0", fillOpacity "0.0", onDoubleClick Submit, onClick <| Move (Locale l)]
+localeMsg : Location -> List(Attribute Msg)
+localeMsg l =
+    [onDoubleClick Submit, onClick <| Move (Locale l)]
 
 -- Position circles
 positionCircle : Place Neighborhood Location -> Bool -> Svg a

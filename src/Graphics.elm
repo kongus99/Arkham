@@ -1,6 +1,9 @@
 module Graphics exposing (..)
-import BoardData exposing(..)
 
+import BoardData exposing(..)
+import Svg exposing (..)
+import Svg.Attributes exposing (..)
+import List exposing (..)
 
 type alias Point = {x : Int, y : Int}
 type alias LineConnective shape = { shape | connector : Point }
@@ -63,3 +66,12 @@ locationCircle location =
                  _ ->                      {cx = 0,    cy = 0,    radius = 0}
     in
         {cx = loc.cx, cy = loc.cy, radius = loc.radius, connector = circleMiddle loc}
+
+localeCircle : (Location -> List(Attribute a)) -> Location -> Svg a
+localeCircle generator l =
+    let
+        c = locationCircle l
+        commonAttributes = [cx <| toString c.cx, cy <| toString c.cy, r <| toString c.radius, strokeWidth "1", strokeOpacity "0.0", fillOpacity "0.0"]
+        generatedAttributes = generator l
+    in
+        circle (append commonAttributes generatedAttributes) []
