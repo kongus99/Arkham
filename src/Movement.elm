@@ -83,11 +83,12 @@ merge path1 path2 =
 view : Model -> Html Msg
 view model = svg [ width "1606", height "2384" ] (concat
                                                 [ [boardImage]
+                                                , [positionCircle model.start True]
+                                                , [positionCircle (withDefault model.start <| head <| reverse model.path) False]
                                                 , (map (localeCircle localeMsg) allLocation)
                                                 , (map (streetRectangle streetMsg) allNeighborhood)
                                                 , (movementLines model)
-                                                , [positionCircle model.start True]
-                                                , [positionCircle (withDefault model.start <| head <| reverse model.path) False]])
+                                                ])
 
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map Show offsetPosition)][]
