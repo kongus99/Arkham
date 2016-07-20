@@ -84,7 +84,7 @@ view : Model -> Html Msg
 view model = svg [ width "1606", height "2384" ] (concat
                                                 [ [boardImage]
                                                 , (map (localeCircle localeMsg) allLocation)
-                                                , (map streetRectangle allNeighborhood)
+                                                , (map (streetRectangle streetMsg) allNeighborhood)
                                                 , (movementLines model)
                                                 , [positionCircle model.start True]
                                                 , [positionCircle (withDefault model.start <| head <| reverse model.path) False]])
@@ -106,12 +106,9 @@ positionCircle p isFilled =
         circle [cx <| toString connector.x, cy <| toString connector.y, r "12", strokeWidth "3", stroke "black", strokeOpacity "1.0", fillOpacity (if isFilled then "1.0" else "0.0")][]
 
 -- Street rectangles
-
-streetRectangle s =
-    rect (rectangleParams (neighborhoodRectangle s) s) []
-
-rectangleParams r s =
-    [ x <| toString r.x, y <| toString r.y, width <| toString r.width, height <| toString r.height, strokeOpacity "0.0", fillOpacity "0.0", onDoubleClick Submit, onClick <| Move (Street s)]
+streetMsg : Neighborhood -> List(Attribute Msg)
+streetMsg n =
+    [onDoubleClick Submit, onClick <| Move (Street n)]
 
 -- Movement lines
 movementLines : Model -> List (Svg c)

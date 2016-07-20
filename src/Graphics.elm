@@ -75,3 +75,12 @@ localeCircle generator l =
         generatedAttributes = generator l
     in
         circle (append commonAttributes generatedAttributes) []
+
+streetRectangle : (Neighborhood -> List(Attribute a)) -> Neighborhood -> Svg a
+streetRectangle generator n =
+    let
+        r = neighborhoodRectangle n
+        commonAttributes = [x <| toString r.x, y <| toString r.y, width <| toString r.width, height <| toString r.height, strokeOpacity "0.0", fillOpacity "0.0"]
+        generatedAttributes = generator n
+    in
+        rect (append commonAttributes generatedAttributes) []
