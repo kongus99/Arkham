@@ -85,6 +85,13 @@ streetRectangle generator n =
     in
         rect (append commonAttributes generatedAttributes) []
 
+positionCircle : Place Neighborhood Location -> Bool -> Svg a
+positionCircle p isFilled =
+    let
+        connector = middle p
+    in
+        circle [cx <| toString connector.x, cy <| toString connector.y, r "12", strokeWidth "3", stroke "black", strokeOpacity "1.0", fillOpacity (if isFilled then "1.0" else "0.0")][]
+
 middle place =
     case place of
         Street s -> (neighborhoodRectangle s).middle

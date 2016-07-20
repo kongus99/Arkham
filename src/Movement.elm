@@ -92,20 +92,11 @@ view model = svg [ width "1606", height "2384" ] (concat
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map Show offsetPosition)][]
 
---Location circles
+--Msg generators
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
     [onDoubleClick Submit, onClick <| Move (Locale l)]
 
--- Position circles
-positionCircle : Place Neighborhood Location -> Bool -> Svg a
-positionCircle p isFilled =
-    let
-        connector = middle p
-    in
-        circle [cx <| toString connector.x, cy <| toString connector.y, r "12", strokeWidth "3", stroke "black", strokeOpacity "1.0", fillOpacity (if isFilled then "1.0" else "0.0")][]
-
--- Street rectangles
 streetMsg : Neighborhood -> List(Attribute Msg)
 streetMsg n =
     [onDoubleClick Submit, onClick <| Move (Street n)]
