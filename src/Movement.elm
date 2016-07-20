@@ -1,13 +1,13 @@
 module Movement exposing (..)
 
 import List exposing (..)
-import List.Extra exposing (break, zip, elemIndex, minimumBy)
+import List.Extra exposing (break, zip, elemIndex, minimumBy, remove)
 import Html exposing (Html, span, button)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.App as App
-import Json.Decode as Json exposing ((:=))
+import Json.Decode as Json exposing ((:=), bool, andThen)
 import Maybe exposing (withDefault)
 import BoardData exposing (..)
 import Paths exposing (..)
@@ -66,7 +66,11 @@ update msg model =
                 minPath = if length newPath < length mergedPath then newPath else mergedPath
             in
                 ({model | path = minPath, isValid = length newPath <= model.movementPoints}, Cmd.none)
-        AddObstruction place -> (model, Cmd.none)
+        AddObstruction place ->
+                if member place model.obstructions then
+                    ({model | obstructions = remove place model.obstructions}, Cmd.none)
+                else
+                    ({model | obstructions = place :: model.obstructions}, Cmd.none)
 
 merge path1 path2 =
     let
@@ -85,6 +89,7 @@ view model = svg [ width "1606", height "2384" ] (concat
                                                 [ [boardImage]
                                                 , [positionCircle model.start True]
                                                 , [positionCircle (withDefault model.start <| head <| reverse model.path) False]
+                                                , (map obstructionSquare model.obstructions)
                                                 , (map (localeCircle localeMsg) allLocation)
                                                 , (map (streetRectangle streetMsg) allNeighborhood)
                                                 , (movementLines model)
@@ -94,13 +99,20 @@ boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map Show offsetPosition)][]
 
 --Msg generators
+
+onCtrlClick : Place Neighborhood Location -> Html.Attribute Msg
+onCtrlClick p =  on "click" (("ctrlKey" := bool) `andThen` msgForCtrlClick p)
+
+msgForCtrlClick place ctrl =
+    if ctrl then Json.succeed <| AddObstruction place else Json.succeed <| Move place
+
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
-    [onDoubleClick Submit, onClick <| Move (Locale l)]
+    [onDoubleClick Submit, onCtrlClick <| Locale l]
 
 streetMsg : Neighborhood -> List(Attribute Msg)
 streetMsg n =
-    [onDoubleClick Submit, onClick <| Move (Street n)]
+    [onDoubleClick Submit, onCtrlClick <| Street n]
 
 -- Movement lines
 movementLines : Model -> List (Svg c)
