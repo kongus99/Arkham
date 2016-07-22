@@ -1,4 +1,4 @@
-module DiceRoller exposing (..)
+module Dice exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (style)
@@ -8,20 +8,20 @@ import Random
 
 -- MODEL
 
-type alias Model = { dieFace : Int, successThreshold : Int }
+type alias Model = { dieFace : Int, isSuccess : Bool }
 
-initialModel = Model 1 5
+initialModel = Model 1 False
 
 -- UPDATE
 
 type Msg
-  = NewFace Int
+  = NewFace Int Bool
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    NewFace newFace ->
-      Model newFace model.successThreshold
+    NewFace newFace isSuccess->
+      Model newFace isSuccess
 
 -- VIEW
 
@@ -34,7 +34,7 @@ resultStyle: Model -> Attribute msg
 resultStyle m =
     let
         styleArgs =
-            if m.dieFace < m.successThreshold then
+            if not m.isSuccess then
                 [ ("backgroundColor", "white"), ("color", "red"), ("fontSize", "250%")]
             else
                 [ ("backgroundColor", "white"), ("color", "green"), ("fontSize", "250%")]
