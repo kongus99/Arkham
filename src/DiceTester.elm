@@ -2,7 +2,6 @@ module DiceTester exposing (..)
 
 import Dice
 
---import Array exposing (toList, get, set, repeat, Array)
 import Html exposing (Html, button, div, text)
 import Html.App as App
 import Html.Events exposing (onClick)
