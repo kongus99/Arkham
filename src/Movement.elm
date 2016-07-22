@@ -44,14 +44,14 @@ update msg model =
     case msg of
         Submit ->
             if model.isValid then
-                ({model | path = [], start = withDefault model.start <| head <| reverse model.path}, Cmd.none)
+                {model | path = [], start = withDefault model.start <| head <| reverse model.path}
             else
-                (model, Cmd.none)
+                model
         Show p ->
             let
                 x = Debug.log "clicked" p
             in
-                (model, Cmd.none)
+                model
         Move place ->
             let
                 toNeighborhood p =
@@ -66,12 +66,12 @@ update msg model =
                           else
                             path model.start place <| filterMap toNeighborhood model.obstructions
             in
-                ({model | path = newPath, isValid = length newPath <= model.movementPoints}, Cmd.none)
+                {model | path = newPath, isValid = length newPath <= model.movementPoints}
         AddObstruction place ->
                 if member place model.obstructions then
-                    ({model | obstructions = remove place model.obstructions}, Cmd.none)
+                    {model | obstructions = remove place model.obstructions}
                 else
-                    ({model | obstructions = place :: model.obstructions}, Cmd.none)
+                    {model | obstructions = place :: model.obstructions}
 
 -- View
 view : Model -> Html Msg
@@ -118,5 +118,3 @@ offsetPosition : Json.Decoder Point
 offsetPosition =
     Json.object2 Point ("offsetX" := Json.int) ("offsetY" := Json.int)
 
-main =
-   App.program { init = ( initialModel, Cmd.none ), view = view, update = update, subscriptions = \_ -> Sub.none }
