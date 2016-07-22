@@ -16,37 +16,30 @@ type alias DiceThrowResult = Int
 type alias NumOfSuccesses = Int
 -- MODEL
 
-type alias Model = { rolls : List Dice.Model, required : NumOfSuccesses, isSuccess : TestResult}
-initialModel availableDices required =
-    { rolls = List.repeat availableDices Dice.initialModel, required = required, isSuccess = False }
+type alias Model = { rolls : List Dice.Model, isSuccess : TestResult}
+initialModel availableDices =
+    { rolls = List.repeat availableDices Dice.initialModel, isSuccess = False }
 
 -- UPDATE
+runTest : NumOfTests -> (List Int -> a) -> Cmd a
+runTest numOfTests wrapper =
+    Random.generate wrapper <| Random.list numOfTests (Random.int 1 6)
 
-type Msg = Run SuccessThreshold NumOfTests | SetNewResult SuccessThreshold (List DiceThrowResult) | SetState TestResult
+type Msg = SetNewResult SuccessThreshold NumOfSuccesses (List DiceThrowResult)
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Msg -> Model -> Model
 update message model =
   case message of
-    Run threshold numOfTests ->
-        (model, Random.generate (SetNewResult threshold) <| Random.list numOfTests (Random.int 1 6))
-    SetNewResult threshold newRolls ->
+    SetNewResult threshold required newRolls ->
         let
             rollSuccessful res = res >= threshold
-            isSuccess = (List.length (List.filter rollSuccessful newRolls)) >= model.required
-            newTask = Task.perform (\_ -> Debug.crash "This failure cannot happen.") identity (Task.succeed (SetState isSuccess))
+            isSuccess = (List.length (List.filter rollSuccessful newRolls)) >= required
             createNewRoll res =
                 Dice.update (Dice.NewFace res (rollSuccessful res)) Dice.initialModel
         in
-            ({model | rolls = List.map createNewRoll newRolls}, newTask)
-    SetState s ->
-        ({model | isSuccess = s}, Cmd.none)
-
+            {model | rolls = List.map createNewRoll newRolls, isSuccess = isSuccess}
 
 -- VIEW
-view : Model -> Html Msg
+view : Model -> Html a
 view model = div[][ div[style [("display", "flex"),("flex-flow", "row wrap"),("justify-content", "space-around")]] (List.map Dice.view model.rolls)
-                  , button [ onClick (Run 4 5)] [ text "Run" ]
                   , span[][text <| toString model.isSuccess]]
-
-main =
-    App.program { init = (initialModel 5 3, Cmd.none), view = view, update = update, subscriptions = \_ -> Sub.none }
