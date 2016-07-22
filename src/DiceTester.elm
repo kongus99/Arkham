@@ -1,13 +1,13 @@
 module DiceTester exposing (..)
 
-import DiceRoller exposing (..)
---import List exposing (map)
+import DiceRoller
 
-import Array exposing (repeat, Array, indexedMap, toList, map, get, set)
-import Html exposing (Html, button, div, text, h1, span)
+import Array exposing (toList, get, set, repeat, Array)
+import Html exposing (Html, button, div, text)
 import Html.App as App
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (style)
+import Random
 
 type alias TestResult = Bool
 type alias NumOfSuccesses = Int
@@ -21,35 +21,32 @@ initialModel successesRequired availableDices = { rolls = repeat availableDices 
 
 -- UPDATE
 
-type Msg = Run | SingleTest Int DiceRoller.Msg
+type Msg = Run | SetNewResult Int DiceRoller.Msg
 
+update : Msg -> Model -> (Model, Cmd Msg)
 update message model =
   case message of
     Run ->
       let
-        futureRolls = map snd <| map (DiceRoller.update DiceRoller.Roll) model.rolls
-        transform index cmd =
-            Cmd.map (SingleTest index) cmd
-        futureRollCmd = indexedMap transform futureRolls
+        prepareNewResult i = Random.generate (SetNewResult i) (Random.map DiceRoller.NewFace (Random.int 1 6))
+        rollCalls = Array.initialize (Array.length model.rolls) prepareNewResult
       in
-        (model, Cmd.batch <| toList futureRollCmd)
-    SingleTest index result ->
+        (model, Cmd.batch <| toList rollCalls)
+    SetNewResult index result ->
         let
-            oldRoll = Maybe.withDefault DiceRoller.initialModel <| get index model.rolls
-            newRoll =  fst <| DiceRoller.update result oldRoll
-
+            newRoll = DiceRoller.update result DiceRoller.initialModel
+            newRolls = set index newRoll model.rolls
         in
-            ({model | rolls = set index newRoll model.rolls}, Cmd.none)
+            ({model | rolls = newRolls}, Cmd.none)
 
 -- VIEW
 view : Model -> Html Msg
 view model = div[][ div[style [("display", "flex"),("flex-flow", "row wrap"),("justify-content", "space-around")]] (toList (Array.indexedMap mapper model.rolls))
                   , button [ onClick Run ] [ text "Run" ]]
 
-
 mapper : Int -> DiceRoller.Model -> Html Msg
 mapper i r =
-    App.map (SingleTest i) (DiceRoller.view r)
+    App.map (SetNewResult i) (DiceRoller.view r)
 
 main =
-    App.program { init = (initialModel 1 20, Cmd.none), view = view, update = update, subscriptions = \_ -> Sub.none }
+    App.program { init = (initialModel 1 5, Cmd.none), view = view, update = update, subscriptions = \_ -> Sub.none }

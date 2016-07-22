@@ -5,17 +5,6 @@ import Html.Attributes exposing (style)
 import Html.App as Html
 import Html.Events exposing (..)
 import Random
---import Graphics exposing(Color)
-
-
-
-main =
-  Html.program
-    { init = (initialModel, Cmd.none)
-    , view = view
-    , update = update
-    , subscriptions = \_ -> Sub.none
-    }
 
 -- MODEL
 
@@ -26,17 +15,13 @@ initialModel = Model 1 5
 -- UPDATE
 
 type Msg
-  = Roll
-  | NewFace Int
+  = NewFace Int
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Msg -> Model -> Model
 update msg model =
   case msg of
-    Roll ->
-      (model, Random.generate NewFace (Random.int 1 6))
-
     NewFace newFace ->
-      (Model newFace model.successThreshold, Cmd.none)
+      Model newFace model.successThreshold
 
 -- VIEW
 
