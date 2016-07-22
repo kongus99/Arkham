@@ -1,21 +1,11 @@
 module BoardData exposing (..)
 
+import List exposing (member)
+
 type Neighborhood = Downtown | Easttown | French_Hill |
                     Merchant_District | Miskatonic_University | Northside |
                     Rivertown | Southside | Uptown
 allNeighborhood = [Downtown, Easttown, French_Hill, Merchant_District, Miskatonic_University, Northside, Rivertown, Southside, Uptown]
-
-streetRectangle street =
-    case street of
-        Northside ->            {x = 296, y = 396,  width = 180, height = 80}
-        Downtown ->             {x = 591, y = 393,  width = 192, height = 82}
-        Easttown ->             {x = 731, y = 621,  width = 208, height = 82}
-        Merchant_District ->    {x = 363, y = 808,  width = 264, height = 80}
-        Rivertown ->            {x = 720, y = 808,  width = 182, height = 78}
-        Miskatonic_University ->{x = 379, y = 1177, width = 236, height = 84}
-        French_Hill ->          {x = 721, y = 1219, width = 195, height = 84}
-        Uptown ->               {x = 469, y = 1669, width = 152, height = 84}
-        Southside ->            {x = 753, y = 1673, width = 180, height = 82}
 
 type Location =  Arkham_Asylum | Bank_of_Arkham | Independence_Square |
                  Hibb's_Roadhouse | Police_Station | Velma's_Diner |
@@ -52,6 +42,15 @@ adjacent n =
         Rivertown -> [Easttown, Merchant_District, French_Hill]
         Southside -> [French_Hill, Uptown]
         Uptown -> [Southside, Miskatonic_University]
+
+isAdjacent : Place Neighborhood Location -> Place Neighborhood Location -> Bool
+isAdjacent p1 p2 =
+    case (p1, p2) of
+        (Street n1, Street n2) -> member n2 <| adjacent n1
+        (Street n, Locale l) -> n == parent l
+        (Locale l, Street n) -> n == parent l
+        (Locale l1, Locale l2) -> False
+
 
 parent : Location -> Neighborhood
 parent l =
