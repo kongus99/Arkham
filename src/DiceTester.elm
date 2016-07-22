@@ -16,8 +16,8 @@ type alias NumOfDices = Int
 
 -- MODEL
 
-type alias Model = { rolls : Array DiceRoller.Model, numOfSuccesses : NumOfSuccesses, numOfDices : NumOfDices }
-initialModel successesRequired availableDices = { rolls = repeat availableDices DiceRoller.initialModel, numOfSuccesses = successesRequired, numOfDices = availableDices }
+type alias Model = { rolls : Array DiceRoller.Model, numOfSuccesses : NumOfSuccesses }
+initialModel successesRequired availableDices = { rolls = repeat availableDices DiceRoller.initialModel, numOfSuccesses = successesRequired }
 
 -- UPDATE
 
