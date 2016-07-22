@@ -25,7 +25,7 @@ update msg model =
 
 -- VIEW
 
-view : Model -> Html Msg
+view : Model -> Html a
 view model =
   span []
     [ span [resultStyle model] [ text (toString model.dieFace) ]]
