@@ -33,7 +33,7 @@ path p1 p2 excluded =
         in
           case (p1, p2) of
             (Street n1, Street n2) -> withDefault [] (tail path)
-            (Street n, Locale l) -> append (withDefault [] (tail path)) [p2]
+            (Street n, Locale l) ->   if path /= [] then append (withDefault [] (tail path)) [p2] else []
             (Locale l, Street n) -> path
             (Locale l1, Locale l2) -> if path /= [] then append path [p2] else []
 
