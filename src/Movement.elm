@@ -39,7 +39,7 @@ path p1 p2 excluded =
 
 -- Update
 
-type Msg = Show Point | Move (Place Neighborhood Location) | AddObstruction (Place Neighborhood Location)| Submit
+type Msg = Show Point | Move (Place Neighborhood Location) | AddObstruction (Place Neighborhood Location) (Maybe Monster)| Submit
 
 update msg model =
     case msg of
@@ -68,16 +68,13 @@ update msg model =
                             path model.start place <| filterMap toNeighborhood (AllDict.keys model.obstructions)
             in
                 {model | path = newPath, isValid = length newPath <= model.investigator.movementPoints}
-        AddObstruction place ->
+        AddObstruction place maybeMonster->
                 if AllDict.member place model.obstructions then
                     {model | obstructions = AllDict.remove place model.obstructions}
                 else
-                    let
-                        m = fst (drawMonster Nothing)
-                    in
-                        case m of
-                            Nothing -> model
-                            Just x -> {model | obstructions = AllDict.insert place x model.obstructions}
+                    case maybeMonster of
+                        Nothing -> model
+                        Just mm -> {model | obstructions = AllDict.insert place mm model.obstructions}
 -- View
 view : Model -> Html Msg
 view model = svg [ width "1606", height "2384" ] (concat
@@ -99,7 +96,7 @@ onCtrlClick : Place Neighborhood Location -> Html.Attribute Msg
 onCtrlClick p =  on "click" (("ctrlKey" := bool) `andThen` msgForCtrlClick p)
 
 msgForCtrlClick place ctrl =
-    if ctrl then Json.succeed <| AddObstruction place else Json.succeed <| Move place
+    if ctrl then Json.succeed <| AddObstruction place Nothing else Json.succeed <| Move place
 
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
