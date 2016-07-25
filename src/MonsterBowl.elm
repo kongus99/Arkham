@@ -15,6 +15,6 @@ drawMonster : Maybe Bowl -> (Maybe Monster, Bowl)
 drawMonster maybeBowl =
     case maybeBowl of
         Nothing ->
-            (get 0 initialBowl, {initialBowl | index = 1})
+            (get 0 initialBowl.monsters, {initialBowl | index = 1})
         Just b ->
-            (get b.index initialBowl, {b | index = (b.index + 1) % (length b.monsters)})
+            (get b.index initialBowl.monsters, {b | index = (b.index + 1) % (length b.monsters)})

@@ -35,6 +35,8 @@ allLocation = [Arkham_Asylum, Bank_of_Arkham, Independence_Square,
 type Place a b
     = Street a
     | Locale b
+placeOrder : Place Neighborhood Location -> String
+placeOrder p = toString p
 
 
 adjacent : Neighborhood -> List Neighborhood
