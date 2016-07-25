@@ -85,13 +85,16 @@ streetRectangle generator n =
     in
         rect (append commonAttributes generatedAttributes) []
 
-positionCircle : Place Neighborhood Location -> Bool -> Svg a
-positionCircle p isFilled =
+positionCircle : Place Neighborhood Location -> Investigator -> Bool -> List (Svg a)
+positionCircle p i isFilled =
     let
         m = middle p
+        xCoord = toString <| m.x + 30
+        yCoord = toString m.y
     in
-        circle [cx <| toString <| m.x + 30, cy <| toString m.y, r "25", strokeWidth "3", fill "green", stroke "green", strokeOpacity "1.0", fillOpacity (if isFilled then "1.0" else "0.0")][]
-
+        circle [cx <| xCoord, cy <| yCoord, r "25", strokeWidth "3", fill "green", stroke "green", strokeOpacity "1.0", fillOpacity (if isFilled then "1.0" else "0.0")][]
+      ::text' [textAnchor "middle", x <| xCoord, y <| yCoord, fill "red"][text (abbreviation i)]
+      ::[]
 obstructionSquare : Place Neighborhood Location -> Svg a
 obstructionSquare p =
     let

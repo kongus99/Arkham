@@ -16,8 +16,8 @@ import Graphics exposing (..)
 
 -- MODEL
 
-type alias Model = { start : (Place Neighborhood Location), path : List (Place Neighborhood Location), movementPoints : Int, isValid : Bool, obstructions : List (Place Neighborhood Location) }
-initialModel = { start = Locale Train_Station, path = [], movementPoints = 3, isValid = True, obstructions = [] }
+type alias Model = { start : (Place Neighborhood Location), path : List (Place Neighborhood Location), investigator : Investigator, isValid : Bool, obstructions : List (Place Neighborhood Location) }
+initialModel = { start = Locale Train_Station, path = [], investigator = firstInvestigator, isValid = True, obstructions = [] }
 
 path : Place Neighborhood Location -> Place Neighborhood Location -> List Neighborhood -> List (Place Neighborhood Location)
 path p1 p2 excluded =
@@ -66,7 +66,7 @@ update msg model =
                           else
                             path model.start place <| filterMap toNeighborhood model.obstructions
             in
-                {model | path = newPath, isValid = length newPath <= model.movementPoints}
+                {model | path = newPath, isValid = length newPath <= model.investigator.movementPoints}
         AddObstruction place ->
                 if member place model.obstructions then
                     {model | obstructions = remove place model.obstructions}
@@ -77,8 +77,8 @@ update msg model =
 view : Model -> Html Msg
 view model = svg [ width "1606", height "2384" ] (concat
                                                 [ [boardImage]
-                                                , [positionCircle model.start True]
-                                                , [positionCircle (withDefault model.start <| head <| reverse model.path) False]
+                                                , (positionCircle model.start model.investigator True)
+                                                , (positionCircle (withDefault model.start <| head <| reverse model.path) model.investigator False)
                                                 , (map obstructionSquare model.obstructions)
                                                 , (movementLines model)
                                                 , (map (localeCircle localeMsg) allLocation)

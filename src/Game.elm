@@ -7,7 +7,6 @@ import Array exposing (Array)
 -- MODEL
 
 type alias Model = { board : Movement.Model, tester : DiceTester.Model }
-type alias Investigator = { sneak : Int }
 
 initialModel = { board = Movement.initialModel, tester = DiceTester.initialModel 0 }
 

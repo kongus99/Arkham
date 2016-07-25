@@ -1,6 +1,13 @@
 module BoardData exposing (..)
 
-import List exposing (member)
+import List exposing (member, map)
+import String exposing (split, slice, join)
+
+type alias Investigator = { name : String, sneak : Int, movementPoints : Int }
+
+abbreviation i = join " " (map (slice 0 1) (split " " i.name))
+
+firstInvestigator = {name = "Agnes Baker", movementPoints = 4, sneak = 3}
 
 type Neighborhood = Downtown | Easttown | French_Hill |
                     Merchant_District | Miskatonic_University | Northside |
