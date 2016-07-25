@@ -3,12 +3,10 @@ import DiceTester
 import Html exposing (Html, button, div, text)
 import Html.App as App
 import Html.Events exposing (onClick)
-
-
+import Array exposing (Array)
 -- MODEL
 
 type alias Model = { board : Movement.Model, tester : DiceTester.Model }
-type alias Monster = { awareness : Int }
 type alias Investigator = { sneak : Int }
 
 initialModel = { board = Movement.initialModel, tester = DiceTester.initialModel 0 }
