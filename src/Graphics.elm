@@ -4,6 +4,7 @@ import BoardData exposing(..)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import List exposing (..)
+import MonsterBowl exposing (Monster)
 
 type alias Point = {x : Int, y : Int}
 type alias LineConnective shape = { shape | middle : Point }
@@ -95,13 +96,19 @@ positionCircle p i isFilled =
         circle [cx <| xCoord, cy <| yCoord, r "25", strokeWidth "3", fill "green", stroke "green", strokeOpacity "1.0", fillOpacity (if isFilled then "1.0" else "0.0")][]
       ::text' [textAnchor "middle", x <| xCoord, y <| yCoord, fill "red"][text (abbreviation i)]
       ::[]
-obstructionSquare : Place Neighborhood Location -> Svg a
-obstructionSquare p =
+obstructionSquare : (Place Neighborhood Location, Monster) -> List (Svg a)
+obstructionSquare (place, monster) =
     let
-        m = middle p
+        mid = middle place
+        upperLeftX = mid.x - 55
+        upperLeftY = mid.y - 25
+        side = 50
+        lowerRightX = mid.x - 12
+        lowerRightY = mid.y + 23
     in
-        rect [x <| toString <| m.x - 55, y <| toString <| m.y - 25, width "50", height "50", strokeWidth "1", fill "red", stroke "red"][]
-
+        rect [x <| toString <| upperLeftX, y <| toString <| upperLeftY, width <| toString side, height <| toString side, strokeWidth "1", fill "red"][]
+      ::text' [textAnchor "middle", x <| toString <| lowerRightX, y <| toString <| lowerRightY][text (toString monster.awareness)]
+      ::[]
 middle place =
     case place of
         Street s -> (neighborhoodRectangle s).middle

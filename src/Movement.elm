@@ -13,7 +13,7 @@ import BoardData exposing (..)
 import Paths exposing (..)
 import Graphics exposing (..)
 import AllDict exposing (AllDict)
-import MonsterBowl exposing (Monster, drawMonster)
+import MonsterBowl exposing (Monster)
 
 
 -- MODEL
@@ -81,7 +81,7 @@ view model = svg [ width "1606", height "2384" ] (concat
                                                 [ [boardImage]
                                                 , (positionCircle model.start model.investigator True)
                                                 , (positionCircle (withDefault model.start <| head <| reverse model.path) model.investigator False)
-                                                , (map obstructionSquare (AllDict.keys model.obstructions))
+                                                , (concatMap obstructionSquare (AllDict.toList model.obstructions))
                                                 , (movementLines model)
                                                 , (map (localeCircle localeMsg) allLocation)
                                                 , (map (streetRectangle streetMsg) allNeighborhood)
