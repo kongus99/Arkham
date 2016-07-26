@@ -11382,6 +11382,59 @@ var _elm_lang$svg$Svg_Attributes$additive = _elm_lang$virtual_dom$VirtualDom$att
 var _elm_lang$svg$Svg_Attributes$accumulate = _elm_lang$virtual_dom$VirtualDom$attribute('accumulate');
 var _elm_lang$svg$Svg_Attributes$accelerate = _elm_lang$virtual_dom$VirtualDom$attribute('accelerate');
 var _elm_lang$svg$Svg_Attributes$accentHeight = _elm_lang$virtual_dom$VirtualDom$attribute('accent-height');
+var _elm_lang$elm_architecture_tutorial$MonsterBowl$m = F2(
+	function (n, a) {
+		return {name: n, awareness: a};
+	});
+var _elm_lang$elm_architecture_tutorial$MonsterBowl$allMonsters = A2(
+	_elm_lang$core$List_ops['::'],
+	A2(_elm_lang$elm_architecture_tutorial$MonsterBowl$m, 'Cultist', -3),
+	A2(
+		_elm_lang$core$List_ops['::'],
+		A2(_elm_lang$elm_architecture_tutorial$MonsterBowl$m, 'Deep One', 0),
+		A2(
+			_elm_lang$core$List_ops['::'],
+			A2(_elm_lang$elm_architecture_tutorial$MonsterBowl$m, 'Zombie', 1),
+			_elm_lang$core$Native_List.fromArray(
+				[]))));
+var _elm_lang$elm_architecture_tutorial$MonsterBowl$initialBowl = {
+	monsters: _elm_lang$core$Array$fromList(_elm_lang$elm_architecture_tutorial$MonsterBowl$allMonsters),
+	index: 0
+};
+var _elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster = function (maybeBowl) {
+	var _p0 = maybeBowl;
+	if (_p0.ctor === 'Nothing') {
+		return {
+			ctor: '_Tuple2',
+			_0: A2(_elm_lang$core$Array$get, 0, _elm_lang$elm_architecture_tutorial$MonsterBowl$initialBowl.monsters),
+			_1: _elm_lang$core$Native_Utils.update(
+				_elm_lang$elm_architecture_tutorial$MonsterBowl$initialBowl,
+				{index: 1})
+		};
+	} else {
+		var _p1 = _p0._0;
+		return {
+			ctor: '_Tuple2',
+			_0: A2(_elm_lang$core$Array$get, _p1.index, _elm_lang$elm_architecture_tutorial$MonsterBowl$initialBowl.monsters),
+			_1: _elm_lang$core$Native_Utils.update(
+				_p1,
+				{
+					index: A2(
+						_elm_lang$core$Basics_ops['%'],
+						_p1.index + 1,
+						_elm_lang$core$Array$length(_p1.monsters))
+				})
+		};
+	}
+};
+var _elm_lang$elm_architecture_tutorial$MonsterBowl$Monster = F2(
+	function (a, b) {
+		return {name: a, awareness: b};
+	});
+var _elm_lang$elm_architecture_tutorial$MonsterBowl$Bowl = F2(
+	function (a, b) {
+		return {monsters: a, index: b};
+	});
 var _elm_lang$elm_architecture_tutorial$Graphics$locationCircle = function (location) {
 	var loc = function () {
 		var _p0 = location;
@@ -11585,30 +11638,58 @@ var _elm_lang$elm_architecture_tutorial$Graphics$positionCircle = F3(
 				_elm_lang$core$Native_List.fromArray(
 					[])));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$obstructionSquare = function (p) {
-	var m = _elm_lang$elm_architecture_tutorial$Graphics$middle(p);
+var _elm_lang$elm_architecture_tutorial$Graphics$obstructionSquare = function (_p3) {
+	var _p4 = _p3;
+	var side = 50;
+	var mid = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p4._0);
+	var upperLeftX = mid.x - 55;
+	var upperLeftY = mid.y - 25;
+	var lowerRightX = mid.x - 12;
+	var lowerRightY = mid.y + 23;
 	return A2(
-		_elm_lang$svg$Svg$rect,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$svg$Svg_Attributes$x(
-				_elm_lang$core$Basics$toString(m.x - 55)),
-				_elm_lang$svg$Svg_Attributes$y(
-				_elm_lang$core$Basics$toString(m.y - 25)),
-				_elm_lang$svg$Svg_Attributes$width('50'),
-				_elm_lang$svg$Svg_Attributes$height('50'),
-				_elm_lang$svg$Svg_Attributes$strokeWidth('1'),
-				_elm_lang$svg$Svg_Attributes$fill('red'),
-				_elm_lang$svg$Svg_Attributes$stroke('red')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[]));
+		_elm_lang$core$List_ops['::'],
+		A2(
+			_elm_lang$svg$Svg$rect,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$x(
+					_elm_lang$core$Basics$toString(upperLeftX)),
+					_elm_lang$svg$Svg_Attributes$y(
+					_elm_lang$core$Basics$toString(upperLeftY)),
+					_elm_lang$svg$Svg_Attributes$width(
+					_elm_lang$core$Basics$toString(side)),
+					_elm_lang$svg$Svg_Attributes$height(
+					_elm_lang$core$Basics$toString(side)),
+					_elm_lang$svg$Svg_Attributes$strokeWidth('1'),
+					_elm_lang$svg$Svg_Attributes$fill('red')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[])),
+		A2(
+			_elm_lang$core$List_ops['::'],
+			A2(
+				_elm_lang$svg$Svg$text$,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$textAnchor('middle'),
+						_elm_lang$svg$Svg_Attributes$x(
+						_elm_lang$core$Basics$toString(lowerRightX)),
+						_elm_lang$svg$Svg_Attributes$y(
+						_elm_lang$core$Basics$toString(lowerRightY))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg$text(
+						_elm_lang$core$Basics$toString(_p4._1.awareness))
+					])),
+			_elm_lang$core$Native_List.fromArray(
+				[])));
 };
 var _elm_lang$elm_architecture_tutorial$Graphics$movement = F2(
-	function (color, _p3) {
-		var _p4 = _p3;
-		var p2 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p4._1);
-		var p1 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p4._0);
+	function (color, _p5) {
+		var _p6 = _p5;
+		var p2 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p6._1);
+		var p1 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p6._0);
 		return A2(
 			_elm_lang$svg$Svg$line,
 			_elm_lang$core$Native_List.fromArray(
@@ -11753,59 +11834,6 @@ var _elm_lang$elm_architecture_tutorial$Paths$PathData = F3(
 	function (a, b, c) {
 		return {goal: a, adjacent: b, excluded: c};
 	});
-var _elm_lang$elm_architecture_tutorial$MonsterBowl$m = F2(
-	function (n, a) {
-		return {name: n, awareness: a};
-	});
-var _elm_lang$elm_architecture_tutorial$MonsterBowl$allMonsters = A2(
-	_elm_lang$core$List_ops['::'],
-	A2(_elm_lang$elm_architecture_tutorial$MonsterBowl$m, 'Cultist', -3),
-	A2(
-		_elm_lang$core$List_ops['::'],
-		A2(_elm_lang$elm_architecture_tutorial$MonsterBowl$m, 'Deep One', 0),
-		A2(
-			_elm_lang$core$List_ops['::'],
-			A2(_elm_lang$elm_architecture_tutorial$MonsterBowl$m, 'Zombie', 1),
-			_elm_lang$core$Native_List.fromArray(
-				[]))));
-var _elm_lang$elm_architecture_tutorial$MonsterBowl$initialBowl = {
-	monsters: _elm_lang$core$Array$fromList(_elm_lang$elm_architecture_tutorial$MonsterBowl$allMonsters),
-	index: 0
-};
-var _elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster = function (maybeBowl) {
-	var _p0 = maybeBowl;
-	if (_p0.ctor === 'Nothing') {
-		return {
-			ctor: '_Tuple2',
-			_0: A2(_elm_lang$core$Array$get, 0, _elm_lang$elm_architecture_tutorial$MonsterBowl$initialBowl.monsters),
-			_1: _elm_lang$core$Native_Utils.update(
-				_elm_lang$elm_architecture_tutorial$MonsterBowl$initialBowl,
-				{index: 1})
-		};
-	} else {
-		var _p1 = _p0._0;
-		return {
-			ctor: '_Tuple2',
-			_0: A2(_elm_lang$core$Array$get, _p1.index, _elm_lang$elm_architecture_tutorial$MonsterBowl$initialBowl.monsters),
-			_1: _elm_lang$core$Native_Utils.update(
-				_p1,
-				{
-					index: A2(
-						_elm_lang$core$Basics_ops['%'],
-						_p1.index + 1,
-						_elm_lang$core$Array$length(_p1.monsters))
-				})
-		};
-	}
-};
-var _elm_lang$elm_architecture_tutorial$MonsterBowl$Monster = F2(
-	function (a, b) {
-		return {name: a, awareness: b};
-	});
-var _elm_lang$elm_architecture_tutorial$MonsterBowl$Bowl = F2(
-	function (a, b) {
-		return {monsters: a, index: b};
-	});
 var _elm_lang$elm_architecture_tutorial$Movement$offsetPosition = A3(
 	_elm_lang$core$Json_Decode$object2,
 	_elm_lang$elm_architecture_tutorial$Graphics$Point,
@@ -11854,7 +11882,10 @@ var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 							[]),
 						_elm_lang$core$List$tail(path));
 				} else {
-					return A2(
+					return (!_elm_lang$core$Native_Utils.eq(
+						path,
+						_elm_lang$core$Native_List.fromArray(
+							[]))) ? A2(
 						_elm_lang$core$List$append,
 						A2(
 							_elm_lang$core$Maybe$withDefault,
@@ -11862,11 +11893,13 @@ var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 								[]),
 							_elm_lang$core$List$tail(path)),
 						_elm_lang$core$Native_List.fromArray(
-							[p2]));
+							[p2])) : _elm_lang$core$Native_List.fromArray(
+						[]);
 				}
 			} else {
 				if (_p1._1.ctor === 'Street') {
-					return path;
+					return A2(_elm_lang$core$List$member, start, excluded) ? _elm_lang$core$Native_List.fromArray(
+						[]) : path;
 				} else {
 					return (!_elm_lang$core$Native_Utils.eq(
 						path,
@@ -11955,9 +11988,7 @@ var _elm_lang$elm_architecture_tutorial$Movement$update = F2(
 							obstructions: A2(_eeue56$elm_all_dict$AllDict$remove, _p6, model.obstructions)
 						});
 				} else {
-					var m = _elm_lang$core$Basics$fst(
-						_elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster(_elm_lang$core$Maybe$Nothing));
-					var _p5 = m;
+					var _p5 = _p2._1;
 					if (_p5.ctor === 'Nothing') {
 						return model;
 					} else {
@@ -11983,16 +12014,17 @@ var _elm_lang$elm_architecture_tutorial$Movement$Model = F5(
 		return {start: a, path: b, investigator: c, isValid: d, obstructions: e};
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$Submit = {ctor: 'Submit'};
-var _elm_lang$elm_architecture_tutorial$Movement$AddObstruction = function (a) {
-	return {ctor: 'AddObstruction', _0: a};
-};
+var _elm_lang$elm_architecture_tutorial$Movement$AddObstruction = F2(
+	function (a, b) {
+		return {ctor: 'AddObstruction', _0: a, _1: b};
+	});
 var _elm_lang$elm_architecture_tutorial$Movement$Move = function (a) {
 	return {ctor: 'Move', _0: a};
 };
 var _elm_lang$elm_architecture_tutorial$Movement$msgForCtrlClick = F2(
 	function (place, ctrl) {
 		return ctrl ? _elm_lang$core$Json_Decode$succeed(
-			_elm_lang$elm_architecture_tutorial$Movement$AddObstruction(place)) : _elm_lang$core$Json_Decode$succeed(
+			A2(_elm_lang$elm_architecture_tutorial$Movement$AddObstruction, place, _elm_lang$core$Maybe$Nothing)) : _elm_lang$core$Json_Decode$succeed(
 			_elm_lang$elm_architecture_tutorial$Movement$Move(place));
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$onCtrlClick = function (p) {
@@ -12063,9 +12095,9 @@ var _elm_lang$elm_architecture_tutorial$Movement$view = function (model) {
 					model.investigator,
 					false),
 					A2(
-					_elm_lang$core$List$map,
+					_elm_lang$core$List$concatMap,
 					_elm_lang$elm_architecture_tutorial$Graphics$obstructionSquare,
-					_eeue56$elm_all_dict$AllDict$keys(model.obstructions)),
+					_eeue56$elm_all_dict$AllDict$toList(model.obstructions)),
 					_elm_lang$elm_architecture_tutorial$Movement$movementLines(model),
 					A2(
 					_elm_lang$core$List$map,
@@ -12079,46 +12111,80 @@ var _elm_lang$elm_architecture_tutorial$Movement$view = function (model) {
 };
 var _elm_lang$elm_architecture_tutorial$Main$initialModel = {
 	board: _elm_lang$elm_architecture_tutorial$Movement$initialModel,
-	tester: _elm_lang$elm_architecture_tutorial$DiceTester$initialModel(0)
+	tester: _elm_lang$elm_architecture_tutorial$DiceTester$initialModel(0),
+	monsterBowl: _elm_lang$core$Maybe$Nothing
 };
-var _elm_lang$elm_architecture_tutorial$Main$Model = F2(
-	function (a, b) {
-		return {board: a, tester: b};
+var _elm_lang$elm_architecture_tutorial$Main$Model = F3(
+	function (a, b, c) {
+		return {board: a, tester: b, monsterBowl: c};
 	});
-var _elm_lang$elm_architecture_tutorial$Main$SneakTest = function (a) {
-	return {ctor: 'SneakTest', _0: a};
-};
+var _elm_lang$elm_architecture_tutorial$Main$SneakTest = F2(
+	function (a, b) {
+		return {ctor: 'SneakTest', _0: a, _1: b};
+	});
 var _elm_lang$elm_architecture_tutorial$Main$update = F2(
 	function (message, model) {
 		var _p0 = message;
 		if (_p0.ctor === 'BoardMove') {
-			var _p2 = _p0._0;
-			var _p1 = _p2;
-			if (_p1.ctor === 'Submit') {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							tester: _elm_lang$elm_architecture_tutorial$DiceTester$initialModel(5)
-						}),
-					_1: A2(_elm_lang$elm_architecture_tutorial$DiceTester$runTest, 5, _elm_lang$elm_architecture_tutorial$Main$SneakTest)
-				};
-			} else {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							board: A2(_elm_lang$elm_architecture_tutorial$Movement$update, _p2, model.board)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+			var _p4 = _p0._0;
+			var _p1 = _p4;
+			switch (_p1.ctor) {
+				case 'Submit':
+					var firstMonster = _elm_lang$core$List$head(
+						_eeue56$elm_all_dict$AllDict$toList(model.board.obstructions));
+					var numOfTests = function () {
+						var _p2 = firstMonster;
+						if ((_p2.ctor === 'Just') && (_p2._0.ctor === '_Tuple2')) {
+							return model.board.investigator.sneak - _p2._0._1.awareness;
+						} else {
+							return 0;
+						}
+					}();
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								tester: _elm_lang$elm_architecture_tutorial$DiceTester$initialModel(numOfTests)
+							}),
+						_1: A2(
+							_elm_lang$elm_architecture_tutorial$DiceTester$runTest,
+							numOfTests,
+							_elm_lang$elm_architecture_tutorial$Main$SneakTest(1))
+					};
+				case 'AddObstruction':
+					var _p3 = _elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster(model.monsterBowl);
+					var maybeMonster = _p3._0;
+					var bowl = _p3._1;
+					var updatedBoard = A2(
+						_elm_lang$elm_architecture_tutorial$Movement$update,
+						A2(_elm_lang$elm_architecture_tutorial$Movement$AddObstruction, _p1._0, maybeMonster),
+						model.board);
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								board: updatedBoard,
+								monsterBowl: _elm_lang$core$Maybe$Just(bowl)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				default:
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								board: A2(_elm_lang$elm_architecture_tutorial$Movement$update, _p4, model.board)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
 			}
 		} else {
 			var updateTester = A2(
 				_elm_lang$elm_architecture_tutorial$DiceTester$update,
-				A3(_elm_lang$elm_architecture_tutorial$DiceTester$SetNewResult, 5, 3, _p0._0),
+				A3(_elm_lang$elm_architecture_tutorial$DiceTester$SetNewResult, 5, _p0._0, _p0._1),
 				model.tester);
 			var newBoard = updateTester.isSuccess ? A2(_elm_lang$elm_architecture_tutorial$Movement$update, _elm_lang$elm_architecture_tutorial$Movement$Submit, model.board) : model.board;
 			return {
@@ -12167,7 +12233,7 @@ var _elm_lang$elm_architecture_tutorial$Main$main = {
 			init: {ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
 			view: _elm_lang$elm_architecture_tutorial$Main$view,
 			update: _elm_lang$elm_architecture_tutorial$Main$update,
-			subscriptions: function (_p3) {
+			subscriptions: function (_p5) {
 				return _elm_lang$core$Platform_Sub$none;
 			}
 		})
