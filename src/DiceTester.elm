@@ -1,25 +1,34 @@
 module DiceTester exposing (..)
 
 import Dice
-
 import Html exposing (Html, button, div, text, span)
-import Html.App as App
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (style)
 import Random
-import Task
 import String
+import List.Extra exposing (zip)
+import BoardData exposing (..)
 
 type alias TestResult = Bool
 type alias NumOfTests = Int
 type alias SuccessThreshold = Int
-type alias DiceThrowResult = Int
 type alias NumOfSuccesses = Int
 -- MODEL
+type alias TestData = {testsToPerform : NumOfTests, location : Place Neighborhood Location, testName : String, requiredSuccesses : NumOfSuccesses}
 
 type alias Model = { rolls : List Dice.Model, isSuccess : TestResult, testName : String}
 initialModel availableDices name =
     { rolls = List.repeat availableDices Dice.initialModel, isSuccess = False, testName = name }
+
+testsWithResults : List Int -> List TestData -> List (List Int, TestData)
+testsWithResults results testData =
+    let
+        indexes = List.scanl (+) 0 (List.map (\t -> t.testsToPerform) testData)
+        intervals = zip indexes <| Maybe.withDefault [] <| List.tail indexes
+        splitResults = List.map (\(start, end) -> List.drop start (List.take end results)) intervals
+    in
+        zip splitResults testData
+
 
 createModel name threshold required newRolls =
     let

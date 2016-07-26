@@ -1,16 +1,11 @@
 import Movement
-import DiceTester
+import DiceTester exposing (TestData)
 import Html exposing (Html, button, div, text)
 import Html.App as App
 import Html.Events exposing (onClick)
-import Array exposing (Array)
 import MonsterBowl exposing (Monster)
 import AllDict
-import List.Extra exposing (zip)
-import BoardData exposing(..)
 -- MODEL
-
-type alias TestData = {testsToPerform :Int, location : Place Neighborhood Location, testName : String, requiredSuccesses : Int}
 
 type alias Model = { board : Movement.Model, testers : List DiceTester.Model, monsterBowl : Maybe MonsterBowl.Bowl }
 
@@ -39,21 +34,12 @@ update message model =
           _ -> ({ model | board = Movement.update msg model.board }, Cmd.none)
     SneakTest tests results ->
         let
-            testsWithRolls = testsWithResults results tests
+            testsWithRolls = DiceTester.testsWithResults results tests
             testers = List.map (\(res, test) -> DiceTester.createModel test.testName test.testsToPerform test.requiredSuccesses res) testsWithRolls
             failedTests = List.filter (\t -> not t.isSuccess) testers
             newBoard = if List.isEmpty failedTests then Movement.update Movement.Submit model.board else model.board
         in
             ({model | testers = testers, board = newBoard}, Cmd.none)
-
-testsWithResults : List Int -> List TestData -> List (List Int, TestData)
-testsWithResults results testData =
-    let
-        indexes = List.scanl (+) 0 (List.map (\t -> t.testsToPerform) testData)
-        intervals = zip indexes <| Maybe.withDefault [] <| List.tail indexes
-        splitResults = List.map (\(start, end) -> List.drop start (List.take end results)) intervals
-    in
-        zip splitResults testData
 
 prepareSneakTestData : Movement.Model -> List TestData
 prepareSneakTestData model =

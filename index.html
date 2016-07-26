@@ -10981,37 +10981,13 @@ var _elm_lang$elm_architecture_tutorial$DiceTester$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(model.isSuccess))
+						A2(
+							_elm_lang$core$String$append,
+							model.testName,
+							_elm_lang$core$Basics$toString(model.isSuccess)))
 					]))
 			]));
 };
-var _elm_lang$elm_architecture_tutorial$DiceTester$update = F2(
-	function (message, model) {
-		var _p0 = message;
-		var _p1 = _p0._2;
-		var rollSuccessful = function (res) {
-			return _elm_lang$core$Native_Utils.cmp(res, _p0._0) > -1;
-		};
-		var isSuccess = _elm_lang$core$Native_Utils.cmp(
-			_elm_lang$core$List$length(
-				A2(_elm_lang$core$List$filter, rollSuccessful, _p1)),
-			_p0._1) > -1;
-		var createNewRoll = function (res) {
-			return A2(
-				_elm_lang$elm_architecture_tutorial$Dice$update,
-				A2(
-					_elm_lang$elm_architecture_tutorial$Dice$NewFace,
-					res,
-					rollSuccessful(res)),
-				_elm_lang$elm_architecture_tutorial$Dice$initialModel);
-		};
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				rolls: A2(_elm_lang$core$List$map, createNewRoll, _p1),
-				isSuccess: isSuccess
-			});
-	});
 var _elm_lang$elm_architecture_tutorial$DiceTester$runTest = F2(
 	function (numOfTests, wrapper) {
 		return A2(
@@ -11022,19 +10998,80 @@ var _elm_lang$elm_architecture_tutorial$DiceTester$runTest = F2(
 				numOfTests,
 				A2(_elm_lang$core$Random$int, 1, 6)));
 	});
-var _elm_lang$elm_architecture_tutorial$DiceTester$initialModel = function (availableDices) {
-	return {
-		rolls: A2(_elm_lang$core$List$repeat, availableDices, _elm_lang$elm_architecture_tutorial$Dice$initialModel),
-		isSuccess: false
-	};
-};
-var _elm_lang$elm_architecture_tutorial$DiceTester$Model = F2(
-	function (a, b) {
-		return {rolls: a, isSuccess: b};
+var _elm_lang$elm_architecture_tutorial$DiceTester$createModel = F4(
+	function (name, threshold, required, newRolls) {
+		var rollSuccessful = function (res) {
+			return _elm_lang$core$Native_Utils.cmp(res, threshold) > -1;
+		};
+		var isSuccess = _elm_lang$core$Native_Utils.cmp(
+			_elm_lang$core$List$length(
+				A2(_elm_lang$core$List$filter, rollSuccessful, newRolls)),
+			required) > -1;
+		var createNewRoll = function (res) {
+			return A2(
+				_elm_lang$elm_architecture_tutorial$Dice$update,
+				A2(
+					_elm_lang$elm_architecture_tutorial$Dice$NewFace,
+					res,
+					rollSuccessful(res)),
+				_elm_lang$elm_architecture_tutorial$Dice$initialModel);
+		};
+		return {
+			rolls: A2(_elm_lang$core$List$map, createNewRoll, newRolls),
+			isSuccess: isSuccess,
+			testName: name
+		};
 	});
-var _elm_lang$elm_architecture_tutorial$DiceTester$SetNewResult = F3(
+var _elm_lang$elm_architecture_tutorial$DiceTester$testsWithResults = F2(
+	function (results, testData) {
+		var indexes = A3(
+			_elm_lang$core$List$scanl,
+			F2(
+				function (x, y) {
+					return x + y;
+				}),
+			0,
+			A2(
+				_elm_lang$core$List$map,
+				function (t) {
+					return t.testsToPerform;
+				},
+				testData));
+		var intervals = A2(
+			_elm_community$list_extra$List_Extra$zip,
+			indexes,
+			A2(
+				_elm_lang$core$Maybe$withDefault,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$List$tail(indexes)));
+		var splitResults = A2(
+			_elm_lang$core$List$map,
+			function (_p0) {
+				var _p1 = _p0;
+				return A2(
+					_elm_lang$core$List$drop,
+					_p1._0,
+					A2(_elm_lang$core$List$take, _p1._1, results));
+			},
+			intervals);
+		return A2(_elm_community$list_extra$List_Extra$zip, splitResults, testData);
+	});
+var _elm_lang$elm_architecture_tutorial$DiceTester$initialModel = F2(
+	function (availableDices, name) {
+		return {
+			rolls: A2(_elm_lang$core$List$repeat, availableDices, _elm_lang$elm_architecture_tutorial$Dice$initialModel),
+			isSuccess: false,
+			testName: name
+		};
+	});
+var _elm_lang$elm_architecture_tutorial$DiceTester$TestData = F4(
+	function (a, b, c, d) {
+		return {testsToPerform: a, location: b, testName: c, requiredSuccesses: d};
+	});
+var _elm_lang$elm_architecture_tutorial$DiceTester$Model = F3(
 	function (a, b, c) {
-		return {ctor: 'SetNewResult', _0: a, _1: b, _2: c};
+		return {rolls: a, isSuccess: b, testName: c};
 	});
 var _elm_lang$svg$Svg$text = _elm_lang$virtual_dom$VirtualDom$text;
 var _elm_lang$svg$Svg$svgNamespace = A2(
@@ -12109,14 +12146,41 @@ var _elm_lang$elm_architecture_tutorial$Movement$view = function (model) {
 					_elm_lang$elm_architecture_tutorial$BoardData$allNeighborhood)
 				])));
 };
+var _elm_lang$elm_architecture_tutorial$Main$prepareSneakTestData = function (model) {
+	var monsters = _eeue56$elm_all_dict$AllDict$toList(model.obstructions);
+	var monstersOnPath = A2(
+		_elm_lang$core$List$filter,
+		function (_p0) {
+			var _p1 = _p0;
+			return _elm_lang$core$Basics$not(
+				_elm_lang$core$List$isEmpty(model.path) && A2(
+					_elm_lang$core$List$member,
+					_p1._0,
+					A2(_elm_lang$core$List_ops['::'], model.start, model.path)));
+		},
+		monsters);
+	return A2(
+		_elm_lang$core$List$map,
+		function (_p2) {
+			var _p3 = _p2;
+			return {
+				testsToPerform: A2(_elm_lang$core$Basics$max, 0, model.investigator.sneak - _p3._1.awareness),
+				location: _p3._0,
+				testName: 'Sneak',
+				requiredSuccesses: 1
+			};
+		},
+		monstersOnPath);
+};
 var _elm_lang$elm_architecture_tutorial$Main$initialModel = {
 	board: _elm_lang$elm_architecture_tutorial$Movement$initialModel,
-	tester: _elm_lang$elm_architecture_tutorial$DiceTester$initialModel(0),
+	testers: _elm_lang$core$Native_List.fromArray(
+		[]),
 	monsterBowl: _elm_lang$core$Maybe$Nothing
 };
 var _elm_lang$elm_architecture_tutorial$Main$Model = F3(
 	function (a, b, c) {
-		return {board: a, tester: b, monsterBowl: c};
+		return {board: a, testers: b, monsterBowl: c};
 	});
 var _elm_lang$elm_architecture_tutorial$Main$SneakTest = F2(
 	function (a, b) {
@@ -12124,41 +12188,35 @@ var _elm_lang$elm_architecture_tutorial$Main$SneakTest = F2(
 	});
 var _elm_lang$elm_architecture_tutorial$Main$update = F2(
 	function (message, model) {
-		var _p0 = message;
-		if (_p0.ctor === 'BoardMove') {
-			var _p4 = _p0._0;
-			var _p1 = _p4;
-			switch (_p1.ctor) {
+		var _p4 = message;
+		if (_p4.ctor === 'BoardMove') {
+			var _p7 = _p4._0;
+			var _p5 = _p7;
+			switch (_p5.ctor) {
 				case 'Submit':
-					var firstMonster = _elm_lang$core$List$head(
-						_eeue56$elm_all_dict$AllDict$toList(model.board.obstructions));
-					var numOfTests = function () {
-						var _p2 = firstMonster;
-						if ((_p2.ctor === 'Just') && (_p2._0.ctor === '_Tuple2')) {
-							return model.board.investigator.sneak - _p2._0._1.awareness;
-						} else {
-							return 0;
-						}
-					}();
+					var tests = _elm_lang$elm_architecture_tutorial$Main$prepareSneakTestData(model.board);
+					var numOfTests = _elm_lang$core$List$sum(
+						A2(
+							_elm_lang$core$List$map,
+							function (t) {
+								return t.testsToPerform;
+							},
+							tests));
 					return {
 						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								tester: _elm_lang$elm_architecture_tutorial$DiceTester$initialModel(numOfTests)
-							}),
+						_0: model,
 						_1: A2(
 							_elm_lang$elm_architecture_tutorial$DiceTester$runTest,
 							numOfTests,
-							_elm_lang$elm_architecture_tutorial$Main$SneakTest(1))
+							_elm_lang$elm_architecture_tutorial$Main$SneakTest(tests))
 					};
 				case 'AddObstruction':
-					var _p3 = _elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster(model.monsterBowl);
-					var maybeMonster = _p3._0;
-					var bowl = _p3._1;
+					var _p6 = _elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster(model.monsterBowl);
+					var maybeMonster = _p6._0;
+					var bowl = _p6._1;
 					var updatedBoard = A2(
 						_elm_lang$elm_architecture_tutorial$Movement$update,
-						A2(_elm_lang$elm_architecture_tutorial$Movement$AddObstruction, _p1._0, maybeMonster),
+						A2(_elm_lang$elm_architecture_tutorial$Movement$AddObstruction, _p5._0, maybeMonster),
 						model.board);
 					return {
 						ctor: '_Tuple2',
@@ -12176,22 +12234,33 @@ var _elm_lang$elm_architecture_tutorial$Main$update = F2(
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								board: A2(_elm_lang$elm_architecture_tutorial$Movement$update, _p4, model.board)
+								board: A2(_elm_lang$elm_architecture_tutorial$Movement$update, _p7, model.board)
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 			}
 		} else {
-			var updateTester = A2(
-				_elm_lang$elm_architecture_tutorial$DiceTester$update,
-				A3(_elm_lang$elm_architecture_tutorial$DiceTester$SetNewResult, 5, _p0._0, _p0._1),
-				model.tester);
-			var newBoard = updateTester.isSuccess ? A2(_elm_lang$elm_architecture_tutorial$Movement$update, _elm_lang$elm_architecture_tutorial$Movement$Submit, model.board) : model.board;
+			var testsWithRolls = A2(_elm_lang$elm_architecture_tutorial$DiceTester$testsWithResults, _p4._1, _p4._0);
+			var testers = A2(
+				_elm_lang$core$List$map,
+				function (_p8) {
+					var _p9 = _p8;
+					var _p10 = _p9._1;
+					return A4(_elm_lang$elm_architecture_tutorial$DiceTester$createModel, _p10.testName, _p10.testsToPerform, _p10.requiredSuccesses, _p9._0);
+				},
+				testsWithRolls);
+			var failedTests = A2(
+				_elm_lang$core$List$filter,
+				function (t) {
+					return _elm_lang$core$Basics$not(t.isSuccess);
+				},
+				testers);
+			var newBoard = _elm_lang$core$List$isEmpty(failedTests) ? A2(_elm_lang$elm_architecture_tutorial$Movement$update, _elm_lang$elm_architecture_tutorial$Movement$Submit, model.board) : model.board;
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{tester: updateTester, board: newBoard}),
+					{testers: testers, board: newBoard}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		}
@@ -12210,10 +12279,7 @@ var _elm_lang$elm_architecture_tutorial$Main$view = function (model) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$elm_architecture_tutorial$DiceTester$view(model.tester)
-					])),
+				A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$DiceTester$view, model.testers)),
 				A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
@@ -12233,7 +12299,7 @@ var _elm_lang$elm_architecture_tutorial$Main$main = {
 			init: {ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
 			view: _elm_lang$elm_architecture_tutorial$Main$view,
 			update: _elm_lang$elm_architecture_tutorial$Main$update,
-			subscriptions: function (_p5) {
+			subscriptions: function (_p11) {
 				return _elm_lang$core$Platform_Sub$none;
 			}
 		})
