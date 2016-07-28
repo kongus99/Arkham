@@ -12,13 +12,10 @@ import Json.Decode as Json exposing ((:=), bool, andThen)
 import List
 import List.Extra exposing (zip, break)
 import Paths
+import Movement
 
-
-type alias M1 = { start : (Place Neighborhood Location), path : List (Place Neighborhood Location)}
-m1Model = { start = Locale Train_Station, path = [] }
-
-type alias Model = { movement : M1, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) Monster String, monsterBowl : Maybe MonsterBowl.Bowl }
-initialModel = { movement = m1Model, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
+type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) Monster String, monsterBowl : Maybe MonsterBowl.Bowl }
+initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
 
 type Msg = UnspecifiedClick Point |
            Click (Place Neighborhood Location) |
@@ -26,22 +23,6 @@ type Msg = UnspecifiedClick Point |
            DoubleClick (Place Neighborhood Location) |
            ResolveDiceTests (List TestData) (List Int)
 
-path : Place Neighborhood Location -> Place Neighborhood Location -> List Neighborhood -> List (Place Neighborhood Location)
-path p1 p2 excluded =
-    if p1 == p2 then [] else
-        let
-           getNeighborhood p = case p of
-                                Street n -> n
-                                Locale l -> parent l
-           start = getNeighborhood p1
-           end = getNeighborhood p2
-           path = List.map Street (Paths.pathBFS (Paths.createPathData end adjacent excluded) start)
-        in
-          case (p1, p2) of
-            (Street n1, Street n2) -> Maybe.withDefault [] (List.tail path)
-            (Street n, Locale l) ->   if path /= [] then List.append (Maybe.withDefault [] (List.tail path)) [p2] else []
-            (Locale l, Street n) -> if List.member start excluded then [] else path
-            (Locale l1, Locale l2) -> if path /= [] then List.append path [p2] else []
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
@@ -57,19 +38,9 @@ update msg model =
                 (model, Cmd.none)
         Click place ->
             let
-                toNeighborhood p =
-                    case p of
-                        Street s -> Just s
-                        _ -> Nothing
-                currentEnd = pathEnd model
-                newPath = if model.movement.start == place then []
-                          else if List.member place model.movement.path then List.append (fst <| break (\x -> x == place) model.movement.path) [place]
-                          else if isAdjacent currentEnd place then
-                            List.append model.movement.path [place]
-                          else
-                            path model.movement.start place <| List.filterMap toNeighborhood (AllDict.keys model.monsters)
+                movement = Movement.moveTo place (AllDict.keys model.monsters) model.movement
             in
-                ({model | movement = updateMove model.movement.start newPath model.movement}, Cmd.none)
+                ({model | movement = movement}, Cmd.none)
         CtrlClick place ->
                 if AllDict.member place model.monsters then
                     ({model | monsters = AllDict.remove place model.monsters}, Cmd.none)
