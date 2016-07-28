@@ -4,9 +4,11 @@ import BoardData exposing (..)
 import Paths
 import AllDict exposing (AllDict)
 import List.Extra exposing (break)
+import DiceChecker exposing (..)
+import MonsterBowl exposing (Monster)
 
-type alias Model = { start : (Place Neighborhood Location), path : List (Place Neighborhood Location)}
-initialModel = { start = Locale Train_Station, path = [] }
+type alias Model = { start : Place Neighborhood Location, path : List (Place Neighborhood Location), evadeTests : List DiceCheck}
+initialModel = { start = Locale Train_Station, path = [], evadeTests = [] }
 
 path : Place Neighborhood Location -> Place Neighborhood Location -> List Neighborhood -> List (Place Neighborhood Location)
 path p1 p2 excluded =
@@ -25,8 +27,8 @@ path p1 p2 excluded =
             (Locale l, Street n) -> if List.member start excluded then [] else path
             (Locale l1, Locale l2) -> if path /= [] then List.append path [p2] else []
 
-moveTo: Place Neighborhood Location -> List (Place Neighborhood Location) -> Model -> Model
-moveTo place obstructions model =
+moveTo: Place Neighborhood Location -> AllDict (Place Neighborhood Location) Monster String -> Investigator -> Model -> Model
+moveTo place monsters investigator model =
     let
         currentEnd = pathEnd model
         newPath = if model.start == place then []
@@ -34,9 +36,18 @@ moveTo place obstructions model =
                   else if isAdjacent currentEnd place then
                     List.append model.path [place]
                   else
-                    path model.start place <| List.filterMap toNeighborhood obstructions
+                    path model.start place <| List.filterMap toNeighborhood (AllDict.keys monsters)
+        newEvadeTests = Debug.log "t" <| prepareEvadeTests model.start newPath monsters investigator
     in
-        {model | path = newPath}
+        {model | path = newPath, evadeTests = newEvadeTests}
+
+prepareEvadeTests : Place Neighborhood Location -> List (Place Neighborhood Location) -> AllDict (Place Neighborhood Location) Monster String -> Investigator -> List DiceCheck
+prepareEvadeTests start path monsters investigator =
+    let
+        monsterList = AllDict.toList monsters
+        monstersOnPath = if List.isEmpty path then [] else List.filter (\(p, m) -> List.member p (start :: path)) monsterList
+    in
+        List.map (\(p, m) -> DiceChecker.prepareCheck p Evade (investigator.sneak - m.awareness) 1 5) monstersOnPath
 
 toNeighborhood p =
     case p of

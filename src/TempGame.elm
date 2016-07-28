@@ -3,7 +3,7 @@ import Graphics exposing (Point)
 import DiceTester exposing (TestData)
 import MonsterBowl exposing (Monster)
 import AllDict exposing (AllDict)
-import Html exposing (Html, span, button)
+import Html exposing (Html, span, button, div)
 import Svg exposing (svg, image, Attribute, Svg)
 import Svg.Attributes exposing (width, height, xlinkHref, x, y)
 import Html.Events exposing (on, onDoubleClick)
@@ -13,9 +13,10 @@ import List
 import List.Extra exposing (zip, break)
 import Paths
 import Movement
+import DiceChecker
 
-type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) Monster String, monsterBowl : Maybe MonsterBowl.Bowl }
-initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
+type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) Monster String, testers : List DiceTester.Model, monsterBowl : Maybe MonsterBowl.Bowl }
+initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, testers = [], monsterBowl = Nothing }
 
 type Msg = UnspecifiedClick Point |
            Click (Place Neighborhood Location) |
@@ -38,7 +39,7 @@ update msg model =
                 (model, Cmd.none)
         Click place ->
             let
-                movement = Movement.moveTo place (AllDict.keys model.monsters) model.movement
+                movement = Movement.moveTo place model.monsters model.investigator model.movement
             in
                 ({model | movement = movement}, Cmd.none)
         CtrlClick place ->
@@ -63,16 +64,19 @@ updateMove start path old =
     {old | path = path, start = start}
 
 view : Model -> Html Msg
-view model = svg [ width "1606", height "2384" ] (List.concat
-                                                [ [boardImage]
-                                                , (Graphics.positionCircle model.movement.start model.investigator True)
-                                                , (Graphics.positionCircle (pathEnd model) model.investigator False)
-                                                , (List.concatMap Graphics.obstructionSquare (AllDict.toList model.monsters))
-                                                , (movementLines model)
-                                                , (List.map (Graphics.localeCircle localeMsg) allLocation)
-                                                , (List.map (Graphics.streetRectangle streetMsg) allNeighborhood)
-                                                ])
+view model =
+    div[] (List.concat [(List.map DiceChecker.drawDiceCheck model.movement.evadeTests), [wholeBoard model]])
 
+wholeBoard : Model -> Html Msg
+wholeBoard model =
+    svg [ width "1606", height "2384" ] (List.concat[ [boardImage]
+                                                    , (Graphics.positionCircle model.movement.start model.investigator True)
+                                                    , (Graphics.positionCircle (pathEnd model) model.investigator False)
+                                                    , (List.concatMap Graphics.obstructionSquare (AllDict.toList model.monsters))
+                                                    , (movementLines model)
+                                                    , (List.map (Graphics.localeCircle localeMsg) allLocation)
+                                                    , (List.map (Graphics.streetRectangle streetMsg) allNeighborhood)
+                                                    ])
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map UnspecifiedClick offsetPosition)][]
 
