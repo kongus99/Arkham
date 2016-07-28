@@ -1,4 +1,4 @@
-module Movement exposing (moveTo, pathEnd, Model, initialModel)
+module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, prematureEndMove)
 
 import BoardData exposing (..)
 import Paths
@@ -37,7 +37,7 @@ moveTo place monsters investigator model =
                     List.append model.path [place]
                   else
                     path model.start place <| List.filterMap toNeighborhood (AllDict.keys monsters)
-        newEvadeTests = Debug.log "t" <| prepareEvadeTests model.start newPath monsters investigator
+        newEvadeTests = prepareEvadeTests model.start newPath monsters investigator
     in
         {model | path = newPath, evadeTests = newEvadeTests}
 
@@ -49,6 +49,28 @@ prepareEvadeTests start path monsters investigator =
     in
         List.map (\(p, m) -> DiceChecker.prepareCheck p Evade (investigator.sneak - m.awareness) 1 5) monstersOnPath
 
+endMove : Model -> Model
+endMove model =
+    {model | path = [], start = pathEnd model, evadeTests = []}
+
+prematureEndMove : Place Neighborhood Location -> Model -> Model
+prematureEndMove place model =
+    {model | path = [], start = place, evadeTests = []}
+
+finalizeMovement : Investigator -> (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
+finalizeMovement investigator wrapper model=
+    if isValidPath investigator model then
+        case List.reverse model.evadeTests of
+            [] -> (endMove model, Cmd.none)
+            t :: ts ->
+                let
+                    newModel = {model | evadeTests = ts}
+                    check = DiceChecker.runCheck t (wrapper t)
+                in
+                    (newModel, check)
+    else
+        (model, Cmd.none)
+
 toNeighborhood p =
     case p of
         Street s -> Just s
@@ -56,3 +78,7 @@ toNeighborhood p =
 
 pathEnd model =
      Maybe.withDefault model.start <| List.head <| List.reverse model.path
+
+isValidPath investigator model =
+    List.length model.path <= investigator.movementPoints
+

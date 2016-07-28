@@ -13,16 +13,16 @@ import List
 import List.Extra exposing (zip, break)
 import Paths
 import Movement
-import DiceChecker
+import DiceChecker exposing (..)
 
-type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) Monster String, testers : List DiceTester.Model, monsterBowl : Maybe MonsterBowl.Bowl }
-initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, testers = [], monsterBowl = Nothing }
+type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) Monster String, previousChecks : List ResolvedDiceCheck, monsterBowl : Maybe MonsterBowl.Bowl }
+initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, previousChecks = [], monsterBowl = Nothing }
 
 type Msg = UnspecifiedClick Point |
            Click (Place Neighborhood Location) |
            CtrlClick (Place Neighborhood Location) |
            DoubleClick (Place Neighborhood Location) |
-           ResolveDiceTests (List TestData) (List Int)
+           ResolveDiceCheck DiceCheck (List Int)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -33,8 +33,8 @@ update msg model =
             in
                 (model, Cmd.none)
         DoubleClick place ->
-            if isValidPath model && pathEnd model == place then
-                ({model | movement = updateMove place [] model.movement}, Cmd.none)
+            if Movement.pathEnd model.movement == place then
+                moveFinalization model
             else
                 (model, Cmd.none)
         Click place ->
@@ -52,16 +52,22 @@ update msg model =
                         case maybeMonster of
                                Nothing -> (model, Cmd.none)
                                Just m -> ({model | monsters = AllDict.insert place m model.monsters, monsterBowl = Just bowl}, Cmd.none)
-        _ -> (model, Cmd.none)
+        ResolveDiceCheck check results ->
+            case check.checkType of
+                Evade ->
+                    let
+                        resolved = DiceChecker.resolveCheck check results
+                    in
+                        if resolved.wasSuccess then
+                            moveFinalization model
+                        else
+                            ({model | movement = Movement.prematureEndMove check.location model.movement}, Cmd.none)
 
-pathEnd model =
-     Maybe.withDefault model.movement.start <| List.head <| List.reverse model.movement.path
-
-isValidPath model =
-    List.length model.movement.path <= model.investigator.movementPoints
-
-updateMove start path old =
-    {old | path = path, start = start}
+moveFinalization model =
+    let
+        (moveModel, cmd) = Movement.finalizeMovement model.investigator ResolveDiceCheck model.movement
+    in
+        ({model | movement = moveModel}, cmd)
 
 view : Model -> Html Msg
 view model =
@@ -71,7 +77,7 @@ wholeBoard : Model -> Html Msg
 wholeBoard model =
     svg [ width "1606", height "2384" ] (List.concat[ [boardImage]
                                                     , (Graphics.positionCircle model.movement.start model.investigator True)
-                                                    , (Graphics.positionCircle (pathEnd model) model.investigator False)
+                                                    , (Graphics.positionCircle (Movement.pathEnd model.movement) model.investigator False)
                                                     , (List.concatMap Graphics.obstructionSquare (AllDict.toList model.monsters))
                                                     , (movementLines model)
                                                     , (List.map (Graphics.localeCircle localeMsg) allLocation)
@@ -100,7 +106,7 @@ streetMsg n =
 movementLines : Model -> List (Svg c)
 movementLines model =
     let
-        color = if isValidPath model then "green" else "red"
+        color = if Movement.isValidPath model.investigator model.movement then "green" else "red"
         lines = zip (model.movement.start :: model.movement.path) model.movement.path
     in
         List.map (Graphics.movement color) lines
