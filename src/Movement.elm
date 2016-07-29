@@ -1,4 +1,4 @@
-module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, prematureEndMove)
+module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, evadeCheck)
 
 import BoardData exposing (..)
 import Paths
@@ -49,27 +49,28 @@ prepareEvadeTests start path monsters investigator =
     in
         List.map (\(p, m) -> DiceChecker.prepareCheck p Evade (investigator.sneak - m.awareness) 1 5) monstersOnPath
 
-endMove : Model -> Model
-endMove model =
-    {model | path = [], start = pathEnd model, evadeTests = []}
-
-prematureEndMove : Place Neighborhood Location -> Model -> Model
-prematureEndMove place model =
+endMove : Place Neighborhood Location -> Model -> Model
+endMove place model =
     {model | path = [], start = place, evadeTests = []}
 
-finalizeMovement : Investigator -> (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
-finalizeMovement investigator wrapper model=
-    if isValidPath investigator model then
-        case List.reverse model.evadeTests of
-            [] -> (endMove model, Cmd.none)
-            t :: ts ->
-                let
-                    newModel = {model | evadeTests = ts}
-                    check = DiceChecker.runCheck t (wrapper t)
-                in
-                    (newModel, check)
+evadeCheck : ResolvedDiceCheck -> (DiceCheck -> List Int -> a) -> Model -> ( Model, Cmd a )
+evadeCheck resolved wrapper model =
+    if resolved.wasSuccess then
+        finalizeMovement wrapper model
     else
-        (model, Cmd.none)
+        (endMove resolved.location model, Cmd.none)
+
+
+finalizeMovement : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
+finalizeMovement wrapper model=
+    case List.reverse model.evadeTests of
+        [] -> (endMove (pathEnd model) model, Cmd.none)
+        t :: ts ->
+            let
+                newModel = {model | evadeTests = List.reverse ts}
+                check = DiceChecker.runCheck t (wrapper t)
+            in
+                (newModel, check)
 
 toNeighborhood p =
     case p of

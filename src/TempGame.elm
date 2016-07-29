@@ -1,6 +1,5 @@
 import BoardData exposing (..)
 import Graphics exposing (Point)
-import DiceTester exposing (TestData)
 import MonsterBowl exposing (Monster)
 import AllDict exposing (AllDict)
 import Html exposing (Html, span, button, div)
@@ -33,8 +32,8 @@ update msg model =
             in
                 (model, Cmd.none)
         DoubleClick place ->
-            if Movement.pathEnd model.movement == place then
-                moveFinalization model
+            if Movement.pathEnd model.movement == place && Movement.isValidPath model.investigator model.movement then
+                applyMoveToModel (Movement.finalizeMovement ResolveDiceCheck model.movement) (resetPreviousChecks model)
             else
                 (model, Cmd.none)
         Click place ->
@@ -57,21 +56,19 @@ update msg model =
                 Evade ->
                     let
                         resolved = DiceChecker.resolveCheck check results
+                        newModel = {model | previousChecks = resolved :: model.previousChecks}
                     in
-                        if resolved.wasSuccess then
-                            moveFinalization model
-                        else
-                            ({model | movement = Movement.prematureEndMove check.location model.movement}, Cmd.none)
+                        applyMoveToModel (Movement.evadeCheck resolved ResolveDiceCheck newModel.movement) newModel
 
-moveFinalization model =
-    let
-        (moveModel, cmd) = Movement.finalizeMovement model.investigator ResolveDiceCheck model.movement
-    in
-        ({model | movement = moveModel}, cmd)
+applyMoveToModel (movement, cmd) model=
+    ({model | movement = movement}, cmd)
+
+resetPreviousChecks model =
+    {model | previousChecks = []}
 
 view : Model -> Html Msg
 view model =
-    div[] (List.concat [(List.map DiceChecker.drawDiceCheck model.movement.evadeTests), [wholeBoard model]])
+    div[] (List.concat [DiceChecker.drawDiceChecks (model.movement.evadeTests, model.previousChecks), [wholeBoard model]])
 
 wholeBoard : Model -> Html Msg
 wholeBoard model =

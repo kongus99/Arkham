@@ -1,4 +1,4 @@
-module DiceChecker exposing (..)
+module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), drawDiceChecks)
 
 import BoardData exposing (..)
 import String
@@ -39,6 +39,10 @@ testDetails check =
     String.concat [" location: ", (toString check.location),
                    " dices available: ", (toString check.dicesAmount),
                    " successes required: ", (toString check.requiredSuccesses)]
+
+drawDiceChecks : (List DiceCheck, List ResolvedDiceCheck) -> List (Html a)
+drawDiceChecks (diceChecks, resolvedDiceChecks) =
+    List.append (List.map drawDiceCheck diceChecks) (List.map drawResolvedDiceCheck resolvedDiceChecks)
 
 drawDiceCheck : DiceCheck -> Html a
 drawDiceCheck check = div [][h1[][text <| testName check.checkType], div[][text <| testDetails check]]
