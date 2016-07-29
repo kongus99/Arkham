@@ -3,8 +3,9 @@ module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, Re
 import BoardData exposing (..)
 import String
 import Random
-import Html exposing (Html, div, h1, text, span, Attribute)
-import Html.Attributes exposing (style)
+import Html exposing (Html, div, text, Attribute)
+import Svg exposing (svg, text', tspan)
+import Svg.Attributes exposing (width, height, viewBox, preserveAspectRatio, fontSize, fontFamily, x, y, textLength, lengthAdjust, fill, fontWeight)
 
 type CheckType = Evade
 
@@ -35,32 +36,37 @@ testName checkType =
     case checkType of
         Evade -> "Monster evasion"
 
-testDetails check =
-    String.concat [" location: ", (toString check.location),
-                   " dices available: ", (toString check.dicesAmount),
-                   " successes required: ", (toString check.requiredSuccesses)]
-
-drawDiceChecks : (List DiceCheck, List ResolvedDiceCheck) -> List (Html a)
+drawDiceChecks : (List DiceCheck, List ResolvedDiceCheck) -> Html a
 drawDiceChecks (diceChecks, resolvedDiceChecks) =
-    List.append (List.map drawDiceCheck diceChecks) (List.map drawResolvedDiceCheck resolvedDiceChecks)
+    div[](List.append (List.map drawDiceCheck diceChecks)(List.map drawResolvedDiceCheck resolvedDiceChecks))
 
 drawDiceCheck : DiceCheck -> Html a
-drawDiceCheck check = div [][h1[][text <| testName check.checkType], div[][text <| testDetails check]]
+drawDiceCheck check =
+    svg [width "300", height "200", viewBox "0 0 1500 1000", preserveAspectRatio "none"]
+    [title check
+    , info "40%" (String.concat ["Location: ", (toString check.location)])
+    , info "60%" (String.concat ["Dices available: ", (toString check.dicesAmount)])
+    , info "80%" (String.concat ["Successes required: ", (toString check.requiredSuccesses)])]
+
+title check = text' [x "33%", y "20%", fontSize "200", textLength "66%", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana"][text (testName check.checkType)]
+info height content = text' [x "33%", y height, fontSize "100", textLength "66%", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana"][text content]
 
 drawResolvedDiceCheck : ResolvedDiceCheck -> Html a
-drawResolvedDiceCheck roll = div[][ div[style [("display", "flex"),("flex-flow", "row wrap"),("justify-content", "space-around")]] (List.map singleDice roll.dices)
-                                  , span[][text <| String.append (testName roll.checkType) <| toString roll.wasSuccess]]
+drawResolvedDiceCheck check =
+    svg [width "300", height "200", viewBox "0 0 1500 1000", preserveAspectRatio "none"]
+    [title check
+    , results check
+    ]
+
+results check =
+    text' [x "33%", y "50%", fontSize "100", textLength "66%", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana"] (List.map singleDice check.dices)
 
 singleDice : (Int, WasSuccess) -> Html a
-singleDice (faceValue, wasSuccess) = span [diceStyle wasSuccess] [ text (toString faceValue) ]
+singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
 
-diceStyle: WasSuccess -> Attribute msg
+diceStyle: WasSuccess -> String
 diceStyle wasSuccess =
-    let
-        styleArgs =
-            if wasSuccess then
-                [ ("backgroundColor", "white"), ("color", "green"), ("fontSize", "250%")]
-            else
-                [ ("backgroundColor", "white"), ("color", "red"), ("fontSize", "250%")]
-    in
-        style styleArgs
+    if wasSuccess then
+        "green"
+    else
+        "red"

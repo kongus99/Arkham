@@ -47,7 +47,7 @@ prepareEvadeTests start path monsters investigator =
         monsterList = AllDict.toList monsters
         monstersOnPath = if List.isEmpty path then [] else List.filter (\(p, m) -> List.member p (start :: path)) monsterList
     in
-        List.map (\(p, m) -> DiceChecker.prepareCheck p Evade (investigator.sneak - m.awareness) 1 5) monstersOnPath
+        List.reverse (List.map (\(p, m) -> DiceChecker.prepareCheck p Evade (investigator.sneak - m.awareness) 1 5) monstersOnPath)
 
 endMove : Place Neighborhood Location -> Model -> Model
 endMove place model =
@@ -63,11 +63,11 @@ evadeCheck resolved wrapper model =
 
 finalizeMovement : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
 finalizeMovement wrapper model=
-    case List.reverse model.evadeTests of
+    case model.evadeTests of
         [] -> (endMove (pathEnd model) model, Cmd.none)
         t :: ts ->
             let
-                newModel = {model | evadeTests = List.reverse ts}
+                newModel = {model | evadeTests = ts}
                 check = DiceChecker.runCheck t (wrapper t)
             in
                 (newModel, check)

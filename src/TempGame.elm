@@ -56,7 +56,7 @@ update msg model =
                 Evade ->
                     let
                         resolved = DiceChecker.resolveCheck check results
-                        newModel = {model | previousChecks = resolved :: model.previousChecks}
+                        newModel = {model | previousChecks = List.reverse (resolved :: (List.reverse model.previousChecks))}
                     in
                         applyMoveToModel (Movement.evadeCheck resolved ResolveDiceCheck newModel.movement) newModel
 
@@ -68,7 +68,7 @@ resetPreviousChecks model =
 
 view : Model -> Html Msg
 view model =
-    div[] (List.concat [DiceChecker.drawDiceChecks (model.movement.evadeTests, model.previousChecks), [wholeBoard model]])
+    div[] [DiceChecker.drawDiceChecks (model.movement.evadeTests, model.previousChecks), wholeBoard model]
 
 wholeBoard : Model -> Html Msg
 wholeBoard model =
