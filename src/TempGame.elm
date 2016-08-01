@@ -1,3 +1,5 @@
+module MainModule exposing (..)
+
 import BoardData exposing (..)
 import Graphics exposing (Point)
 import MonsterBowl exposing (Monster)

@@ -3,11 +3,12 @@ module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, Re
 import BoardData exposing (..)
 import String
 import Random
-import Html exposing (Html, div, text, Attribute)
-import Svg exposing (svg, text', tspan)
-import Svg.Attributes exposing (width, height, viewBox, preserveAspectRatio, fontSize, fontFamily, x, y, textLength, lengthAdjust, fill, fontWeight)
+import Html exposing (Html, text, Attribute)
+import Svg exposing (svg, text', tspan, image, rect)
+import Svg.Attributes exposing (..)
 
 diceBoxWidth = 300
+diceBoxHeight = 200
 leftDiceTextMargin = 25
 
 type CheckType = Evade
@@ -43,18 +44,26 @@ drawDiceChecks : (List DiceCheck, List ResolvedDiceCheck) -> Html a
 drawDiceChecks (diceChecks, resolvedDiceChecks) =
     let
         totalWidth = diceBoxWidth * (List.length diceChecks + List.length resolvedDiceChecks)
+        checksToPerform = List.indexedMap drawDiceCheck diceChecks
+        checksPerformed = List.indexedMap drawResolvedDiceCheck resolvedDiceChecks
     in
-        svg[width <| toString totalWidth, height "200"](List.concat (List.append (List.indexedMap drawDiceCheck diceChecks)(List.indexedMap drawResolvedDiceCheck resolvedDiceChecks)))
+        svg[width <| toString totalWidth, height <| toString diceBoxHeight](List.concat (List.append checksToPerform checksPerformed))
 
 drawDiceCheck : Int -> DiceCheck -> List (Html a)
 drawDiceCheck index check =
     let
-        margin = leftDiceTextMargin + diceBoxWidth * index
+        textMargin = leftDiceTextMargin + diceBoxWidth * index
+        imageMargin = (diceBoxWidth // 2 - 8) + diceBoxWidth * index
+        imageHeight = (diceBoxHeight // 2 - 8)
+        fifthOfHeight = diceBoxHeight // 5
     in
-        [info margin 40 <| [text <| testName check.checkType]
-        , info margin 80 <| [text <| String.append "Location: " (toString check.location)]
-        , info margin 120 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
-        , info margin 160 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]]
+        [
+--          rect [x "0", y "0", width "300", height "200", fill "none", strokeWidth "2", stroke "black"][]
+        image [xlinkHref "sneak.png", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16"][]
+        , info textMargin fifthOfHeight <| [text <| testName check.checkType]
+        , info textMargin (2 * fifthOfHeight) <| [text <| String.append "Location: " (toString check.location)]
+        , info textMargin (3 * fifthOfHeight) <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+        , info textMargin (4 * fifthOfHeight) <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]]
 
 
 baseDiceParameters margin height =  [x <| toString margin, y <| toString height, textLength "150", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana"]
@@ -66,7 +75,7 @@ drawResolvedDiceCheck index check =
     let
         margin = leftDiceTextMargin + diceBoxWidth * index
     in
-        [info margin 40 <| [text <| testName check.checkType] , info margin 100 <| (List.map singleDice check.dices)]
+        [info margin (diceBoxHeight // 5) <| [text <| testName check.checkType] , info margin (diceBoxHeight // 2) <| (List.map singleDice check.dices)]
 
 singleDice : (Int, WasSuccess) -> Html a
 singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
