@@ -7,6 +7,9 @@ import Html exposing (Html, div, text, Attribute)
 import Svg exposing (svg, text', tspan)
 import Svg.Attributes exposing (width, height, viewBox, preserveAspectRatio, fontSize, fontFamily, x, y, textLength, lengthAdjust, fill, fontWeight)
 
+diceBoxWidth = 300
+leftDiceTextMargin = 25
+
 type CheckType = Evade
 
 type alias WasSuccess = Bool
@@ -38,28 +41,32 @@ testName checkType =
 
 drawDiceChecks : (List DiceCheck, List ResolvedDiceCheck) -> Html a
 drawDiceChecks (diceChecks, resolvedDiceChecks) =
-    div[](List.append (List.map drawDiceCheck diceChecks)(List.map drawResolvedDiceCheck resolvedDiceChecks))
+    let
+        totalWidth = diceBoxWidth * (List.length diceChecks + List.length resolvedDiceChecks)
+    in
+        svg[width <| toString totalWidth, height "200"](List.concat (List.append (List.indexedMap drawDiceCheck diceChecks)(List.indexedMap drawResolvedDiceCheck resolvedDiceChecks)))
 
-drawDiceCheck : DiceCheck -> Html a
-drawDiceCheck check =
-    svg [width "300", height "200", viewBox "0 0 1500 1000", preserveAspectRatio "none"]
-    [title check
-    , info "40%" (String.concat ["Location: ", (toString check.location)])
-    , info "60%" (String.concat ["Dices available: ", (toString check.dicesAmount)])
-    , info "80%" (String.concat ["Successes required: ", (toString check.requiredSuccesses)])]
+drawDiceCheck : Int -> DiceCheck -> List (Html a)
+drawDiceCheck index check =
+    let
+        margin = leftDiceTextMargin + diceBoxWidth * index
+    in
+        [info margin 40 <| [text <| testName check.checkType]
+        , info margin 80 <| [text <| String.append "Location: " (toString check.location)]
+        , info margin 120 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+        , info margin 160 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]]
 
-title check = text' [x "33%", y "20%", fontSize "200", textLength "66%", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana"][text (testName check.checkType)]
-info height content = text' [x "33%", y height, fontSize "100", textLength "66%", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana"][text content]
 
-drawResolvedDiceCheck : ResolvedDiceCheck -> Html a
-drawResolvedDiceCheck check =
-    svg [width "300", height "200", viewBox "0 0 1500 1000", preserveAspectRatio "none"]
-    [title check
-    , results check
-    ]
+baseDiceParameters margin height =  [x <| toString margin, y <| toString height, textLength "150", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana"]
 
-results check =
-    text' [x "33%", y "50%", fontSize "100", textLength "66%", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana"] (List.map singleDice check.dices)
+info margin height content = text' (baseDiceParameters margin height) content
+
+drawResolvedDiceCheck : Int -> ResolvedDiceCheck -> List (Html a)
+drawResolvedDiceCheck index check =
+    let
+        margin = leftDiceTextMargin + diceBoxWidth * index
+    in
+        [info margin 40 <| [text <| testName check.checkType] , info margin 100 <| (List.map singleDice check.dices)]
 
 singleDice : (Int, WasSuccess) -> Html a
 singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
