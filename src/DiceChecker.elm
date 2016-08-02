@@ -58,17 +58,19 @@ drawDiceCheck index check =
         fifthOfHeight = diceBoxHeight // 5
     in
         [
---          rect [x "0", y "0", width "300", height "200", fill "none", strokeWidth "2", stroke "black"][]
         image [xlinkHref "sneak.png", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16"][]
+--        , rect [x "0", y "0", width "300", height "200", fill "none", strokeWidth "2", stroke "black"][]
         , info textMargin fifthOfHeight <| [text <| testName check.checkType]
         , info textMargin (2 * fifthOfHeight) <| [text <| String.append "Location: " (toString check.location)]
         , info textMargin (3 * fifthOfHeight) <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
         , info textMargin (4 * fifthOfHeight) <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]]
 
 
-baseDiceParameters margin height =  [x <| toString margin, y <| toString height, textLength "150", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana"]
+baseDiceParameters margin height =
+    [x <| toString margin, y <| toString height, textLength "150", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", class "diceThrowInfo"]
 
-info margin height content = text' (baseDiceParameters margin height) content
+info margin height content =
+    text' (baseDiceParameters margin height) content
 
 drawResolvedDiceCheck : Int -> ResolvedDiceCheck -> List (Html a)
 drawResolvedDiceCheck index check =

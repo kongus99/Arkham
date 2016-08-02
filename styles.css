@@ -1,0 +1,27 @@
+.diceThrowBox {
+    /*visibility: hidden;*/
+    opacity: 0.0;
+}
+.diceThrowImage:hover ~ .diceThrowBox{
+    visibility: visible;
+}
+/*.diceThrowImage:hover .diceThrowInfo {*/
+    /*visibility: visible*/
+/*}*/
+.diceThrowBox:hover {
+    visibility: visible;
+}
+/*.diceThrowBox:hover .diceThrowInfo {*/
+    /*visibility: visible*/
+/*}*/
+/*.diceThrowImage:hover ~ .diceThrowBox{*/
+/*visibility: visible*/
+/*}*/
+
+/*.diceThrowBox:hover {*/
+/*visibility: visible*/
+/*}*/
+
+/*.diceThrowBox:hover ~ .diceThrowInfo{*/
+/*visibility: visible*/
+/*}*/
