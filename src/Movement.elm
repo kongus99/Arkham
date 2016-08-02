@@ -51,7 +51,7 @@ prepareEvadeTests start path monsters investigator model =
 
 endMove : Place Neighborhood Location -> Model -> Model
 endMove place model =
-    {model | path = [], start = place, evadeTests = DiceChecker.clearPendingChecks model.evadeTests}
+    {model | path = [], start = place}
 
 evadeCheck : ResolvedDiceCheck -> (DiceCheck -> List Int -> a) -> Model -> ( Model, Cmd a )
 evadeCheck resolved wrapper model =
@@ -65,25 +65,18 @@ evadeCheck resolved wrapper model =
 
 firstEvadeCheck : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
 firstEvadeCheck wrapper model =
-    let
-        newChecks = DiceChecker.clearPreviousChecks model.evadeTests
-    in
-        finalizeMovement wrapper {model | evadeTests = newChecks}
-
+    finalizeMovement wrapper {model | evadeTests = DiceChecker.clearPreviousChecks model.evadeTests}
 
 finalizeMovement : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
 finalizeMovement wrapper model=
     let
-        allChecks = model.evadeTests
+        (tests, cmd) = runCheck wrapper model.evadeTests
+        newModel = {model | evadeTests = tests}
     in
-        case allChecks.currentChecks of
-            [] -> (endMove (pathEnd model) model, Cmd.none)
-            t :: ts ->
-                let
-                    newModel = {model | evadeTests = {allChecks | currentChecks = ts}}
-                    check = DiceChecker.runCheck t (wrapper t)
-                in
-                    (newModel, check)
+        if List.isEmpty model.evadeTests.currentChecks then
+            (endMove (pathEnd model) newModel, Cmd.none)
+        else
+            (newModel, cmd)
 
 toNeighborhood p =
     case p of

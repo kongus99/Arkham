@@ -1,4 +1,4 @@
-module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), view, Model, initialChecks, clearPendingChecks, addResolvedCheck, clearPreviousChecks)
+module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), view, Model, initialChecks, addResolvedCheck, clearPreviousChecks)
 
 import BoardData exposing (..)
 import String
@@ -23,8 +23,6 @@ type alias ResolvedDiceCheck = CommonCheck {dices : List (Int, WasSuccess), wasS
 type alias Model = { currentChecks : List DiceCheck, previousChecks : List ResolvedDiceCheck}
 initialChecks = { currentChecks = [], previousChecks = []}
 
-clearPendingChecks model = {model | currentChecks = []}
-
 addResolvedCheck resolved model = {model | previousChecks = List.reverse (resolved :: (List.reverse model.previousChecks))}
 
 clearPreviousChecks model = {model | previousChecks = []}
@@ -42,8 +40,14 @@ prepareCheck location checkType dicesAmount requiredSuccesses successThreshold =
      successThreshold = successThreshold,
      isDetailed = False}
 
-runCheck : DiceCheck -> (List Int -> a) -> Cmd a
-runCheck check wrapper =
+runCheck : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
+runCheck wrapper model =
+    case model.currentChecks of
+        [] -> ({model | currentChecks = []}, Cmd.none)
+        t :: ts -> ({model | currentChecks = ts}, generateCheck t (wrapper t))
+
+generateCheck : DiceCheck -> (List Int -> a) -> Cmd a
+generateCheck check wrapper =
     Random.generate wrapper <| Random.list check.dicesAmount (Random.int 1 6)
 
 resolveCheck : DiceCheck -> List Int -> ResolvedDiceCheck
@@ -67,8 +71,6 @@ update msg model =
     case msg of
         UnresolvedDetailsToggle c -> model
         ResolvedDetailsToggle c -> model
-
-
 
 view : Model -> Html a
 view model =
