@@ -1,4 +1,4 @@
-module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), view, Model, initialChecks, addResolvedCheck, clearPreviousChecks)
+module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), view, Model, initialChecks, addResolvedCheck, clearPreviousChecks, Msg, update)
 
 import BoardData exposing (..)
 import String

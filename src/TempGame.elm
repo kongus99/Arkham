@@ -23,7 +23,9 @@ type Msg = UnspecifiedClick Point |
            Click (Place Neighborhood Location) |
            CtrlClick (Place Neighborhood Location) |
            DoubleClick (Place Neighborhood Location) |
-           ResolveDiceCheck DiceCheck (List Int)
+           ResolveDiceCheck DiceCheck (List Int) |
+           CheckerClick DiceChecker.Msg
+
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -60,13 +62,14 @@ update msg model =
                         resolved = DiceChecker.resolveCheck check results
                     in
                         applyMoveToModel (Movement.evadeCheck resolved ResolveDiceCheck model.movement) model
+        CheckerClick c -> ({model | movement = Movement.updateEvade c model.movement}, Cmd.none)
 
 applyMoveToModel (movement, cmd) model=
     ({model | movement = movement}, cmd)
 
 view : Model -> Html Msg
 view model =
-    div[] [DiceChecker.view model.movement.evadeTests, wholeBoard model]
+    div[] [App.map CheckerClick <| DiceChecker.view model.movement.evadeTests, wholeBoard model]
 
 wholeBoard : Model -> Html Msg
 wholeBoard model =
