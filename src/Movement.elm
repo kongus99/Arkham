@@ -54,7 +54,7 @@ prepareEvadeTests start path monsters investigator model =
 
 endMove : Place Neighborhood Location -> Model -> Model
 endMove place model =
-    {model | path = [], start = place}
+    {model | path = [], start = place, evadeTests = DiceChecker.clearPendingChecks model.evadeTests}
 
 evadeCheck : ResolvedDiceCheck -> (DiceCheck -> List Int -> a) -> Model -> ( Model, Cmd a )
 evadeCheck resolved wrapper model =

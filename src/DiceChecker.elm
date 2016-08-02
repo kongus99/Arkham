@@ -1,4 +1,4 @@
-module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), view, Model, initialChecks, addResolvedCheck, clearPreviousChecks, Msg, update)
+module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), view, Model, initialChecks, addResolvedCheck, clearPreviousChecks, Msg, update, clearPendingChecks)
 
 import BoardData exposing (..)
 import String
@@ -28,6 +28,7 @@ addResolvedCheck resolved model = {model | previousChecks = List.reverse (resolv
 
 clearPreviousChecks model = {model | previousChecks = []}
 
+clearPendingChecks model = {model | currentChecks = []}
 
 testName checkType =
     case checkType of
