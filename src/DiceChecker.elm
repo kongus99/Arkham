@@ -69,8 +69,15 @@ type Msg = UnresolvedDetailsToggle DiceCheck | ResolvedDetailsToggle ResolvedDic
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        UnresolvedDetailsToggle c -> model
-        ResolvedDetailsToggle c -> model
+        UnresolvedDetailsToggle c -> {model | currentChecks = List.map (toggleDetails c) model.currentChecks}
+        ResolvedDetailsToggle c -> {model | previousChecks = List.map (toggleDetails c) model.previousChecks}
+
+toggleDetails : CommonCheck a -> CommonCheck a -> CommonCheck a
+toggleDetails expectedCheck check =
+    if expectedCheck == check then
+        {check | isDetailed = not check.isDetailed}
+    else
+        check
 
 view : Model -> Html a
 view model =
