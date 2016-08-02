@@ -6,6 +6,7 @@ import Random
 import Html exposing (Html, text, Attribute)
 import Svg exposing (svg, text', tspan, image, rect)
 import Svg.Attributes exposing (..)
+import Svg.Events exposing (onClick)
 
 diceBoxWidth = 300
 diceBoxHeight = 200
@@ -79,7 +80,7 @@ toggleDetails expectedCheck check =
     else
         check
 
-view : Model -> Html a
+view : Model -> Html Msg
 view model =
     let
         (diceChecks, resolvedDiceChecks) = (model.currentChecks, model.previousChecks)
@@ -89,35 +90,45 @@ view model =
     in
         svg[width <| toString totalWidth, height <| toString diceBoxHeight](List.concat (List.append checksToPerform checksPerformed))
 
-drawDiceCheck : Int -> DiceCheck -> List (Html a)
+drawDiceCheck : Int -> DiceCheck -> List (Html Msg)
 drawDiceCheck index check =
     let
+        rectangleX = diceBoxWidth * index
+        rectangleY = 0
         textMargin = leftDiceTextMargin + diceBoxWidth * index
         imageMargin = (diceBoxWidth // 2 - 8) + diceBoxWidth * index
         imageHeight = (diceBoxHeight // 2 - 8)
         fifthOfHeight = diceBoxHeight // 5
     in
-        [
-        image [xlinkHref "sneak.png", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16"][]
---        , rect [x "0", y "0", width "300", height "200", fill "none", strokeWidth "2", stroke "black"][]
-        , info textMargin fifthOfHeight <| [text <| testName check.checkType]
-        , info textMargin (2 * fifthOfHeight) <| [text <| String.append "Location: " (toString check.location)]
-        , info textMargin (3 * fifthOfHeight) <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
-        , info textMargin (4 * fifthOfHeight) <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]]
-
-
-baseDiceParameters margin height =
-    [x <| toString margin, y <| toString height, textLength "150", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", class "diceThrowInfo"]
+        if check.isDetailed then
+            [ rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black"][]
+            , info textMargin fifthOfHeight <| [text <| testName check.checkType]
+            , info textMargin (2 * fifthOfHeight) <| [text <| String.append "Location: " (toString check.location)]
+            , info textMargin (3 * fifthOfHeight) <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+            , info textMargin (4 * fifthOfHeight) <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
+            , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", onClick <| UnresolvedDetailsToggle check][]]
+        else
+            [image [xlinkHref "sneak.png", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16", onClick <| UnresolvedDetailsToggle check][]]
 
 info margin height content =
-    text' (baseDiceParameters margin height) content
+    text' [x <| toString margin, y <| toString height, textLength "150", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", class "diceThrowInfo"] content
 
-drawResolvedDiceCheck : Int -> ResolvedDiceCheck -> List (Html a)
+drawResolvedDiceCheck : Int -> ResolvedDiceCheck -> List (Html Msg)
 drawResolvedDiceCheck index check =
     let
         margin = leftDiceTextMargin + diceBoxWidth * index
+        imageMargin = (diceBoxWidth // 2 - 8) + diceBoxWidth * index
+        imageHeight = (diceBoxHeight // 2 - 8)
+        rectangleX = diceBoxWidth * index
+        rectangleY = 0
     in
-        [info margin (diceBoxHeight // 5) <| [text <| testName check.checkType] , info margin (diceBoxHeight // 2) <| (List.map singleDice check.dices)]
+        case (check.wasSuccess, check.isDetailed) of
+            (_, True) -> [ rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black"][]
+                         , info margin (diceBoxHeight // 5) <| [text <| testName check.checkType]
+                         , info margin (diceBoxHeight // 2) <| (List.map singleDice check.dices)
+                         , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", onClick <| ResolvedDetailsToggle check][]]
+            (True, _) -> [image [xlinkHref "ok.jpg", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16", onClick <| ResolvedDetailsToggle check][]]
+            (False, _) -> [image [xlinkHref "notOk.png", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16", onClick <| ResolvedDetailsToggle check][]]
 
 singleDice : (Int, WasSuccess) -> Html a
 singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
