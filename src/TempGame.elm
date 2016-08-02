@@ -16,8 +16,8 @@ import Paths
 import Movement
 import DiceChecker exposing (..)
 
-type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) Monster String, previousChecks : List ResolvedDiceCheck, monsterBowl : Maybe MonsterBowl.Bowl }
-initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, previousChecks = [], monsterBowl = Nothing }
+type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) Monster String, monsterBowl : Maybe MonsterBowl.Bowl }
+initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
 
 type Msg = UnspecifiedClick Point |
            Click (Place Neighborhood Location) |
@@ -35,7 +35,7 @@ update msg model =
                 (model, Cmd.none)
         DoubleClick place ->
             if Movement.pathEnd model.movement == place && Movement.isValidPath model.investigator model.movement then
-                applyMoveToModel (Movement.finalizeMovement ResolveDiceCheck model.movement) (resetPreviousChecks model)
+                applyMoveToModel (Movement.firstEvadeCheck ResolveDiceCheck model.movement) model
             else
                 (model, Cmd.none)
         Click place ->
@@ -58,19 +58,15 @@ update msg model =
                 Evade ->
                     let
                         resolved = DiceChecker.resolveCheck check results
-                        newModel = {model | previousChecks = List.reverse (resolved :: (List.reverse model.previousChecks))}
                     in
-                        applyMoveToModel (Movement.evadeCheck resolved ResolveDiceCheck newModel.movement) newModel
+                        applyMoveToModel (Movement.evadeCheck resolved ResolveDiceCheck model.movement) model
 
 applyMoveToModel (movement, cmd) model=
     ({model | movement = movement}, cmd)
 
-resetPreviousChecks model =
-    {model | previousChecks = []}
-
 view : Model -> Html Msg
 view model =
-    div[] [DiceChecker.drawDiceChecks (model.movement.evadeTests, model.previousChecks), wholeBoard model]
+    div[] [DiceChecker.view model.movement.evadeTests, wholeBoard model]
 
 wholeBoard : Model -> Html Msg
 wholeBoard model =

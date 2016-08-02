@@ -1,4 +1,4 @@
-module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), drawDiceChecks)
+module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), view, Model, initialChecks, clearPendingChecks, addResolvedCheck, clearPreviousChecks)
 
 import BoardData exposing (..)
 import String
@@ -14,13 +14,33 @@ leftDiceTextMargin = 25
 type CheckType = Evade
 
 type alias WasSuccess = Bool
+type alias IsDetailed = Bool
 
-type alias CommonCheck a = {a | location : Place Neighborhood Location, checkType : CheckType, dicesAmount : Int}
+type alias CommonCheck a = {a | location : Place Neighborhood Location, checkType : CheckType, dicesAmount : Int, isDetailed : IsDetailed}
 type alias DiceCheck = CommonCheck {requiredSuccesses : Int, successThreshold : Int}
 type alias ResolvedDiceCheck = CommonCheck {dices : List (Int, WasSuccess), wasSuccess : WasSuccess}
 
+type alias Model = { currentChecks : List DiceCheck, previousChecks : List ResolvedDiceCheck}
+initialChecks = { currentChecks = [], previousChecks = []}
+
+clearPendingChecks model = {model | currentChecks = []}
+
+addResolvedCheck resolved model = {model | previousChecks = List.reverse (resolved :: (List.reverse model.previousChecks))}
+
+clearPreviousChecks model = {model | previousChecks = []}
+
+
+testName checkType =
+    case checkType of
+        Evade -> "Monster evasion"
+
 prepareCheck location checkType dicesAmount requiredSuccesses successThreshold =
-    {location = location, checkType = checkType, dicesAmount = dicesAmount, requiredSuccesses = requiredSuccesses, successThreshold = successThreshold}
+    {location = location,
+     checkType = checkType,
+     dicesAmount = dicesAmount,
+     requiredSuccesses = requiredSuccesses,
+     successThreshold = successThreshold,
+     isDetailed = False}
 
 runCheck : DiceCheck -> (List Int -> a) -> Cmd a
 runCheck check wrapper =
@@ -33,16 +53,27 @@ resolveCheck check results =
         dices = List.map (\r -> (r, rollSuccessful r)) results
         wasSuccess = (List.length (List.filter rollSuccessful results)) >= check.requiredSuccesses
     in
-        {location = check.location, checkType = check.checkType, dicesAmount = check.dicesAmount, dices = dices, wasSuccess = wasSuccess}
+        {location = check.location,
+         checkType = check.checkType,
+         dicesAmount = check.dicesAmount,
+         dices = dices,
+         wasSuccess = wasSuccess,
+         isDetailed = check.isDetailed}
+
+type Msg = UnresolvedDetailsToggle DiceCheck | ResolvedDetailsToggle ResolvedDiceCheck
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        UnresolvedDetailsToggle c -> model
+        ResolvedDetailsToggle c -> model
 
 
-testName checkType =
-    case checkType of
-        Evade -> "Monster evasion"
 
-drawDiceChecks : (List DiceCheck, List ResolvedDiceCheck) -> Html a
-drawDiceChecks (diceChecks, resolvedDiceChecks) =
+view : Model -> Html a
+view model =
     let
+        (diceChecks, resolvedDiceChecks) = (model.currentChecks, model.previousChecks)
         totalWidth = diceBoxWidth * (List.length diceChecks + List.length resolvedDiceChecks)
         checksToPerform = List.indexedMap drawDiceCheck diceChecks
         checksPerformed = List.indexedMap drawResolvedDiceCheck resolvedDiceChecks

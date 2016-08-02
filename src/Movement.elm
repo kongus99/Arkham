@@ -1,4 +1,4 @@
-module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, evadeCheck)
+module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, firstEvadeCheck, evadeCheck)
 
 import BoardData exposing (..)
 import Paths
@@ -7,8 +7,8 @@ import List.Extra exposing (break)
 import DiceChecker exposing (..)
 import MonsterBowl exposing (Monster)
 
-type alias Model = { start : Place Neighborhood Location, path : List (Place Neighborhood Location), evadeTests : List DiceCheck}
-initialModel = { start = Locale Train_Station, path = [], evadeTests = [] }
+type alias Model = { start : Place Neighborhood Location, path : List (Place Neighborhood Location), evadeTests : DiceChecker.Model}
+initialModel = { start = Locale Train_Station, path = [], evadeTests = DiceChecker.initialChecks }
 
 path : Place Neighborhood Location -> Place Neighborhood Location -> List Neighborhood -> List (Place Neighborhood Location)
 path p1 p2 excluded =
@@ -37,40 +37,53 @@ moveTo place monsters investigator model =
                     List.append model.path [place]
                   else
                     path model.start place <| List.filterMap toNeighborhood (AllDict.keys monsters)
-        newEvadeTests = prepareEvadeTests model.start newPath monsters investigator
+        newEvadeTests = prepareEvadeTests model.start newPath monsters investigator model.evadeTests
     in
         {model | path = newPath, evadeTests = newEvadeTests}
 
-prepareEvadeTests : Place Neighborhood Location -> List (Place Neighborhood Location) -> AllDict (Place Neighborhood Location) Monster String -> Investigator -> List DiceCheck
-prepareEvadeTests start path monsters investigator =
+prepareEvadeTests : Place Neighborhood Location -> List (Place Neighborhood Location) -> AllDict (Place Neighborhood Location) Monster String -> Investigator -> DiceChecker.Model ->  DiceChecker.Model
+prepareEvadeTests start path monsters investigator model =
     let
         monsterList = AllDict.toList monsters
         monstersOnPath = if List.isEmpty path then [] else List.filter (\(p, m) -> List.member p (start :: path)) monsterList
     in
-        List.reverse (List.map (\(p, m) -> DiceChecker.prepareCheck p Evade (investigator.sneak - m.awareness) 1 5) monstersOnPath)
+        {model |  currentChecks = List.reverse (List.map (\(p, m) -> DiceChecker.prepareCheck p Evade (investigator.sneak - m.awareness) 1 5) monstersOnPath)}
 
 endMove : Place Neighborhood Location -> Model -> Model
 endMove place model =
-    {model | path = [], start = place, evadeTests = []}
+    {model | path = [], start = place, evadeTests = DiceChecker.clearPendingChecks model.evadeTests}
 
 evadeCheck : ResolvedDiceCheck -> (DiceCheck -> List Int -> a) -> Model -> ( Model, Cmd a )
 evadeCheck resolved wrapper model =
-    if resolved.wasSuccess then
-        finalizeMovement wrapper model
-    else
-        (endMove resolved.location model, Cmd.none)
+    let
+        newModel = {model | evadeTests = addResolvedCheck resolved model.evadeTests }
+    in
+        if resolved.wasSuccess then
+            finalizeMovement wrapper newModel
+        else
+            (endMove resolved.location newModel, Cmd.none)
+
+firstEvadeCheck : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
+firstEvadeCheck wrapper model =
+    let
+        newChecks = DiceChecker.clearPreviousChecks model.evadeTests
+    in
+        finalizeMovement wrapper {model | evadeTests = newChecks}
 
 
 finalizeMovement : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
 finalizeMovement wrapper model=
-    case model.evadeTests of
-        [] -> (endMove (pathEnd model) model, Cmd.none)
-        t :: ts ->
-            let
-                newModel = {model | evadeTests = ts}
-                check = DiceChecker.runCheck t (wrapper t)
-            in
-                (newModel, check)
+    let
+        allChecks = model.evadeTests
+    in
+        case allChecks.currentChecks of
+            [] -> (endMove (pathEnd model) model, Cmd.none)
+            t :: ts ->
+                let
+                    newModel = {model | evadeTests = {allChecks | currentChecks = ts}}
+                    check = DiceChecker.runCheck t (wrapper t)
+                in
+                    (newModel, check)
 
 toNeighborhood p =
     case p of
