@@ -124,40 +124,44 @@ movement color (start, end) =
     in
         line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "3", strokeLinecap "round"] []
 
-drawDiceCheck : Dimension -> (DiceCheck -> Attribute a) -> Int -> DiceCheck -> List (Svg a)
-drawDiceCheck dim generator index check =
+checkDim = {width = 225, height = 150}
+
+drawDiceCheck : (DiceCheck -> Attribute a) -> Int -> DiceCheck -> List (Svg a)
+drawDiceCheck generator index check =
     if check.isDetailed then
-        [ checkRectangle dim index "1.0" (visibility "visible")
-        , info dim index 1 <| [text <| testName check.checkType]
-        , info dim index 2 <| [text <| String.append "Location: " (toString check.location)]
-        , info dim index 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
-        , info dim index 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
-        , checkRectangle dim index "0.0" (generator check)]
+        [ checkRectangle check "1.0" (\c -> visibility "visible")
+        , info check 1 <| [text <| testName check.checkType]
+        , info check 2 <| [text <| String.append "Location: " (toString check.location)]
+        , info check 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+        , info check 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
+        , checkRectangle check "0.0" generator]
     else
         [icon check "sneak.png" generator]
 
-drawResolvedDiceCheck : Dimension -> (ResolvedDiceCheck -> Attribute a) -> Int -> ResolvedDiceCheck -> List (Svg a)
-drawResolvedDiceCheck dim generator index check =
+drawResolvedDiceCheck : (ResolvedDiceCheck -> Attribute a) -> Int -> ResolvedDiceCheck -> List (Svg a)
+drawResolvedDiceCheck generator index check =
     case (check.wasSuccess, check.isDetailed) of
-        (_, True) -> [ checkRectangle dim index "1.0" (visibility "visible")
-                     , info dim index 1 <| [text <| testName check.checkType]
-                     , info dim index 3 <| (List.map singleDice check.dices)
-                     , checkRectangle dim index "0.0" (generator check)]
+        (_, True) -> [ checkRectangle check "1.0" (\c -> visibility "visible")
+                     , info check 1 <| [text <| testName check.checkType]
+                     , info check 3 <| (List.map singleDice check.dices)
+                     , checkRectangle check "0.0" generator]
         (True, _) -> [icon check "ok.jpg" generator]
         (False, _) -> [icon check "notOk.png" generator]
 
-checkRectangle dim index op attribute =
+checkRectangle check op generator =
     let
-        rectangleX = dim.width * index
-        rectangleY = 0
+        middlePoint = middle check.location
+        rectangleX = middlePoint.x - checkDim.width // 2
+        rectangleY = middlePoint.y - checkDim.height // 2
     in
-        rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString dim.width, height <| toString dim.height, fill "white", stroke "black", opacity op, attribute][]
+        rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString checkDim.width, height <| toString checkDim.height, fill "white", stroke "black", opacity op, generator check][]
 
-info dim indexX indexY content =
+info check indexY content =
     let
-        posX = dim.width // 2 + dim.width * indexX
-        posY = indexY * dim.height // 5
-        length = 5 * dim.width // 6
+        middlePoint = middle check.location
+        posX = middlePoint.x
+        posY = middlePoint.y - checkDim.height // 2 + indexY * checkDim.height // 5
+        length = 5 * checkDim.width // 6
     in
         text' [x <| toString posX, y <| toString posY, textLength <| toString length, lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
 

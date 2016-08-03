@@ -66,8 +66,8 @@ toggleDetails expectedCheck check =
 view : Model -> List (Svg Msg)
 view model =
     let
-        checksToPerform = List.indexedMap (Graphics.drawDiceCheck {width = 300, height = 200} (\check -> onClick <| UnresolvedDetailsToggle check)) model.currentChecks
-        checksPerformed = List.indexedMap (Graphics.drawResolvedDiceCheck {width = 300, height = 200} (\check -> onClick <| ResolvedDetailsToggle check)) model.previousChecks
+        checksToPerform = List.indexedMap (Graphics.drawDiceCheck (\check -> onClick <| UnresolvedDetailsToggle check)) model.currentChecks
+        checksPerformed = List.indexedMap (Graphics.drawResolvedDiceCheck (\check -> onClick <| ResolvedDetailsToggle check)) model.previousChecks
     in
         List.concat (List.append checksToPerform checksPerformed)
 
