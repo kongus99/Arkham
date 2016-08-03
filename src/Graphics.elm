@@ -124,7 +124,7 @@ movement color (start, end) =
     in
         line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "3", strokeLinecap "round"] []
 
-checkDim = {width = 225, height = 150}
+checkDim = { width = 225, height = 150 }
 
 drawDiceCheck : (DiceCheck -> Attribute a) -> Int -> DiceCheck -> List (Svg a)
 drawDiceCheck generator index check =
