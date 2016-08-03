@@ -8,6 +8,7 @@ import MonsterBowl exposing (Monster)
 import String
 
 type alias Point = {x : Int, y : Int}
+type alias Dimension = {width : Int, height : Int}
 type alias LineConnective shape = { shape | middle : Point }
 type alias Circle = LineConnective {cx : Int, cy : Int, radius : Int}
 type alias Rectangle = LineConnective {x : Int, y : Int, width : Int, height : Int}
@@ -123,51 +124,48 @@ movement color (start, end) =
     in
         line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "3", strokeLinecap "round"] []
 
-diceBoxWidth = 300
-diceBoxHeight = 200
-
-drawDiceCheck : (DiceCheck -> Attribute a) -> Int -> DiceCheck -> List (Svg a)
-drawDiceCheck generator index check =
+drawDiceCheck : Dimension -> (DiceCheck -> Attribute a) -> Int -> DiceCheck -> List (Svg a)
+drawDiceCheck dim generator index check =
     if check.isDetailed then
-        [ checkRectangle index "1.0" (visibility "visible")
-        , info index 1 <| [text <| testName check.checkType]
-        , info index 2 <| [text <| String.append "Location: " (toString check.location)]
-        , info index 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
-        , info index 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
-        , checkRectangle index "0.0" (generator check)]
+        [ checkRectangle dim index "1.0" (visibility "visible")
+        , info dim index 1 <| [text <| testName check.checkType]
+        , info dim index 2 <| [text <| String.append "Location: " (toString check.location)]
+        , info dim index 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+        , info dim index 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
+        , checkRectangle dim index "0.0" (generator check)]
     else
-        [icon index "sneak.png" <| generator check]
+        [icon dim index "sneak.png" <| generator check]
 
-drawResolvedDiceCheck : (ResolvedDiceCheck -> Attribute a) -> Int -> ResolvedDiceCheck -> List (Svg a)
-drawResolvedDiceCheck generator index check =
+drawResolvedDiceCheck : Dimension -> (ResolvedDiceCheck -> Attribute a) -> Int -> ResolvedDiceCheck -> List (Svg a)
+drawResolvedDiceCheck dim generator index check =
     case (check.wasSuccess, check.isDetailed) of
-        (_, True) -> [ checkRectangle index "1.0" (visibility "visible")
-                     , info index 1 <| [text <| testName check.checkType]
-                     , info index 3 <| (List.map singleDice check.dices)
-                     , checkRectangle index "0.0" (generator check)]
-        (True, _) -> [icon index "ok.jpg" (generator check)]
-        (False, _) -> [icon index "notOk.png" (generator check)]
+        (_, True) -> [ checkRectangle dim index "1.0" (visibility "visible")
+                     , info dim index 1 <| [text <| testName check.checkType]
+                     , info dim index 3 <| (List.map singleDice check.dices)
+                     , checkRectangle dim index "0.0" (generator check)]
+        (True, _) -> [icon dim index "ok.jpg" (generator check)]
+        (False, _) -> [icon dim index "notOk.png" (generator check)]
 
-checkRectangle index op attribute =
+checkRectangle dim index op attribute =
     let
-        rectangleX = diceBoxWidth * index
+        rectangleX = dim.width * index
         rectangleY = 0
     in
-        rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black", opacity op, attribute][]
+        rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString dim.width, height <| toString dim.height, fill "white", stroke "black", opacity op, attribute][]
 
-info indexX indexY content =
+info dim indexX indexY content =
     let
-        posX = diceBoxWidth // 2  + diceBoxWidth * indexX
-        posY = indexY * diceBoxHeight // 5
-        length = 5 * diceBoxWidth / 6
+        posX = dim.width // 2 + dim.width * indexX
+        posY = indexY * dim.height // 5
+        length = 5 * dim.width // 6
     in
         text' [x <| toString posX, y <| toString posY, textLength <| toString length, lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
 
-icon index link whenClicked =
+icon dim index link whenClicked =
      let
         iconSize = 16
-        posX = (diceBoxWidth - iconSize) // 2 + diceBoxWidth * index
-        posY = (diceBoxHeight - iconSize) // 2
+        posX = (dim.width - iconSize) // 2 + dim.width * index
+        posY = (dim.height - iconSize) // 2
      in
         image [xlinkHref link, x <| toString posX, y <| toString posY, height <| toString iconSize, width <| toString iconSize, whenClicked] []
 
