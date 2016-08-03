@@ -40,17 +40,16 @@ moveTo place monsters investigator model =
                     List.append model.path [place]
                   else
                     path model.start place <| List.filterMap toNeighborhood (AllDict.keys monsters)
-        newEvadeTests = prepareEvadeTests model.start newPath monsters investigator model.evadeTests
+        newEvadeTests = prepareEvadeTests (model.start :: newPath) monsters investigator model.evadeTests
     in
         {model | path = newPath, evadeTests = newEvadeTests}
 
-prepareEvadeTests : Place Neighborhood Location -> List (Place Neighborhood Location) -> AllDict (Place Neighborhood Location) Monster String -> Investigator -> DiceChecker.Model ->  DiceChecker.Model
-prepareEvadeTests start path monsters investigator model =
+prepareEvadeTests : List (Place Neighborhood Location) -> AllDict (Place Neighborhood Location) Monster String -> Investigator -> DiceChecker.Model ->  DiceChecker.Model
+prepareEvadeTests path monsters investigator model =
     let
-        fullPath = start :: path
         generateCheck place monster = DiceChecker.prepareCheck place Evade (investigator.sneak - monster.awareness) 1 5
     in
-        {model |  currentChecks = List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) fullPath, previousChecks = []}
+        {model |  currentChecks = List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path, previousChecks = []}
 
 endMove : Place Neighborhood Location -> Model -> Model
 endMove place model =
