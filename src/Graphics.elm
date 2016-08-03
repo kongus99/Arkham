@@ -104,8 +104,8 @@ monsterSquare (place, monster) =
         rectX = mid.x - 55
         rectY = mid.y - 25
         side = 50
-        textX= mid.x - 12
-        textY = mid.y + 23
+        textX= rectX + 43
+        textY = rectY + 48
     in
         rect [x <| toString <| rectX, y <| toString <| rectY, width <| toString side, height <| toString side, fill "red"][]
       ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString monster.awareness)]
@@ -125,51 +125,53 @@ movement color (start, end) =
 
 diceBoxWidth = 300
 diceBoxHeight = 200
-leftDiceTextMargin = 25
-iconSize = 16
 
 drawDiceCheck : (DiceCheck -> Attribute a) -> Int -> DiceCheck -> List (Svg a)
 drawDiceCheck generator index check =
     let
         rectangleX = diceBoxWidth * index
         rectangleY = 0
-        textMargin = diceBoxWidth // 2  + diceBoxWidth * index
-        imageMargin = (diceBoxWidth - iconSize) // 2 + diceBoxWidth * index
-        imageHeight = (diceBoxHeight - iconSize) // 2
-        fifthOfHeight = diceBoxHeight // 5
     in
         if check.isDetailed then
             [ rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black"][]
-            , info textMargin fifthOfHeight <| [text <| testName check.checkType]
-            , info textMargin (2 * fifthOfHeight) <| [text <| String.append "Location: " (toString check.location)]
-            , info textMargin (3 * fifthOfHeight) <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
-            , info textMargin (4 * fifthOfHeight) <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
+            , info index 1 <| [text <| testName check.checkType]
+            , info index 2 <| [text <| String.append "Location: " (toString check.location)]
+            , info index 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+            , info index 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
             , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", generator check][]]
         else
-            [icon imageMargin imageHeight "sneak.png" <| generator check]
-
-info margin height content =
-    text' [x <| toString margin, y <| toString height, textLength <| toString (5 * diceBoxWidth / 6), lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
-
-icon xPos yPos link whenClicked =
-    image [xlinkHref link, x <| toString xPos, y <| toString yPos, height <| toString iconSize, width <| toString iconSize, whenClicked] []
+            [icon index "sneak.png" <| generator check]
 
 drawResolvedDiceCheck : (ResolvedDiceCheck -> Attribute a) -> Int -> ResolvedDiceCheck -> List (Svg a)
 drawResolvedDiceCheck generator index check =
     let
-        textMargin = diceBoxWidth // 2  + diceBoxWidth * index
-        imageMargin = (diceBoxWidth - iconSize) // 2 + diceBoxWidth * index
-        imageHeight = (diceBoxHeight - iconSize) // 2
         rectangleX = diceBoxWidth * index
         rectangleY = 0
     in
         case (check.wasSuccess, check.isDetailed) of
             (_, True) -> [ rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black"][]
-                         , info textMargin (diceBoxHeight // 5) <| [text <| testName check.checkType]
-                         , info textMargin (diceBoxHeight // 2) <| (List.map singleDice check.dices)
+                         , info index 1 <| [text <| testName check.checkType]
+                         , info index 3 <| (List.map singleDice check.dices)
                          , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", generator check][]]
-            (True, _) -> [icon imageMargin imageHeight "ok.jpg" (generator check)]
-            (False, _) -> [icon imageMargin imageHeight "notOk.png" (generator check)]
+            (True, _) -> [icon index "ok.jpg" (generator check)]
+            (False, _) -> [icon index "notOk.png" (generator check)]
+
+
+info indexX indexY content =
+    let
+        posX = diceBoxWidth // 2  + diceBoxWidth * indexX
+        posY = indexY * diceBoxHeight // 5
+        length = 5 * diceBoxWidth / 6
+    in
+        text' [x <| toString posX, y <| toString posY, textLength <| toString length, lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
+
+icon index link whenClicked =
+     let
+        iconSize = 16
+        posX = (diceBoxWidth - iconSize) // 2 + diceBoxWidth * index
+        posY = (diceBoxHeight - iconSize) // 2
+     in
+        image [xlinkHref link, x <| toString posX, y <| toString posY, height <| toString iconSize, width <| toString iconSize, whenClicked] []
 
 singleDice : (Int, WasSuccess) -> Svg a
 singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
