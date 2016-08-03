@@ -76,7 +76,7 @@ wholeBoard model =
     svg [ width "1606", height "2384" ] (List.concat[ [boardImage]
                                                     , (Graphics.positionCircle model.movement.start model.investigator True)
                                                     , (Graphics.positionCircle (Movement.pathEnd model.movement) model.investigator False)
-                                                    , (List.concatMap Graphics.obstructionSquare (AllDict.toList model.monsters))
+                                                    , (List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters))
                                                     , (movementLines model)
                                                     , (List.map (Graphics.localeCircle localeMsg) allLocation)
                                                     , (List.map (Graphics.streetRectangle streetMsg) allNeighborhood)

@@ -90,24 +90,24 @@ positionCircle : Place Neighborhood Location -> Investigator -> Bool -> List (Sv
 positionCircle p i isFilled =
     let
         m = middle p
-        xCoord = toString <| m.x + 30
-        yCoord = toString m.y
+        circleX = toString <| m.x + 30
+        circleY = toString m.y
     in
-        circle [cx <| xCoord, cy <| yCoord, r "25", strokeWidth "3", fill "green", stroke "green", strokeOpacity "1.0", fillOpacity (if isFilled then "1.0" else "0.0")][]
-      ::text' [textAnchor "middle", x <| xCoord, y <| yCoord, fill "red"][text (abbreviation i)]
+        circle [cx <| circleX, cy <| circleY, r "25", strokeWidth "3", fill "green", stroke "green", fillOpacity (if isFilled then "1.0" else "0.0")][]
+      ::text' [textAnchor "middle", x <| circleX, y <| circleY, fill "red"][text (abbreviation i)]
       ::[]
-obstructionSquare : (Place Neighborhood Location, Monster) -> List (Svg a)
-obstructionSquare (place, monster) =
+monsterSquare : (Place Neighborhood Location, Monster) -> List (Svg a)
+monsterSquare (place, monster) =
     let
         mid = middle place
-        upperLeftX = mid.x - 55
-        upperLeftY = mid.y - 25
+        rectX = mid.x - 55
+        rectY = mid.y - 25
         side = 50
-        lowerRightX = mid.x - 12
-        lowerRightY = mid.y + 23
+        textX= mid.x - 12
+        textY = mid.y + 23
     in
-        rect [x <| toString <| upperLeftX, y <| toString <| upperLeftY, width <| toString side, height <| toString side, strokeWidth "1", fill "red"][]
-      ::text' [textAnchor "middle", x <| toString <| lowerRightX, y <| toString <| lowerRightY][text (toString monster.awareness)]
+        rect [x <| toString <| rectX, y <| toString <| rectY, width <| toString side, height <| toString side, fill "red"][]
+      ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString monster.awareness)]
       ::[]
 middle place =
     case place of
@@ -120,4 +120,4 @@ movement color (start, end) =
         p1 = middle start
         p2 = middle end
     in
-        line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "5", strokeLinecap "round"] []
+        line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "3", strokeLinecap "round"] []

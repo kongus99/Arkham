@@ -96,7 +96,7 @@ drawDiceCheck index check =
     let
         rectangleX = diceBoxWidth * index
         rectangleY = 0
-        textMargin = leftDiceTextMargin + diceBoxWidth * index
+        textMargin = round (diceBoxWidth / 2)  + diceBoxWidth * index
         imageMargin = (diceBoxWidth // 2 - 8) + diceBoxWidth * index
         imageHeight = (diceBoxHeight // 2 - 8)
         fifthOfHeight = diceBoxHeight // 5
@@ -112,12 +112,12 @@ drawDiceCheck index check =
             [image [xlinkHref "sneak.png", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16", onClick <| UnresolvedDetailsToggle check][]]
 
 info margin height content =
-    text' [x <| toString margin, y <| toString height, textLength "150", lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", class "diceThrowInfo"] content
+    text' [x <| toString margin, y <| toString height, textLength <| toString (diceBoxWidth - 50), lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
 
 drawResolvedDiceCheck : Int -> ResolvedDiceCheck -> List (Html Msg)
 drawResolvedDiceCheck index check =
     let
-        margin = leftDiceTextMargin + diceBoxWidth * index
+        textMargin = round (diceBoxWidth / 2)  + diceBoxWidth * index
         imageMargin = (diceBoxWidth // 2 - 8) + diceBoxWidth * index
         imageHeight = (diceBoxHeight // 2 - 8)
         rectangleX = diceBoxWidth * index
@@ -125,8 +125,8 @@ drawResolvedDiceCheck index check =
     in
         case (check.wasSuccess, check.isDetailed) of
             (_, True) -> [ rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black"][]
-                         , info margin (diceBoxHeight // 5) <| [text <| testName check.checkType]
-                         , info margin (diceBoxHeight // 2) <| (List.map singleDice check.dices)
+                         , info textMargin (diceBoxHeight // 5) <| [text <| testName check.checkType]
+                         , info textMargin (diceBoxHeight // 2) <| (List.map singleDice check.dices)
                          , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", onClick <| ResolvedDetailsToggle check][]]
             (True, _) -> [image [xlinkHref "ok.jpg", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16", onClick <| ResolvedDetailsToggle check][]]
             (False, _) -> [image [xlinkHref "notOk.png", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16", onClick <| ResolvedDetailsToggle check][]]
