@@ -95,18 +95,18 @@ positionCircle p i isFilled =
         circleX = toString <| m.x + 30
         circleY = toString m.y
     in
-        circle [cx <| circleX, cy <| circleY, r "25", strokeWidth "3", fill "green", stroke "green", fillOpacity (if isFilled then "1.0" else "0.0")][]
+        circle [cx <| circleX, cy <| circleY, r "20", strokeWidth "3", fill "green", stroke "green", fillOpacity (if isFilled then "1.0" else "0.0")][]
       ::text' [textAnchor "middle", x <| circleX, y <| circleY, fill "red"][text (abbreviation i)]
       ::[]
 monsterSquare : (Place Neighborhood Location, Monster) -> List (Svg a)
 monsterSquare (place, monster) =
     let
         mid = middle place
-        rectX = mid.x - 55
-        rectY = mid.y - 25
-        side = 50
-        textX= rectX + 43
-        textY = rectY + 48
+        rectX = mid.x - 60
+        rectY = mid.y - 20
+        side = 40
+        textX= rectX + 33
+        textY = rectY + 38
     in
         rect [x <| toString <| rectX, y <| toString <| rectY, width <| toString side, height <| toString side, fill "red"][]
       ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString monster.awareness)]
@@ -134,7 +134,7 @@ drawDiceCheck dim generator index check =
         , info dim index 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
         , checkRectangle dim index "0.0" (generator check)]
     else
-        [icon dim index "sneak.png" <| generator check]
+        [icon check "sneak.png" generator]
 
 drawResolvedDiceCheck : Dimension -> (ResolvedDiceCheck -> Attribute a) -> Int -> ResolvedDiceCheck -> List (Svg a)
 drawResolvedDiceCheck dim generator index check =
@@ -143,8 +143,8 @@ drawResolvedDiceCheck dim generator index check =
                      , info dim index 1 <| [text <| testName check.checkType]
                      , info dim index 3 <| (List.map singleDice check.dices)
                      , checkRectangle dim index "0.0" (generator check)]
-        (True, _) -> [icon dim index "ok.jpg" (generator check)]
-        (False, _) -> [icon dim index "notOk.png" (generator check)]
+        (True, _) -> [icon check "ok.jpg" generator]
+        (False, _) -> [icon check "notOk.png" generator]
 
 checkRectangle dim index op attribute =
     let
@@ -161,13 +161,14 @@ info dim indexX indexY content =
     in
         text' [x <| toString posX, y <| toString posY, textLength <| toString length, lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
 
-icon dim index link whenClicked =
+icon check link generator =
      let
         iconSize = 16
-        posX = (dim.width - iconSize) // 2 + dim.width * index
-        posY = (dim.height - iconSize) // 2
+        middlePoint = middle check.location
+        posX = middlePoint.x - iconSize // 2
+        posY = middlePoint.y - iconSize // 2 - 25
      in
-        image [xlinkHref link, x <| toString posX, y <| toString posY, height <| toString iconSize, width <| toString iconSize, whenClicked] []
+        image [xlinkHref link, x <| toString posX, y <| toString posY, height <| toString iconSize, width <| toString iconSize, generator check] []
 
 singleDice : (Int, WasSuccess) -> Svg a
 singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
