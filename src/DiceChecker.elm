@@ -1,4 +1,4 @@
-module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, DiceCheck, ResolvedDiceCheck, CheckType(..), view, Model, initialChecks, addResolvedCheck, clearPreviousChecks, Msg, update, clearPendingChecks)
+module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, view, Model, initialChecks, addResolvedCheck, clearPreviousChecks, Msg, update, clearPendingChecks)
 
 import BoardData exposing (..)
 import String
@@ -13,16 +13,8 @@ diceBoxHeight = 200
 leftDiceTextMargin = 25
 iconSize = 16
 
-type CheckType = Evade
-
-type alias WasSuccess = Bool
-type alias IsDetailed = Bool
-
-type alias CommonCheck a = {a | location : Place Neighborhood Location, checkType : CheckType, dicesAmount : Int, isDetailed : IsDetailed}
-type alias DiceCheck = CommonCheck {requiredSuccesses : Int, successThreshold : Int}
-type alias ResolvedDiceCheck = CommonCheck {dices : List (Int, WasSuccess), wasSuccess : WasSuccess}
-
 type alias Model = { currentChecks : List DiceCheck, previousChecks : List ResolvedDiceCheck}
+
 initialChecks = { currentChecks = [], previousChecks = []}
 
 addResolvedCheck resolved model = {model | previousChecks = List.reverse (resolved :: (List.reverse model.previousChecks))}
@@ -110,11 +102,16 @@ drawDiceCheck index check =
             , info textMargin (4 * fifthOfHeight) <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
             , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", onClick <| UnresolvedDetailsToggle check][]]
         else
-            [image [xlinkHref "sneak.png", x <| toString imageMargin, y <| toString imageHeight, height <| toString iconSize, width <| toString iconSize, onClick <| UnresolvedDetailsToggle check][]]
+            [icon imageMargin imageHeight "sneak.png" [onClick <| UnresolvedDetailsToggle check]]
 
 info margin height content =
     text' [x <| toString margin, y <| toString height, textLength <| toString (5 * diceBoxWidth / 6), lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
-icon margin height content = ""
+
+icon xPos yPos link attributes =
+    let
+        commonAttributes = [xlinkHref link, x <| toString xPos, y <| toString yPos, height <| toString iconSize, width <| toString iconSize]
+    in
+        image (List.append commonAttributes attributes) []
 
 drawResolvedDiceCheck : Int -> ResolvedDiceCheck -> List (Html Msg)
 drawResolvedDiceCheck index check =
@@ -130,8 +127,8 @@ drawResolvedDiceCheck index check =
                          , info textMargin (diceBoxHeight // 5) <| [text <| testName check.checkType]
                          , info textMargin (diceBoxHeight // 2) <| (List.map singleDice check.dices)
                          , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", onClick <| ResolvedDetailsToggle check][]]
-            (True, _) -> [image [xlinkHref "ok.jpg", x <| toString imageMargin, y <| toString imageHeight, height <| toString iconSize, width <| toString iconSize, onClick <| ResolvedDetailsToggle check][]]
-            (False, _) -> [image [xlinkHref "notOk.png", x <| toString imageMargin, y <| toString imageHeight, height <| toString iconSize, width <| toString iconSize, onClick <| ResolvedDetailsToggle check][]]
+            (True, _) -> [icon imageMargin imageHeight "ok.jpg" [onClick <| ResolvedDetailsToggle check]]
+            (False, _) -> [icon imageMargin imageHeight "notOk.png" [onClick <| ResolvedDetailsToggle check]]
 
 singleDice : (Int, WasSuccess) -> Html a
 singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]

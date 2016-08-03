@@ -3,6 +3,15 @@ module BoardData exposing (..)
 import List exposing (member, map)
 import String exposing (split, slice, join)
 
+type CheckType = Evade
+
+type alias WasSuccess = Bool
+type alias IsDetailed = Bool
+
+type alias CommonCheck a = {a | location : Place Neighborhood Location, checkType : CheckType, dicesAmount : Int, isDetailed : IsDetailed}
+type alias DiceCheck = CommonCheck {requiredSuccesses : Int, successThreshold : Int}
+type alias ResolvedDiceCheck = CommonCheck {dices : List (Int, WasSuccess), wasSuccess : WasSuccess}
+
 type alias Investigator = { name : String, sneak : Int, movementPoints : Int }
 
 abbreviation i = join " " (map (slice 0 1) (split " " i.name))
