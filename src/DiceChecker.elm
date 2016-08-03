@@ -11,6 +11,7 @@ import Svg.Events exposing (onClick)
 diceBoxWidth = 300
 diceBoxHeight = 200
 leftDiceTextMargin = 25
+iconSize = 16
 
 type CheckType = Evade
 
@@ -97,8 +98,8 @@ drawDiceCheck index check =
         rectangleX = diceBoxWidth * index
         rectangleY = 0
         textMargin = round (diceBoxWidth / 2)  + diceBoxWidth * index
-        imageMargin = (diceBoxWidth // 2 - 8) + diceBoxWidth * index
-        imageHeight = (diceBoxHeight // 2 - 8)
+        imageMargin = (diceBoxWidth // 2 - round (iconSize / 2)) + diceBoxWidth * index
+        imageHeight = (diceBoxHeight // 2 - round (iconSize / 2))
         fifthOfHeight = diceBoxHeight // 5
     in
         if check.isDetailed then
@@ -109,17 +110,18 @@ drawDiceCheck index check =
             , info textMargin (4 * fifthOfHeight) <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
             , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", onClick <| UnresolvedDetailsToggle check][]]
         else
-            [image [xlinkHref "sneak.png", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16", onClick <| UnresolvedDetailsToggle check][]]
+            [image [xlinkHref "sneak.png", x <| toString imageMargin, y <| toString imageHeight, height <| toString iconSize, width <| toString iconSize, onClick <| UnresolvedDetailsToggle check][]]
 
 info margin height content =
-    text' [x <| toString margin, y <| toString height, textLength <| toString (diceBoxWidth - 50), lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
+    text' [x <| toString margin, y <| toString height, textLength <| toString (5 * diceBoxWidth / 6), lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
+icon margin height content = ""
 
 drawResolvedDiceCheck : Int -> ResolvedDiceCheck -> List (Html Msg)
 drawResolvedDiceCheck index check =
     let
         textMargin = round (diceBoxWidth / 2)  + diceBoxWidth * index
-        imageMargin = (diceBoxWidth // 2 - 8) + diceBoxWidth * index
-        imageHeight = (diceBoxHeight // 2 - 8)
+        imageMargin = (diceBoxWidth // 2 - round (iconSize / 2)) + diceBoxWidth * index
+        imageHeight = (diceBoxHeight // 2 - round (iconSize / 2))
         rectangleX = diceBoxWidth * index
         rectangleY = 0
     in
@@ -128,8 +130,8 @@ drawResolvedDiceCheck index check =
                          , info textMargin (diceBoxHeight // 5) <| [text <| testName check.checkType]
                          , info textMargin (diceBoxHeight // 2) <| (List.map singleDice check.dices)
                          , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", onClick <| ResolvedDetailsToggle check][]]
-            (True, _) -> [image [xlinkHref "ok.jpg", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16", onClick <| ResolvedDetailsToggle check][]]
-            (False, _) -> [image [xlinkHref "notOk.png", x <| toString imageMargin, y <| toString imageHeight, height "16", width "16", onClick <| ResolvedDetailsToggle check][]]
+            (True, _) -> [image [xlinkHref "ok.jpg", x <| toString imageMargin, y <| toString imageHeight, height <| toString iconSize, width <| toString iconSize, onClick <| ResolvedDetailsToggle check][]]
+            (False, _) -> [image [xlinkHref "notOk.png", x <| toString imageMargin, y <| toString imageHeight, height <| toString iconSize, width <| toString iconSize, onClick <| ResolvedDetailsToggle check][]]
 
 singleDice : (Int, WasSuccess) -> Html a
 singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
