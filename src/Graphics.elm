@@ -128,34 +128,32 @@ diceBoxHeight = 200
 
 drawDiceCheck : (DiceCheck -> Attribute a) -> Int -> DiceCheck -> List (Svg a)
 drawDiceCheck generator index check =
-    let
-        rectangleX = diceBoxWidth * index
-        rectangleY = 0
-    in
-        if check.isDetailed then
-            [ rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black"][]
-            , info index 1 <| [text <| testName check.checkType]
-            , info index 2 <| [text <| String.append "Location: " (toString check.location)]
-            , info index 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
-            , info index 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
-            , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", generator check][]]
-        else
-            [icon index "sneak.png" <| generator check]
+    if check.isDetailed then
+        [ checkRectangle index "1.0" (visibility "visible")
+        , info index 1 <| [text <| testName check.checkType]
+        , info index 2 <| [text <| String.append "Location: " (toString check.location)]
+        , info index 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+        , info index 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
+        , checkRectangle index "0.0" (generator check)]
+    else
+        [icon index "sneak.png" <| generator check]
 
 drawResolvedDiceCheck : (ResolvedDiceCheck -> Attribute a) -> Int -> ResolvedDiceCheck -> List (Svg a)
 drawResolvedDiceCheck generator index check =
+    case (check.wasSuccess, check.isDetailed) of
+        (_, True) -> [ checkRectangle index "1.0" (visibility "visible")
+                     , info index 1 <| [text <| testName check.checkType]
+                     , info index 3 <| (List.map singleDice check.dices)
+                     , checkRectangle index "0.0" (generator check)]
+        (True, _) -> [icon index "ok.jpg" (generator check)]
+        (False, _) -> [icon index "notOk.png" (generator check)]
+
+checkRectangle index op attribute =
     let
         rectangleX = diceBoxWidth * index
         rectangleY = 0
     in
-        case (check.wasSuccess, check.isDetailed) of
-            (_, True) -> [ rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black"][]
-                         , info index 1 <| [text <| testName check.checkType]
-                         , info index 3 <| (List.map singleDice check.dices)
-                         , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", generator check][]]
-            (True, _) -> [icon index "ok.jpg" (generator check)]
-            (False, _) -> [icon index "notOk.png" (generator check)]
-
+        rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black", opacity op, attribute][]
 
 info indexX indexY content =
     let
