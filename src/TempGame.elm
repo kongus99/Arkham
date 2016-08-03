@@ -37,7 +37,7 @@ update msg model =
                 (model, Cmd.none)
         DoubleClick place ->
             if Movement.pathEnd model.movement == place && Movement.isValidPath model.investigator model.movement then
-                applyMoveToModel (Movement.firstEvadeCheck ResolveDiceCheck model.movement) model
+                applyMoveToModel (Movement.finalizeMovement ResolveDiceCheck model.movement) model
             else
                 (model, Cmd.none)
         Click place ->

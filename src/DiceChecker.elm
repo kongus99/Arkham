@@ -1,4 +1,4 @@
-module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, view, Model, initialChecks, addResolvedCheck, clearPreviousChecks, Msg, update, clearPendingChecks)
+module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, view, Model, initialChecks, addResolvedCheck, Msg, update, clearPendingChecks)
 
 import BoardData exposing (..)
 import String
@@ -13,8 +13,6 @@ type alias Model = { currentChecks : List DiceCheck, previousChecks : List Resol
 initialChecks = { currentChecks = [], previousChecks = []}
 
 addResolvedCheck resolved model = {model | previousChecks = List.reverse (resolved :: (List.reverse model.previousChecks))}
-
-clearPreviousChecks model = {model | previousChecks = []}
 
 clearPendingChecks model = {model | currentChecks = []}
 

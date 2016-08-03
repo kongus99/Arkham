@@ -1,4 +1,4 @@
-module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, firstEvadeCheck, evadeCheck, updateEvade)
+module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, evadeCheck, updateEvade)
 
 import BoardData exposing (..)
 import Paths
@@ -50,7 +50,7 @@ prepareEvadeTests start path monsters investigator model =
         monsterList = AllDict.toList monsters
         monstersOnPath = if List.isEmpty path then [] else List.filter (\(p, m) -> List.member p (start :: path)) monsterList
     in
-        {model |  currentChecks = List.reverse (List.map (\(p, m) -> DiceChecker.prepareCheck p Evade (investigator.sneak - m.awareness) 1 5) monstersOnPath)}
+        {model |  currentChecks = List.reverse (List.map (\(p, m) -> DiceChecker.prepareCheck p Evade (investigator.sneak - m.awareness) 1 5) monstersOnPath), previousChecks = []}
 
 endMove : Place Neighborhood Location -> Model -> Model
 endMove place model =
@@ -65,10 +65,6 @@ evadeCheck resolved wrapper model =
             finalizeMovement wrapper newModel
         else
             (endMove resolved.location newModel, Cmd.none)
-
-firstEvadeCheck : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
-firstEvadeCheck wrapper model =
-    finalizeMovement wrapper {model | evadeTests = DiceChecker.clearPreviousChecks model.evadeTests}
 
 finalizeMovement : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
 finalizeMovement wrapper model=
