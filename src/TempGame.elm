@@ -69,17 +69,18 @@ applyMoveToModel (movement, cmd) model=
 
 view : Model -> Html Msg
 view model =
-    div[] [App.map CheckerClick <| DiceChecker.view model.movement.evadeTests, wholeBoard model]
+    div[][wholeBoard model]
 
 wholeBoard : Model -> Html Msg
 wholeBoard model =
     svg [ width "1606", height "2384" ] (List.concat[ [boardImage]
-                                                    , (Graphics.positionCircle model.movement.start model.investigator True)
-                                                    , (Graphics.positionCircle (Movement.pathEnd model.movement) model.investigator False)
-                                                    , (List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters))
-                                                    , (movementLines model)
-                                                    , (List.map (Graphics.localeCircle localeMsg) allLocation)
-                                                    , (List.map (Graphics.streetRectangle streetMsg) allNeighborhood)
+                                                    , Graphics.positionCircle model.movement.start model.investigator True
+                                                    , Graphics.positionCircle (Movement.pathEnd model.movement) model.investigator False
+                                                    , List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters)
+                                                    , movementLines model
+                                                    , List.map (Graphics.localeCircle localeMsg) allLocation
+                                                    , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
+                                                    , List.map (App.map CheckerClick) (DiceChecker.view model.movement.evadeTests)
                                                     ])
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map UnspecifiedClick offsetPosition)][]

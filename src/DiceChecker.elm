@@ -63,14 +63,12 @@ toggleDetails expectedCheck check =
     else
         check
 
-view : Model -> Svg Msg
+view : Model -> List (Svg Msg)
 view model =
     let
-        (diceChecks, resolvedDiceChecks) = (model.currentChecks, model.previousChecks)
-        totalWidth = Graphics.diceBoxWidth * (List.length diceChecks + List.length resolvedDiceChecks)
-        checksToPerform = List.indexedMap (Graphics.drawDiceCheck (\check -> onClick <| UnresolvedDetailsToggle check)) diceChecks
-        checksPerformed = List.indexedMap (Graphics.drawResolvedDiceCheck (\check -> onClick <| ResolvedDetailsToggle check)) resolvedDiceChecks
+        checksToPerform = List.indexedMap (Graphics.drawDiceCheck (\check -> onClick <| UnresolvedDetailsToggle check)) model.currentChecks
+        checksPerformed = List.indexedMap (Graphics.drawResolvedDiceCheck (\check -> onClick <| ResolvedDetailsToggle check)) model.previousChecks
     in
-        svg[width <| toString totalWidth, height <| toString Graphics.diceBoxHeight](List.concat (List.append checksToPerform checksPerformed))
+        List.concat (List.append checksToPerform checksPerformed)
 
 
