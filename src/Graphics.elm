@@ -5,6 +5,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import List exposing (..)
 import MonsterBowl exposing (Monster)
+import String
 
 type alias Point = {x : Int, y : Int}
 type alias LineConnective shape = { shape | middle : Point }
@@ -16,7 +17,7 @@ neighborhoodRectangle: Neighborhood -> Rectangle
 neighborhoodRectangle n =
     let
         rectangleMiddle r =
-            {x = floor <| r.x + (r.width / 2), y = floor <| r.y + (r.height / 2)}
+            {x = r.x + (r.width // 2), y = r.y + (r.height // 2)}
         st =
            case n of
                 Northside ->            {x = 296, y = 396,  width = 180, height = 80}
@@ -29,7 +30,7 @@ neighborhoodRectangle n =
                 Uptown ->               {x = 469, y = 1669, width = 152, height = 84}
                 Southside ->            {x = 753, y = 1673, width = 180, height = 82}
     in
-        {x = round st.x, y = round st.y,  width =  round st.width, height = round st.height, middle = rectangleMiddle st}
+        {x = st.x, y = st.y, width =  st.width, height = st.height, middle = rectangleMiddle st}
 
 
 locationCircle: Location -> Circle
@@ -121,3 +122,65 @@ movement color (start, end) =
         p2 = middle end
     in
         line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "3", strokeLinecap "round"] []
+
+diceBoxWidth = 300
+diceBoxHeight = 200
+leftDiceTextMargin = 25
+iconSize = 16
+
+drawDiceCheck : (DiceCheck -> Attribute a) -> Int -> DiceCheck -> List (Svg a)
+drawDiceCheck generator index check =
+    let
+        rectangleX = diceBoxWidth * index
+        rectangleY = 0
+        textMargin = diceBoxWidth // 2  + diceBoxWidth * index
+        imageMargin = (diceBoxWidth - iconSize) // 2 + diceBoxWidth * index
+        imageHeight = (diceBoxHeight - iconSize) // 2
+        fifthOfHeight = diceBoxHeight // 5
+    in
+        if check.isDetailed then
+            [ rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black"][]
+            , info textMargin fifthOfHeight <| [text <| testName check.checkType]
+            , info textMargin (2 * fifthOfHeight) <| [text <| String.append "Location: " (toString check.location)]
+            , info textMargin (3 * fifthOfHeight) <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+            , info textMargin (4 * fifthOfHeight) <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
+            , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", generator check][]]
+        else
+            [icon imageMargin imageHeight "sneak.png" <| generator check]
+
+info margin height content =
+    text' [x <| toString margin, y <| toString height, textLength <| toString (5 * diceBoxWidth / 6), lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
+
+icon xPos yPos link whenClicked =
+    image [xlinkHref link, x <| toString xPos, y <| toString yPos, height <| toString iconSize, width <| toString iconSize, whenClicked] []
+
+drawResolvedDiceCheck : (ResolvedDiceCheck -> Attribute a) -> Int -> ResolvedDiceCheck -> List (Svg a)
+drawResolvedDiceCheck generator index check =
+    let
+        textMargin = diceBoxWidth // 2  + diceBoxWidth * index
+        imageMargin = (diceBoxWidth - iconSize) // 2 + diceBoxWidth * index
+        imageHeight = (diceBoxHeight - iconSize) // 2
+        rectangleX = diceBoxWidth * index
+        rectangleY = 0
+    in
+        case (check.wasSuccess, check.isDetailed) of
+            (_, True) -> [ rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, fill "white", stroke "black"][]
+                         , info textMargin (diceBoxHeight // 5) <| [text <| testName check.checkType]
+                         , info textMargin (diceBoxHeight // 2) <| (List.map singleDice check.dices)
+                         , rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString diceBoxWidth, height <| toString diceBoxHeight, opacity "0.0", generator check][]]
+            (True, _) -> [icon imageMargin imageHeight "ok.jpg" (generator check)]
+            (False, _) -> [icon imageMargin imageHeight "notOk.png" (generator check)]
+
+singleDice : (Int, WasSuccess) -> Svg a
+singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
+
+diceStyle: WasSuccess -> String
+diceStyle wasSuccess =
+    if wasSuccess then
+        "green"
+    else
+        "red"
+
+testName checkType =
+    case checkType of
+        Evade -> "Monster evasion"
