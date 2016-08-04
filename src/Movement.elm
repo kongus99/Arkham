@@ -30,7 +30,7 @@ path p1 p2 excluded =
             (Locale l, Street n) -> if List.member start excluded then [] else path
             (Locale l1, Locale l2) -> if path /= [] then List.append path [p2] else []
 
-moveTo: Place Neighborhood Location -> AllDict (Place Neighborhood Location) Monster String -> Investigator -> Model -> Model
+moveTo: Place Neighborhood Location -> AllDict (Place Neighborhood Location) (List Monster) String -> Investigator -> Model -> Model
 moveTo place monsters investigator model =
     let
         currentEnd = pathEnd model
@@ -44,12 +44,12 @@ moveTo place monsters investigator model =
     in
         {model | path = newPath, evadeTests = newEvadeTests}
 
-prepareEvadeTests : List (Place Neighborhood Location) -> AllDict (Place Neighborhood Location) Monster String -> Investigator -> DiceChecker.Model ->  DiceChecker.Model
+prepareEvadeTests : List (Place Neighborhood Location) -> AllDict (Place Neighborhood Location) (List Monster) String -> Investigator -> DiceChecker.Model ->  DiceChecker.Model
 prepareEvadeTests path monsters investigator model =
     let
-        generateCheck place monster = DiceChecker.prepareCheck place Evade (investigator.sneak - monster.awareness) 1 5
+        generateCheck place monsters = List.map (\monster -> DiceChecker.prepareCheck place Evade (investigator.sneak - monster.awareness) 1 5) monsters
     in
-        {model |  currentChecks = List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path, previousChecks = []}
+        {model |  currentChecks = List.concat (List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path), previousChecks = []}
 
 endMove : Place Neighborhood Location -> Model -> Model
 endMove place model =

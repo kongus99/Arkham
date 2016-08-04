@@ -9,14 +9,14 @@ import Svg exposing (svg, image, Attribute, Svg)
 import Svg.Attributes exposing (width, height, xlinkHref, x, y)
 import Html.Events exposing (on, onDoubleClick)
 import Html.App as App
-import Json.Decode as Json exposing ((:=), bool, andThen)
+import Json.Decode as Json exposing ((:=), bool, andThen, object2)
 import List
 import List.Extra exposing (zip, break)
 import Paths
 import Movement
 import DiceChecker exposing (..)
 
-type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) Monster String, monsterBowl : Maybe MonsterBowl.Bowl }
+type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) (List Monster) String, monsterBowl : Maybe MonsterBowl.Bowl }
 initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
 
 type Msg = UnspecifiedClick Point |
@@ -54,7 +54,7 @@ update msg model =
                     in
                         case maybeMonster of
                                Nothing -> (model, Cmd.none)
-                               Just m -> ({model | monsters = AllDict.insert place m model.monsters, monsterBowl = Just bowl}, Cmd.none)
+                               Just m -> ({model | monsters = AllDict.insert place [m] model.monsters, monsterBowl = Just bowl}, Cmd.none)
         ResolveDiceCheck check results ->
             case check.checkType of
                 Evade ->
@@ -87,10 +87,15 @@ boardImage =
 
 --Msg generators
 
-onCtrlClick : Place Neighborhood Location -> Html.Attribute Msg
-onCtrlClick p =  on "click" (("ctrlKey" := bool) `andThen` msgForCtrlClick p)
+--object2 (,)
+--          ("x" := float)
+--          ("y" := float)
 
-msgForCtrlClick place ctrl =
+
+onCtrlClick : Place Neighborhood Location -> Html.Attribute Msg
+onCtrlClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForCtrlClick p)
+
+msgForCtrlClick place (ctrl, shift) =
     if ctrl then Json.succeed <| CtrlClick place else Json.succeed <| Click place
 
 localeMsg : Location -> List(Attribute Msg)

@@ -98,8 +98,8 @@ positionCircle p i isFilled =
         circle [cx <| circleX, cy <| circleY, r "20", strokeWidth "3", fill "green", stroke "green", fillOpacity (if isFilled then "1.0" else "0.0")][]
       ::text' [textAnchor "middle", x <| circleX, y <| circleY, fill "red"][text (abbreviation i)]
       ::[]
-monsterSquare : (Place Neighborhood Location, Monster) -> List (Svg a)
-monsterSquare (place, monster) =
+monsterSquare : (Place Neighborhood Location, List Monster) -> List (Svg a)
+monsterSquare (place, monsters) =
     let
         mid = middle place
         rectX = mid.x - 60
@@ -109,7 +109,7 @@ monsterSquare (place, monster) =
         textY = rectY + 38
     in
         rect [x <| toString <| rectX, y <| toString <| rectY, width <| toString side, height <| toString side, fill "red"][]
-      ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString monster.awareness)]
+      ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString <| List.length monsters)]
       ::[]
 middle place =
     case place of
