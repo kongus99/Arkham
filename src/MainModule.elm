@@ -16,12 +16,13 @@ import Paths
 import Movement
 import DiceChecker exposing (..)
 
+type alias ClickData = {shiftKey : Bool, ctrlKey : Bool, place : Place Neighborhood Location}
+
 type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) (List Monster) String, monsterBowl : Maybe MonsterBowl.Bowl }
 initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
 
 type Msg = UnspecifiedClick Point |
-           Click (Place Neighborhood Location) |
-           CtrlClick (Place Neighborhood Location) |
+           Click ClickData |
            DoubleClick (Place Neighborhood Location) |
            ResolveDiceCheck DiceCheck (List Int) |
            CheckerClick DiceChecker.Msg
@@ -40,21 +41,26 @@ update msg model =
                 applyMoveToModel (Movement.finalizeMovement ResolveDiceCheck model.movement) model
             else
                 (model, Cmd.none)
-        Click place ->
-            let
-                movement = Movement.moveTo place model.monsters model.investigator model.movement
-            in
-                ({model | movement = movement}, Cmd.none)
-        CtrlClick place ->
-                if AllDict.member place model.monsters then
-                    ({model | monsters = AllDict.remove place model.monsters}, Cmd.none)
-                else
+        Click data ->
+            case (data.shiftKey, data.ctrlKey) of
+                (False, False) ->
+                    ({model | movement = Movement.moveTo data.place model.monsters model.investigator model.movement}, Cmd.none)
+                (False, True) ->
                     let
-                        (maybeMonster, bowl) = MonsterBowl.drawMonster model.monsterBowl
+                       (maybeMonster, bowl) = MonsterBowl.drawMonster model.monsterBowl
+                       monsterList = Maybe.withDefault [] (AllDict.get data.place model.monsters)
+                   in
+                       case maybeMonster of
+                              Nothing -> (model, Cmd.none)
+                              Just m -> ({model | monsters = AllDict.insert data.place (m :: monsterList) model.monsters, monsterBowl = Just bowl}, Cmd.none)
+                (_, _) ->
+                    let
+                        monsterList = Maybe.withDefault [] (AllDict.get data.place model.monsters)
                     in
-                        case maybeMonster of
-                               Nothing -> (model, Cmd.none)
-                               Just m -> ({model | monsters = AllDict.insert place [m] model.monsters, monsterBowl = Just bowl}, Cmd.none)
+                        case monsterList of
+                            [] ->  ({model | monsters = AllDict.remove data.place model.monsters}, Cmd.none)
+                            x :: [] -> ({model | monsters = AllDict.remove data.place model.monsters}, Cmd.none)
+                            x :: xs -> ({model | monsters = AllDict.insert data.place xs model.monsters}, Cmd.none)
         ResolveDiceCheck check results ->
             case check.checkType of
                 Evade ->
@@ -86,17 +92,12 @@ boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map UnspecifiedClick offsetPosition)][]
 
 --Msg generators
-
---object2 (,)
---          ("x" := float)
---          ("y" := float)
-
-
 onCtrlClick : Place Neighborhood Location -> Html.Attribute Msg
 onCtrlClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForCtrlClick p)
 
 msgForCtrlClick place (ctrl, shift) =
-    if ctrl then Json.succeed <| CtrlClick place else Json.succeed <| Click place
+    Json.succeed <| Click <| ClickData shift ctrl place
+--    if ctrl then Json.succeed <| CtrlClick place else Json.succeed <| Click place
 
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
