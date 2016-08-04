@@ -49,7 +49,7 @@ prepareEvadeTests path monsters investigator model =
     let
         generateCheck place monsters = List.map (\monster -> DiceChecker.prepareCheck place Evade (investigator.sneak - monster.awareness) 1 5) monsters
     in
-        {model |  currentChecks = List.concat (List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path), previousChecks = []}
+        DiceChecker.generateNewChecks (List.concat (List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path)) model
 
 endMove : Place Neighborhood Location -> Model -> Model
 endMove place model =
@@ -71,7 +71,7 @@ finalizeMovement wrapper model=
         (tests, cmd) = runCheck wrapper model.evadeTests
         newModel = {model | evadeTests = tests}
     in
-        if List.isEmpty model.evadeTests.currentChecks then
+        if DiceChecker.hasPendingChecks model.evadeTests then
             (endMove (pathEnd model) newModel, Cmd.none)
         else
             (newModel, cmd)
