@@ -3,12 +3,13 @@ module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, view, Model, 
 import BoardData exposing (..)
 import String
 import Random
+import List.Extra as Lists
 import Svg exposing (Svg,svg)
 import Svg.Attributes exposing (height, width)
 import Svg.Events exposing (onClick)
 import Graphics
 
-type alias Model = { currentChecks : List DiceCheck, previousChecks : List ResolvedDiceCheck}
+type alias Model = { currentChecks : List UnresolvedCheck, previousChecks : List ResolvedCheck}
 
 initialChecks = { currentChecks = [], previousChecks = []}
 
@@ -21,38 +22,53 @@ generateNewChecks checks model = {model | currentChecks = checks, previousChecks
 hasPendingChecks model = List.isEmpty model.currentChecks
 
 prepareCheck location checkType dicesAmount requiredSuccesses successThreshold =
-    {location = location,
-     checkType = checkType,
-     dicesAmount = dicesAmount,
-     requiredSuccesses = requiredSuccesses,
-     successThreshold = successThreshold,
-     isDetailed = False}
+    { location = location
+    , checkType = checkType
+    , isDetailed = False
+    , throws = [Throw dicesAmount requiredSuccesses]
+    , successThreshold = successThreshold
+    }
 
-runCheck : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
+runCheck : (UnresolvedCheck -> List Int -> a) -> Model -> (Model, Cmd a)
 runCheck wrapper model =
     case model.currentChecks of
-        [] -> ({model | currentChecks = []}, Cmd.none)
-        t :: ts -> ({model | currentChecks = ts}, generateCheck t (wrapper t))
+        [] -> (model, Cmd.none)
+        c :: cs -> ({model | currentChecks = cs}, generateCheck c (wrapper c))
 
-generateCheck : DiceCheck -> (List Int -> a) -> Cmd a
+generateCheck : UnresolvedCheck -> (List Int -> a) -> Cmd a
 generateCheck check wrapper =
-    Random.generate wrapper <| Random.list check.dicesAmount (Random.int 1 6)
+    let
+        total = List.sum (List.map (\t -> t.dices) check.throws)
+    in
+        Random.generate wrapper <| Random.list total (Random.int 1 6)
 
-resolveCheck : DiceCheck -> List Int -> ResolvedDiceCheck
+resolveCheck : UnresolvedCheck -> List Int -> ResolvedCheck
 resolveCheck check results =
     let
-        rollSuccessful res = res >= check.successThreshold
-        dices = List.map (\r -> (r, rollSuccessful r)) results
-        wasSuccess = (List.length (List.filter rollSuccessful results)) >= check.requiredSuccesses
+        splitResults = splitList results (List.map (\t -> t.dices) check.throws)
+        throwResults = List.map (resolveSingle check.successThreshold) (Lists.zip check.throws splitResults)
+        wasSuccess = Lists.find (\t -> t.wasSuccess) throwResults /= Nothing
     in
         {location = check.location,
          checkType = check.checkType,
-         dicesAmount = check.dicesAmount,
-         dices = dices,
+         throws = throwResults,
          wasSuccess = wasSuccess,
          isDetailed = check.isDetailed}
 
-type Msg = UnresolvedDetailsToggle DiceCheck | ResolvedDetailsToggle ResolvedDiceCheck
+splitList list amounts =
+    case amounts of
+        [] -> []
+        x :: xs -> (List.take x list) :: splitList (List.drop x list) xs
+
+resolveSingle successThreshold (throw, results) =
+    let
+        rollSuccessful res = res >= successThreshold
+        dices = List.map (\r -> (r, rollSuccessful r)) results
+        wasSuccess = (List.length (List.filter rollSuccessful results)) >= throw.numOfSuccesses
+    in
+        ThrowResult dices wasSuccess
+
+type Msg = UnresolvedDetailsToggle UnresolvedCheck | ResolvedDetailsToggle ResolvedCheck
 
 update : Msg -> Model -> Model
 update msg model =
@@ -60,7 +76,7 @@ update msg model =
         UnresolvedDetailsToggle c -> {model | currentChecks = List.map (toggleDetails c) model.currentChecks}
         ResolvedDetailsToggle c -> {model | previousChecks = List.map (toggleDetails c) model.previousChecks}
 
-toggleDetails : CommonCheck a -> CommonCheck a -> CommonCheck a
+toggleDetails : LocationCheck a -> LocationCheck a -> LocationCheck a
 toggleDetails expectedCheck check =
     if expectedCheck == check then
         {check | isDetailed = not check.isDetailed}

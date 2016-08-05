@@ -8,9 +8,12 @@ type CheckType = Evade
 type alias WasSuccess = Bool
 type alias IsDetailed = Bool
 
-type alias CommonCheck a = {a | location : Place Neighborhood Location, checkType : CheckType, dicesAmount : Int, isDetailed : IsDetailed}
-type alias DiceCheck = CommonCheck {requiredSuccesses : Int, successThreshold : Int}
-type alias ResolvedDiceCheck = CommonCheck {dices : List (Int, WasSuccess), wasSuccess : WasSuccess}
+type alias Throw = {dices : Int, numOfSuccesses : Int}
+type alias ThrowResult = {dices : List (Int, WasSuccess), wasSuccess : WasSuccess}
+
+type alias LocationCheck a = {a | location : Place Neighborhood Location, checkType : CheckType, isDetailed : IsDetailed}
+type alias UnresolvedCheck = LocationCheck {throws : List Throw, successThreshold : Int}
+type alias ResolvedCheck = LocationCheck {throws : List ThrowResult, wasSuccess : WasSuccess}
 
 type alias Investigator = { name : String, sneak : Int, movementPoints : Int }
 

@@ -126,24 +126,24 @@ movement color (start, end) =
 
 checkDim = { width = 225, height = 150 }
 
-drawDiceCheck : (DiceCheck -> Attribute a) -> Int -> DiceCheck -> List (Svg a)
+drawDiceCheck : (UnresolvedCheck -> Attribute a) -> Int -> UnresolvedCheck -> List (Svg a)
 drawDiceCheck generator index check =
     if check.isDetailed then
         [ checkRectangle check "1.0" (\c -> visibility "visible")
         , info check 1 <| [text <| testName check.checkType]
         , info check 2 <| [text <| String.append "Location: " (toString check.location)]
-        , info check 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
-        , info check 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
+--        , info check 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+--        , info check 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
         , checkRectangle check "0.0" generator]
     else
         [icon check "sneak.png" generator]
 
-drawResolvedDiceCheck : (ResolvedDiceCheck -> Attribute a) -> Int -> ResolvedDiceCheck -> List (Svg a)
+drawResolvedDiceCheck : (ResolvedCheck -> Attribute a) -> Int -> ResolvedCheck -> List (Svg a)
 drawResolvedDiceCheck generator index check =
     case (check.wasSuccess, check.isDetailed) of
         (_, True) -> [ checkRectangle check "1.0" (\c -> visibility "visible")
                      , info check 1 <| [text <| testName check.checkType]
-                     , info check 3 <| (List.map singleDice check.dices)
+--                     , info check 3 <| (List.map singleDice check.dices)
                      , checkRectangle check "0.0" generator]
         (True, _) -> [icon check "ok.jpg" generator]
         (False, _) -> [icon check "notOk.png" generator]
