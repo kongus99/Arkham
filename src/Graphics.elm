@@ -150,15 +150,22 @@ topOffsets number =
         rowTopMargins = List.map topMargin indexes
     in
         List.concat <| List.map (List.repeat maxColumns) rowTopMargins
+
+createRectangle width height leftMargin topMargin (x,y) =
+    let
+        rx = x + leftMargin
+        ry = y + topMargin
+        middle =  {x = rx + width // 2, y = ry + height // 2}
+    in
+        {x = rx, y = ry, width = width , height = height, middle = middle}
+
 calculateCheckerPositions number =
     let
         topLeftPoints = Lists.zip (leftOffsets number) (topOffsets number)
         leftMargin = (checkDimWithMargins.width - checkDim.width) // 2
         topMargin = (checkDimWithMargins.height - checkDim.height) // 2
     in
-        List.map (\(x,y) -> {x = x + leftMargin, y = y + topMargin, width = checkDim.width , height = checkDim.height}) topLeftPoints
-
-
+        List.map (createRectangle checkDim.width checkDim.height leftMargin topMargin) topLeftPoints
 
 drawDiceCheck : (UnresolvedCheck -> Attribute a) -> UnresolvedCheck -> Svg a
 drawDiceCheck generator check = icon check "sneak.png" generator
@@ -170,31 +177,28 @@ drawSelectedDiceCheck : (UnresolvedCheck -> Attribute a) -> UnresolvedCheck -> L
 drawSelectedDiceCheck generator check =
         let
             rectangles = calculateCheckerPositions <| List.length check.throws
+            throwRectangles = Lists.zip check.throws rectangles
         in
             List.concat [
-                [drawBoardOverlay check generator],
-                List.map (checkRectangle check "1.0" generator) rectangles
+                [drawBoardOverlay check generator]
+                , List.map (checkRectangle check "1.0" generator) rectangles
+                , List.map (info check 1 [text <| testName check.checkType]) rectangles
+                , List.map (info check 2 [text <| String.append "Location: " (toString check.location)]) rectangles
+                , List.map (\(t, r) -> info check 3 [text <| String.append "Dices available: " (toString t.dices)] r) throwRectangles
+                , List.map (\(t, r) -> info check 4 [text <| String.append "Successes required: " (toString t.numOfSuccesses)] r) throwRectangles
                 ]
---          [ checkRectangle check "1.0" (\c -> visibility "visible")
---          , info check 1 <| [text <| testName check.checkType]
---          , info check 2 <| [text <| String.append "Location: " (toString check.location)]
---          , info check 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
---          , info check 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
---          , checkRectangle check "0.0" generator]
-
---        checkRectangle check "1.0" (\c -> visibility "visible")
---                     , info check 1 <| [text <| testName check.checkType]
---                     , info check 3 <| (List.map singleDice check.dices)
---                     , checkRectangle check "0.0" generator
 
 drawSelectedResolvedDiceCheck : (ResolvedCheck -> Attribute a) -> ResolvedCheck -> List (Svg a)
 drawSelectedResolvedDiceCheck generator check =
         let
             rectangles = calculateCheckerPositions <| List.length check.throws
+            throwRectangles = Lists.zip check.throws rectangles
         in
             List.concat [
-                [drawBoardOverlay check generator],
-                List.map (checkRectangle check "1.0" generator) rectangles
+                [drawBoardOverlay check generator]
+                , List.map (checkRectangle check "1.0" generator) rectangles
+                , List.map (info check 1 [text <| testName check.checkType]) rectangles
+                , List.map (\(t, r) -> info check 3 (List.map singleDice t.dices) r) throwRectangles
                 ]
 
 drawBoardOverlay check generator =
@@ -203,9 +207,9 @@ drawBoardOverlay check generator =
 checkRectangle check op generator r =
         rect [x <| toString r.x, y <| toString r.y, width <| toString r.width, height <| toString r.height, fill "white", stroke "black", opacity op, generator check][]
 
-info check indexY content =
+info check indexY content rectangle =
     let
-        middlePoint = middle check.location
+        middlePoint = rectangle.middle
         posX = middlePoint.x
         posY = middlePoint.y - checkDim.height // 2 + indexY * checkDim.height // 5
         length = 5 * checkDim.width // 6
