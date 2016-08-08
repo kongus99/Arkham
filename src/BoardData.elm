@@ -6,12 +6,11 @@ import String exposing (split, slice, join)
 type CheckType = Evade
 
 type alias WasSuccess = Bool
-type alias IsDetailed = Bool
 
 type alias Throw = {dices : Int, numOfSuccesses : Int}
 type alias ThrowResult = {dices : List (Int, WasSuccess), wasSuccess : WasSuccess}
 
-type alias LocationCheck a = {a | location : Place Neighborhood Location, checkType : CheckType, isDetailed : IsDetailed}
+type alias LocationCheck a = {a | location : Place Neighborhood Location, checkType : CheckType}
 type alias UnresolvedCheck = LocationCheck {throws : List Throw, successThreshold : Int}
 type alias ResolvedCheck = LocationCheck {throws : List ThrowResult, wasSuccess : WasSuccess}
 

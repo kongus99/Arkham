@@ -9,9 +9,11 @@ import Svg.Attributes exposing (height, width)
 import Svg.Events exposing (onClick)
 import Graphics
 
-type alias Model = { currentChecks : List UnresolvedCheck, previousChecks : List ResolvedCheck}
+type alias IsUnresolved = Bool
 
-initialChecks = { currentChecks = [], previousChecks = []}
+type alias Model = { currentChecks : List UnresolvedCheck, selected : Maybe (IsUnresolved, Int), previousChecks : List ResolvedCheck}
+
+initialChecks = { currentChecks = [], selected = Nothing, previousChecks = []}
 
 addResolvedCheck resolved model = {model | previousChecks = List.reverse (resolved :: (List.reverse model.previousChecks))}
 
@@ -21,11 +23,10 @@ generateNewChecks checks model = {model | currentChecks = checks, previousChecks
 
 hasPendingChecks model = List.isEmpty model.currentChecks
 
-prepareCheck location checkType dicesAmount requiredSuccesses successThreshold =
+prepareCheck location checkType throws successThreshold =
     { location = location
     , checkType = checkType
-    , isDetailed = False
-    , throws = [Throw dicesAmount requiredSuccesses]
+    , throws = throws
     , successThreshold = successThreshold
     }
 
@@ -52,8 +53,7 @@ resolveCheck check results =
         {location = check.location,
          checkType = check.checkType,
          throws = throwResults,
-         wasSuccess = wasSuccess,
-         isDetailed = check.isDetailed}
+         wasSuccess = wasSuccess}
 
 splitList list amounts =
     case amounts of
@@ -68,27 +68,37 @@ resolveSingle successThreshold (throw, results) =
     in
         ThrowResult dices wasSuccess
 
-type Msg = UnresolvedDetailsToggle UnresolvedCheck | ResolvedDetailsToggle ResolvedCheck
+type Msg = UnresolvedDetails UnresolvedCheck | ResolvedDetails ResolvedCheck | HideDetails
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        UnresolvedDetailsToggle c -> {model | currentChecks = List.map (toggleDetails c) model.currentChecks}
-        ResolvedDetailsToggle c -> {model | previousChecks = List.map (toggleDetails c) model.previousChecks}
+        UnresolvedDetails c -> {model | selected = findCheck c True model.currentChecks}
+        ResolvedDetails c -> {model | selected = findCheck c False model.previousChecks}
+        HideDetails -> {model | selected = Nothing }
 
-toggleDetails : LocationCheck a -> LocationCheck a -> LocationCheck a
-toggleDetails expectedCheck check =
-    if expectedCheck == check then
-        {check | isDetailed = not check.isDetailed}
-    else
-        check
+findCheck : LocationCheck a -> IsUnresolved -> List (LocationCheck a) -> Maybe (IsUnresolved, Int)
+findCheck check isUnresolved checks =
+     Maybe.map (\i -> (isUnresolved, i))  <| Lists.elemIndex check checks
+
+getSelectedUnresolved model =
+    case model.selected of
+        Just (True, i) -> Lists.getAt i model.currentChecks
+        _ -> Nothing
+
+getSelectedResolved model =
+    case model.selected of
+        Just (False, i) -> Lists.getAt i model.previousChecks
+        _ -> Nothing
 
 view : Model -> List (Svg Msg)
 view model =
     let
-        checksToPerform = List.indexedMap (Graphics.drawDiceCheck (\check -> onClick <| UnresolvedDetailsToggle check)) model.currentChecks
-        checksPerformed = List.indexedMap (Graphics.drawResolvedDiceCheck (\check -> onClick <| ResolvedDetailsToggle check)) model.previousChecks
+        checksToPerform = List.map (Graphics.drawDiceCheck (\check -> onClick <| UnresolvedDetails check)) model.currentChecks
+        checksPerformed = List.map (Graphics.drawResolvedDiceCheck (\check -> onClick <| ResolvedDetails check)) model.previousChecks
+        selectedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedDiceCheck (\c -> onClick <| HideDetails)) (getSelectedUnresolved model)
+        selectedResolvedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedResolvedDiceCheck (\c -> onClick <| HideDetails)) (getSelectedResolved model)
     in
-        List.concat (List.append checksToPerform checksPerformed)
+        List.concat [checksToPerform, checksPerformed, selectedDiceCheck, selectedResolvedDiceCheck]
 
 

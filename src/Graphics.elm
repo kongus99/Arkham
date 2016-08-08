@@ -3,7 +3,8 @@ module Graphics exposing (..)
 import BoardData exposing(..)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
-import List exposing (..)
+import List
+import List.Extra as Lists
 import MonsterBowl exposing (Monster)
 import String
 
@@ -77,7 +78,7 @@ localeCircle generator l =
         commonAttributes = [cx <| toString c.cx, cy <| toString c.cy, r <| toString c.radius, strokeWidth "1", strokeOpacity "0.0", fillOpacity "0.0"]
         generatedAttributes = generator l
     in
-        circle (append commonAttributes generatedAttributes) []
+        circle (List.append commonAttributes generatedAttributes) []
 
 streetRectangle : (Neighborhood -> List(Attribute a)) -> Neighborhood -> Svg a
 streetRectangle generator n =
@@ -86,7 +87,7 @@ streetRectangle generator n =
         commonAttributes = [x <| toString r.x, y <| toString r.y, width <| toString r.width, height <| toString r.height, strokeOpacity "0.0", fillOpacity "0.0"]
         generatedAttributes = generator n
     in
-        rect (append commonAttributes generatedAttributes) []
+        rect (List.append commonAttributes generatedAttributes) []
 
 positionCircle : Place Neighborhood Location -> Investigator -> Bool -> List (Svg a)
 positionCircle p i isFilled =
@@ -124,37 +125,83 @@ movement color (start, end) =
     in
         line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "3", strokeLinecap "round"] []
 
-checkDim = { width = 225, height = 150 }
+boardDim = Dimension 1606 2384
+checkDim = Dimension 150 225
+checkDimWithMargins = Dimension (checkDim.width * 4 // 3) (checkDim.height * 4 // 3)
+maxColumns = boardDim.width // checkDimWithMargins.width
 
-drawDiceCheck : (UnresolvedCheck -> Attribute a) -> Int -> UnresolvedCheck -> List (Svg a)
-drawDiceCheck generator index check =
-    if check.isDetailed then
-        [ checkRectangle check "1.0" (\c -> visibility "visible")
-        , info check 1 <| [text <| testName check.checkType]
-        , info check 2 <| [text <| String.append "Location: " (toString check.location)]
---        , info check 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
---        , info check 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
-        , checkRectangle check "0.0" generator]
-    else
-        [icon check "sneak.png" generator]
-
-drawResolvedDiceCheck : (ResolvedCheck -> Attribute a) -> Int -> ResolvedCheck -> List (Svg a)
-drawResolvedDiceCheck generator index check =
-    case (check.wasSuccess, check.isDetailed) of
-        (_, True) -> [ checkRectangle check "1.0" (\c -> visibility "visible")
-                     , info check 1 <| [text <| testName check.checkType]
---                     , info check 3 <| (List.map singleDice check.dices)
-                     , checkRectangle check "0.0" generator]
-        (True, _) -> [icon check "ok.jpg" generator]
-        (False, _) -> [icon check "notOk.png" generator]
-
-checkRectangle check op generator =
+leftOffsets number =
     let
-        middlePoint = middle check.location
-        rectangleX = middlePoint.x - checkDim.width // 2
-        rectangleY = middlePoint.y - checkDim.height // 2
+        remainder = number % maxColumns
+        leftMargin (i, isFull) =
+            let lm = if isFull then (boardDim.width % checkDimWithMargins.width) // 2 else (boardDim.width - remainder * checkDimWithMargins.width) // 2
+            in lm + (i  * checkDimWithMargins.width)
+        indexes = List.scanl (\x -> \y -> (x + y) % maxColumns) 0 (List.repeat number 1)
+        isFullRow = List.append (List.repeat (number - remainder) True) (List.repeat remainder False)
     in
-        rect [x <| toString rectangleX, y <| toString rectangleY, width <| toString checkDim.width, height <| toString checkDim.height, fill "white", stroke "black", opacity op, generator check][]
+       List.map leftMargin <| (Lists.zip indexes isFullRow)
+
+topOffsets number =
+    let
+        numOfRows = ceiling (toFloat number / toFloat maxColumns)
+        topMargin i = let tm = (boardDim.height - numOfRows * checkDimWithMargins.height) // 2
+                      in tm + (i  * checkDimWithMargins.height)
+        indexes = List.scanl (+) 0 (List.repeat (numOfRows - 1) 1)
+        rowTopMargins = List.map topMargin indexes
+    in
+        List.concat <| List.map (List.repeat maxColumns) rowTopMargins
+calculateCheckerPositions number =
+    let
+        topLeftPoints = Lists.zip (leftOffsets number) (topOffsets number)
+        leftMargin = (checkDimWithMargins.width - checkDim.width) // 2
+        topMargin = (checkDimWithMargins.height - checkDim.height) // 2
+    in
+        List.map (\(x,y) -> {x = x + leftMargin, y = y + topMargin, width = checkDim.width , height = checkDim.height}) topLeftPoints
+
+
+
+drawDiceCheck : (UnresolvedCheck -> Attribute a) -> UnresolvedCheck -> Svg a
+drawDiceCheck generator check = icon check "sneak.png" generator
+
+drawResolvedDiceCheck : (ResolvedCheck -> Attribute a) -> ResolvedCheck -> Svg a
+drawResolvedDiceCheck generator check = if check.wasSuccess then icon check "ok.jpg" generator else icon check "notOk.png" generator
+
+drawSelectedDiceCheck : (UnresolvedCheck -> Attribute a) -> UnresolvedCheck -> List (Svg a)
+drawSelectedDiceCheck generator check =
+        let
+            rectangles = calculateCheckerPositions <| List.length check.throws
+        in
+            List.concat [
+                [drawBoardOverlay check generator],
+                List.map (checkRectangle check "1.0" generator) rectangles
+                ]
+--          [ checkRectangle check "1.0" (\c -> visibility "visible")
+--          , info check 1 <| [text <| testName check.checkType]
+--          , info check 2 <| [text <| String.append "Location: " (toString check.location)]
+--          , info check 3 <| [text <| String.append "Dices available: " (toString check.dicesAmount)]
+--          , info check 4 <| [text <| String.append "Successes required: " (toString check.requiredSuccesses)]
+--          , checkRectangle check "0.0" generator]
+
+--        checkRectangle check "1.0" (\c -> visibility "visible")
+--                     , info check 1 <| [text <| testName check.checkType]
+--                     , info check 3 <| (List.map singleDice check.dices)
+--                     , checkRectangle check "0.0" generator
+
+drawSelectedResolvedDiceCheck : (ResolvedCheck -> Attribute a) -> ResolvedCheck -> List (Svg a)
+drawSelectedResolvedDiceCheck generator check =
+        let
+            rectangles = calculateCheckerPositions <| List.length check.throws
+        in
+            List.concat [
+                [drawBoardOverlay check generator],
+                List.map (checkRectangle check "1.0" generator) rectangles
+                ]
+
+drawBoardOverlay check generator =
+    checkRectangle check "0.2" generator {x = 0, y = 0 , width = boardDim.width, height = boardDim.height}
+
+checkRectangle check op generator r =
+        rect [x <| toString r.x, y <| toString r.y, width <| toString r.width, height <| toString r.height, fill "white", stroke "black", opacity op, generator check][]
 
 info check indexY content =
     let

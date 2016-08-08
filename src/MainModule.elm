@@ -1,7 +1,7 @@
 module MainModule exposing (..)
 
 import BoardData exposing (..)
-import Graphics exposing (Point)
+import Graphics exposing (Point, boardDim)
 import MonsterBowl exposing (Monster)
 import AllDict exposing (AllDict)
 import Html exposing (Html, span, button, div)
@@ -24,7 +24,7 @@ initialModel = { movement = Movement.initialModel, investigator = firstInvestiga
 type Msg = UnspecifiedClick Point |
            Click ClickData |
            DoubleClick (Place Neighborhood Location) |
-           ResolveDiceCheck DiceCheck (List Int) |
+           ResolveDiceCheck UnresolvedCheck (List Int) |
            CheckerClick DiceChecker.Msg
 
 
@@ -79,7 +79,7 @@ view model =
 
 wholeBoard : Model -> Html Msg
 wholeBoard model =
-    svg [ width "1606", height "2384" ] (List.concat[ [boardImage]
+    svg [ width <| toString boardDim.width , height <| toString boardDim.height] (List.concat[ [boardImage]
                                                     , Graphics.positionCircle model.movement.start model.investigator True
                                                     , Graphics.positionCircle (Movement.pathEnd model.movement) model.investigator False
                                                     , List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters)
@@ -92,20 +92,20 @@ boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map UnspecifiedClick offsetPosition)][]
 
 --Msg generators
-onCtrlClick : Place Neighborhood Location -> Html.Attribute Msg
-onCtrlClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForCtrlClick p)
+onGeneralClick : Place Neighborhood Location -> Html.Attribute Msg
+onGeneralClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForGeneralClick p)
 
-msgForCtrlClick place (ctrl, shift) =
+msgForGeneralClick place (ctrl, shift) =
     Json.succeed <| Click <| ClickData shift ctrl place
 --    if ctrl then Json.succeed <| CtrlClick place else Json.succeed <| Click place
 
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
-    [onDoubleClick <| DoubleClick <| Locale l, onCtrlClick <| Locale l]
+    [onDoubleClick <| DoubleClick <| Locale l, onGeneralClick <| Locale l]
 
 streetMsg : Neighborhood -> List(Attribute Msg)
 streetMsg n =
-    [onDoubleClick <| DoubleClick <| Street n, onCtrlClick <| Street n]
+    [onDoubleClick <| DoubleClick <| Street n, onGeneralClick <| Street n]
 
 -- Movement lines
 movementLines : Model -> List (Svg c)

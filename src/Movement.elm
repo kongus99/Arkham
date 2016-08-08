@@ -47,15 +47,15 @@ moveTo place monsters investigator model =
 prepareEvadeTests : List (Place Neighborhood Location) -> AllDict (Place Neighborhood Location) (List Monster) String -> Investigator -> DiceChecker.Model ->  DiceChecker.Model
 prepareEvadeTests path monsters investigator model =
     let
-        generateCheck place monsters = List.map (\monster -> DiceChecker.prepareCheck place Evade (investigator.sneak - monster.awareness) 1 5) monsters
+        generateCheck place ms = DiceChecker.prepareCheck place Evade (List.map (\m -> Throw (investigator.sneak - m.awareness) 1) ms) 5
     in
-        DiceChecker.generateNewChecks (List.concat (List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path)) model
+        DiceChecker.generateNewChecks (List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path) model
 
 endMove : Place Neighborhood Location -> Model -> Model
 endMove place model =
     {model | path = [], start = place, evadeTests = DiceChecker.clearPendingChecks model.evadeTests}
 
-evadeCheck : ResolvedDiceCheck -> (DiceCheck -> List Int -> a) -> Model -> ( Model, Cmd a )
+evadeCheck : ResolvedCheck -> (UnresolvedCheck -> List Int -> a) -> Model -> ( Model, Cmd a )
 evadeCheck resolved wrapper model =
     let
         newModel = {model | evadeTests = addResolvedCheck resolved model.evadeTests }
@@ -65,7 +65,7 @@ evadeCheck resolved wrapper model =
         else
             (endMove resolved.location newModel, Cmd.none)
 
-finalizeMovement : (DiceCheck -> List Int -> a) -> Model -> (Model, Cmd a)
+finalizeMovement : (UnresolvedCheck -> List Int -> a) -> Model -> (Model, Cmd a)
 finalizeMovement wrapper model=
     let
         (tests, cmd) = runCheck wrapper model.evadeTests
