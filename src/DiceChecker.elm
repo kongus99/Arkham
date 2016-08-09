@@ -91,24 +91,17 @@ getSelectedResolved model =
         Just (False, i) -> Lists.getAt i model.previousChecks
         _ -> Nothing
 
-dicesAvailable throw =
-    [text <| String.append "Dices available: " (toString throw.dices)]
+dicesAvailable throw = [text <| String.append "Dices available: " (toString throw.dices)]
 
-successesRequired throw =
-    [text <| String.append "Successes required: " (toString throw.numOfSuccesses)]
+successesRequired throw = [text <| String.append "Successes required: " (toString throw.numOfSuccesses)]
 
-throwResults throw =
-    (List.map singleDice throw.dices)
+throwResults throw = (List.map singleDice throw.dices)
 
-singleDice : (Int, WasSuccess) -> Svg a
-singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
-
-diceStyle: WasSuccess -> String
-diceStyle wasSuccess =
-    if wasSuccess then
-        "green"
-    else
-        "red"
+singleDice (faceValue, wasSuccess) =
+    let
+        diceStyle wasSuccess = if wasSuccess then "green" else "red"
+    in
+        tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
 
 view : Model -> List (Svg Msg)
 view model =
