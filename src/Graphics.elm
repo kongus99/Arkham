@@ -127,8 +127,6 @@ movement color (start, end) =
 
 boardDim = Dimension 1606 2384
 checkDim = Dimension 150 225
-checkDimWithMargins = Dimension (checkDim.width * 4 // 3) (checkDim.height * 4 // 3)
-maxColumns = boardDim.width // checkDimWithMargins.width
 
 leftOffsets number maxWidth tileWidth maxInRow =
     let
@@ -160,6 +158,8 @@ createRectangle width height leftMargin topMargin (x,y) =
 
 calculateCheckerPositions number =
     let
+        checkDimWithMargins = Dimension (checkDim.width * 4 // 3) (checkDim.height * 4 // 3)
+        maxColumns = boardDim.width // checkDimWithMargins.width
         topLeftPoints = Lists.zip (leftOffsets number boardDim.width checkDimWithMargins.width maxColumns) (topOffsets number boardDim.height checkDimWithMargins.height maxColumns)
         leftMargin = (checkDimWithMargins.width - checkDim.width) // 2
         topMargin = (checkDimWithMargins.height - checkDim.height) // 2
