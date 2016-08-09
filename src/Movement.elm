@@ -7,13 +7,13 @@ import List.Extra exposing (break)
 import DiceChecker exposing (..)
 import MonsterBowl exposing (Monster)
 
-type alias Model = { start : Place Neighborhood Location, path : List (Place Neighborhood Location), evadeTests : DiceChecker.Model}
+type alias Model = { start : Place, path : List Place, evadeTests : DiceChecker.Model}
 initialModel = { start = Locale Train_Station, path = [], evadeTests = DiceChecker.initialChecks }
 
 updateEvade : DiceChecker.Msg -> Model -> Model
 updateEvade msg model = {model | evadeTests = DiceChecker.update msg model.evadeTests}
 
-path : Place Neighborhood Location -> Place Neighborhood Location -> List Neighborhood -> List (Place Neighborhood Location)
+path : Place -> Place -> List Neighborhood -> List Place
 path p1 p2 excluded =
     if p1 == p2 then [] else
         let
@@ -30,7 +30,7 @@ path p1 p2 excluded =
             (Locale l, Street n) -> if List.member start excluded then [] else path
             (Locale l1, Locale l2) -> if path /= [] then List.append path [p2] else []
 
-moveTo: Place Neighborhood Location -> AllDict (Place Neighborhood Location) (List Monster) String -> Investigator -> Model -> Model
+moveTo: Place -> AllDict Place (List Monster) String -> Investigator -> Model -> Model
 moveTo place monsters investigator model =
     let
         currentEnd = pathEnd model
@@ -44,14 +44,14 @@ moveTo place monsters investigator model =
     in
         {model | path = newPath, evadeTests = newEvadeTests}
 
-prepareEvadeTests : List (Place Neighborhood Location) -> AllDict (Place Neighborhood Location) (List Monster) String -> Investigator -> DiceChecker.Model ->  DiceChecker.Model
+prepareEvadeTests : List Place -> AllDict Place (List Monster) String -> Investigator -> DiceChecker.Model ->  DiceChecker.Model
 prepareEvadeTests path monsters investigator model =
     let
         generateCheck place ms = DiceChecker.prepareCheck place Evade (List.map (\m -> Throw (investigator.sneak - m.awareness) 1) ms) 5
     in
         DiceChecker.generateNewChecks (List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path) model
 
-endMove : Place Neighborhood Location -> Model -> Model
+endMove : Place -> Model -> Model
 endMove place model =
     {model | path = [], start = place, evadeTests = DiceChecker.clearPendingChecks model.evadeTests}
 

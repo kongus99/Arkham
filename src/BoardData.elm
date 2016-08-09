@@ -10,15 +10,15 @@ type alias WasSuccess = Bool
 type alias Throw = {dices : Int, numOfSuccesses : Int}
 type alias ThrowResult = {dices : List (Int, WasSuccess), wasSuccess : WasSuccess}
 
-type alias LocationCheck b a = {a | location : Place Neighborhood Location, checkType : CheckType, throws : List b}
+type alias LocationCheck b a = {a | location : Place, checkType : CheckType, throws : List b}
 type alias UnresolvedCheck = LocationCheck Throw {successThreshold : Int}
 type alias ResolvedCheck = LocationCheck ThrowResult {wasSuccess : WasSuccess}
 
-type alias Investigator = { name : String, sneak : Int, movementPoints : Int }
+type alias Investigator = { name : String, movementPoints : Int, sneak : Int, card : String}
 
-abbreviation i = join " " (map (slice 0 1) (split " " i.name))
+defaultInvestigator = Investigator "Agnes Baker" 4 3 "AgnesBaker.png"
 
-firstInvestigator = {name = "Agnes Baker", movementPoints = 4, sneak = 3}
+allInvestigators = [defaultInvestigator, Investigator "Akachi Onyele" 5 4 "AkachiOnyele.png"]
 
 type Neighborhood = Downtown | Easttown | French_Hill |
                     Merchant_District | Miskatonic_University | Northside |
@@ -43,10 +43,10 @@ allLocation = [Arkham_Asylum, Bank_of_Arkham, Independence_Square,
                Black_Cave, General_Store, Graveyard,
                Historical_Society, Ma's_Boarding_House, South_Church,
                St_Mary's_Hospital, Woods, Ye_Olde_Magick_Shoppe]
-type Place a b
-    = Street a
-    | Locale b
-placeOrder : Place Neighborhood Location -> String
+
+type Place = Street Neighborhood | Locale Location
+
+placeOrder : Place -> String
 placeOrder p = toString p
 
 
@@ -63,7 +63,7 @@ adjacent n =
         Southside -> [French_Hill, Uptown]
         Uptown -> [Southside, Miskatonic_University]
 
-isAdjacent : Place Neighborhood Location -> Place Neighborhood Location -> Bool
+isAdjacent : Place -> Place -> Bool
 isAdjacent p1 p2 =
     case (p1, p2) of
         (Street n1, Street n2) -> member n2 <| adjacent n1

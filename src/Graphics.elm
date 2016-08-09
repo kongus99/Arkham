@@ -89,17 +89,17 @@ streetRectangle generator n =
     in
         rect (List.append commonAttributes generatedAttributes) []
 
-positionCircle : Place Neighborhood Location -> Investigator -> Bool -> List (Svg a)
-positionCircle p i isFilled =
+positionCircle : Place -> Investigator -> (Investigator -> Attribute a) -> Bool -> List (Svg a)
+positionCircle p i msgGenerator isFilled =
     let
         m = middle p
         circleX = toString <| m.x + 30
         circleY = toString m.y
     in
         circle [cx <| circleX, cy <| circleY, r "20", strokeWidth "3", fill "green", stroke "green", fillOpacity (if isFilled then "1.0" else "0.0")][]
-      ::text' [textAnchor "middle", x <| circleX, y <| circleY, fill "red"][text (abbreviation i)]
+      ::text' [textAnchor "middle", x <| circleX, y <| circleY, fill "red", msgGenerator i][text "1"]
       ::[]
-monsterSquare : (Place Neighborhood Location, List Monster) -> List (Svg a)
+monsterSquare : (Place, List Monster) -> List (Svg a)
 monsterSquare (place, monsters) =
     let
         mid = middle place
@@ -117,7 +117,7 @@ middle place =
         Street s -> (neighborhoodRectangle s).middle
         Locale l -> (locationCircle l).middle
 
-movement: Color -> (Place Neighborhood Location, Place Neighborhood Location) -> Svg a
+movement: Color -> (Place, Place) -> Svg a
 movement color (start, end) =
     let
         p1 = middle start
@@ -127,6 +127,8 @@ movement color (start, end) =
 
 boardDim = Dimension 1606 2384
 checkDim = Dimension 150 225
+
+investigatorDim = Dimension 350 493
 
 leftOffsets number maxWidth tileWidth maxInRow =
     let

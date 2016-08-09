@@ -6,7 +6,7 @@ import MonsterBowl exposing (Monster)
 import AllDict exposing (AllDict)
 import Html exposing (Html, span, button, div)
 import Svg exposing (svg, image, Attribute, Svg)
-import Svg.Attributes exposing (width, height, xlinkHref, x, y)
+import Svg.Attributes exposing (width, height, xlinkHref, x, y, class)
 import Html.Events exposing (on, onDoubleClick)
 import Html.App as App
 import Json.Decode as Json exposing ((:=), bool, andThen, object2)
@@ -15,15 +15,15 @@ import List.Extra exposing (zip, break)
 import Paths
 import Movement
 import DiceChecker exposing (..)
+--update : (Bool, Bool) -> Model -> Model
+type alias ClickData = {shiftKey : Bool, ctrlKey : Bool, place : Place}
 
-type alias ClickData = {shiftKey : Bool, ctrlKey : Bool, place : Place Neighborhood Location}
-
-type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict (Place Neighborhood Location) (List Monster) String, monsterBowl : Maybe MonsterBowl.Bowl }
-initialModel = { movement = Movement.initialModel, investigator = firstInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
+type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict Place (List Monster) String, monsterBowl : Maybe MonsterBowl.Bowl }
+initialModel = { movement = Movement.initialModel, investigator = defaultInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
 
 type Msg = UnspecifiedClick Point |
            Click ClickData |
-           DoubleClick (Place Neighborhood Location) |
+           DoubleClick Place |
            ResolveDiceCheck UnresolvedCheck (List Int) |
            CheckerClick DiceChecker.Msg
 
@@ -80,8 +80,8 @@ view model =
 wholeBoard : Model -> Html Msg
 wholeBoard model =
     svg [ width <| toString boardDim.width , height <| toString boardDim.height] (List.concat[ [boardImage]
-                                                    , Graphics.positionCircle model.movement.start model.investigator True
-                                                    , Graphics.positionCircle (Movement.pathEnd model.movement) model.investigator False
+                                                    , Graphics.positionCircle model.movement.start model.investigator (\i -> class "ccc")True
+                                                    , Graphics.positionCircle (Movement.pathEnd model.movement) model.investigator (\i -> class "ccc") False
                                                     , List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters)
                                                     , movementLines model
                                                     , List.map (Graphics.localeCircle localeMsg) allLocation
@@ -92,12 +92,11 @@ boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map UnspecifiedClick offsetPosition)][]
 
 --Msg generators
-onGeneralClick : Place Neighborhood Location -> Html.Attribute Msg
+onGeneralClick : Place -> Attribute Msg
 onGeneralClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForGeneralClick p)
 
 msgForGeneralClick place (ctrl, shift) =
     Json.succeed <| Click <| ClickData shift ctrl place
---    if ctrl then Json.succeed <| CtrlClick place else Json.succeed <| Click place
 
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
