@@ -26,7 +26,7 @@ type Msg = UnspecifiedClick Point |
            DoubleClick Place |
            ResolveDiceCheck UnresolvedCheck (List Int)
 
-move place (shiftKey, ctrlKey) model =
+locationClick place (shiftKey, ctrlKey) model =
     case (shiftKey, ctrlKey) of
         (False, False) ->
             {model | movement = Movement.moveTo place model.monsters model.investigator model.movement}
@@ -89,25 +89,28 @@ wholeBoard model =
                                                     , movementLines model
                                                     , List.map (Graphics.localeCircle localeMsg) allLocation
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
-                                                    , List.map (App.map <| (\msg -> Click <| ClickData <| checkerClick msg)) (DiceChecker.view model.movement.evadeTests)
+                                                    , List.map (App.map msgForCheckerClick) (DiceChecker.view model.movement.evadeTests)
                                                     ])
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map UnspecifiedClick offsetPosition)][]
 
 --Msg generators
-onGeneralClick : Place -> Attribute Msg
-onGeneralClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForGeneralClick p)
+onLocationClick : Place -> Attribute Msg
+onLocationClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForLocationClick p)
 
-msgForGeneralClick place (ctrl, shift) =
-    Json.succeed <| Click <| ClickData (move place (shift, ctrl))
+msgForLocationClick place (ctrl, shift) =
+    Json.succeed <| Click <| ClickData (locationClick place (shift, ctrl))
+
+msgForCheckerClick msg =
+    Click <| ClickData <| checkerClick msg
 
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
-    [onDoubleClick <| DoubleClick <| Locale l, onGeneralClick <| Locale l]
+    [onDoubleClick <| DoubleClick <| Locale l, onLocationClick <| Locale l]
 
 streetMsg : Neighborhood -> List(Attribute Msg)
 streetMsg n =
-    [onDoubleClick <| DoubleClick <| Street n, onGeneralClick <| Street n]
+    [onDoubleClick <| DoubleClick <| Street n, onLocationClick <| Street n]
 
 -- Movement lines
 movementLines : Model -> List (Svg c)
