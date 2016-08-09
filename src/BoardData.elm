@@ -10,9 +10,9 @@ type alias WasSuccess = Bool
 type alias Throw = {dices : Int, numOfSuccesses : Int}
 type alias ThrowResult = {dices : List (Int, WasSuccess), wasSuccess : WasSuccess}
 
-type alias LocationCheck a = {a | location : Place Neighborhood Location, checkType : CheckType}
-type alias UnresolvedCheck = LocationCheck {throws : List Throw, successThreshold : Int}
-type alias ResolvedCheck = LocationCheck {throws : List ThrowResult, wasSuccess : WasSuccess}
+type alias LocationCheck b a = {a | location : Place Neighborhood Location, checkType : CheckType, throws : List b}
+type alias UnresolvedCheck = LocationCheck Throw {successThreshold : Int}
+type alias ResolvedCheck = LocationCheck ThrowResult {wasSuccess : WasSuccess}
 
 type alias Investigator = { name : String, sneak : Int, movementPoints : Int }
 

@@ -172,33 +172,22 @@ drawDiceCheck generator check = icon check "sneak.png" generator
 drawResolvedDiceCheck : (ResolvedCheck -> Attribute a) -> ResolvedCheck -> Svg a
 drawResolvedDiceCheck generator check = if check.wasSuccess then icon check "ok.jpg" generator else icon check "notOk.png" generator
 
-drawSelectedDiceCheck : (UnresolvedCheck -> Attribute a) -> UnresolvedCheck -> List (Svg a)
-drawSelectedDiceCheck generator check =
-        let
-            rectangles = calculateCheckerPositions <| List.length check.throws
-            throwRectangles = Lists.zip check.throws rectangles
-        in
-            List.concat [
-                [drawBoardOverlay check generator]
-                , List.map (checkRectangle check "1.0" generator) rectangles
-                , List.map (info check 1 [text <| testName check.checkType]) rectangles
-                , List.map (info check 2 [text <| String.append "Location: " (toString check.location)]) rectangles
-                , List.map (\(t, r) -> info check 3 [text <| String.append "Dices available: " (toString t.dices)] r) throwRectangles
-                , List.map (\(t, r) -> info check 4 [text <| String.append "Successes required: " (toString t.numOfSuccesses)] r) throwRectangles
-                ]
-
-drawSelectedResolvedDiceCheck : (ResolvedCheck -> Attribute a) -> ResolvedCheck -> List (Svg a)
-drawSelectedResolvedDiceCheck generator check =
-        let
-            rectangles = calculateCheckerPositions <| List.length check.throws
-            throwRectangles = Lists.zip check.throws rectangles
-        in
-            List.concat [
-                [drawBoardOverlay check generator]
-                , List.map (checkRectangle check "1.0" generator) rectangles
-                , List.map (info check 1 [text <| testName check.checkType]) rectangles
-                , List.map (\(t, r) -> info check 3 (List.map singleDice t.dices) r) throwRectangles
-                ]
+drawSelectedCheck : (LocationCheck b a -> Attribute c) -> List (b -> List (Svg c)) -> LocationCheck b a -> List (Svg c)
+drawSelectedCheck msgGenerator textGenerators check =
+    let
+        rectangles = calculateCheckerPositions <| List.length check.throws
+        throwRectangles = Lists.zip check.throws rectangles
+        maxTextRows = 2 + List.length textGenerators
+        generateText i gen = List.map (\(t, r) -> info (i + 3) maxTextRows (gen t) r) throwRectangles
+        texts = List.concat <| List.indexedMap generateText textGenerators
+    in
+        List.concat [
+            [drawBoardOverlay check msgGenerator]
+            , List.map (checkRectangle check "1.0" msgGenerator) rectangles
+            , List.map (info 1 maxTextRows [text <| testName check.checkType]) rectangles
+            , List.map (info 2 maxTextRows [text <| String.append "Location: " (toString check.location)]) rectangles
+            , texts
+            ]
 
 drawBoardOverlay check generator =
     checkRectangle check "0.2" generator {x = 0, y = 0 , width = boardDim.width, height = boardDim.height}
@@ -206,11 +195,11 @@ drawBoardOverlay check generator =
 checkRectangle check op generator r =
         rect [x <| toString r.x, y <| toString r.y, width <| toString r.width, height <| toString r.height, fill "white", stroke "black", opacity op, generator check][]
 
-info check indexY content rectangle =
+info rowNumber maxRows content rectangle =
     let
         middlePoint = rectangle.middle
         posX = middlePoint.x
-        posY = middlePoint.y - checkDim.height // 2 + indexY * checkDim.height // 5
+        posY = middlePoint.y - checkDim.height // 2 + rowNumber * checkDim.height // ( maxRows + 1)
         length = 5 * checkDim.width // 6
     in
         text' [x <| toString posX, y <| toString posY, textLength <| toString length, lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
@@ -223,16 +212,6 @@ icon check link generator =
         posY = middlePoint.y - iconSize // 2 - 25
      in
         image [xlinkHref link, x <| toString posX, y <| toString posY, height <| toString iconSize, width <| toString iconSize, generator check] []
-
-singleDice : (Int, WasSuccess) -> Svg a
-singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
-
-diceStyle: WasSuccess -> String
-diceStyle wasSuccess =
-    if wasSuccess then
-        "green"
-    else
-        "red"
 
 testName checkType =
     case checkType of

@@ -4,8 +4,8 @@ import BoardData exposing (..)
 import String
 import Random
 import List.Extra as Lists
-import Svg exposing (Svg,svg)
-import Svg.Attributes exposing (height, width)
+import Svg exposing (Svg,svg, text', text, tspan)
+import Svg.Attributes exposing (height, width, fill, fontWeight)
 import Svg.Events exposing (onClick)
 import Graphics
 
@@ -77,7 +77,7 @@ update msg model =
         ResolvedDetails c -> {model | selected = findCheck c False model.previousChecks}
         HideDetails -> {model | selected = Nothing }
 
-findCheck : LocationCheck a -> IsUnresolved -> List (LocationCheck a) -> Maybe (IsUnresolved, Int)
+findCheck : LocationCheck b a -> IsUnresolved -> List (LocationCheck b a) -> Maybe (IsUnresolved, Int)
 findCheck check isUnresolved checks =
      Maybe.map (\i -> (isUnresolved, i))  <| Lists.elemIndex check checks
 
@@ -91,13 +91,32 @@ getSelectedResolved model =
         Just (False, i) -> Lists.getAt i model.previousChecks
         _ -> Nothing
 
+dicesAvailable throw =
+    [text <| String.append "Dices available: " (toString throw.dices)]
+
+successesRequired throw =
+    [text <| String.append "Successes required: " (toString throw.numOfSuccesses)]
+
+throwResults throw =
+    (List.map singleDice throw.dices)
+
+singleDice : (Int, WasSuccess) -> Svg a
+singleDice (faceValue, wasSuccess) = tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
+
+diceStyle: WasSuccess -> String
+diceStyle wasSuccess =
+    if wasSuccess then
+        "green"
+    else
+        "red"
+
 view : Model -> List (Svg Msg)
 view model =
     let
         checksToPerform = List.map (Graphics.drawDiceCheck (\check -> onClick <| UnresolvedDetails check)) model.currentChecks
         checksPerformed = List.map (Graphics.drawResolvedDiceCheck (\check -> onClick <| ResolvedDetails check)) model.previousChecks
-        selectedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedDiceCheck (\c -> onClick <| HideDetails)) (getSelectedUnresolved model)
-        selectedResolvedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedResolvedDiceCheck (\c -> onClick <| HideDetails)) (getSelectedResolved model)
+        selectedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedCheck (\c -> onClick <| HideDetails) [dicesAvailable, successesRequired]) (getSelectedUnresolved model)
+        selectedResolvedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedCheck (\c -> onClick <| HideDetails) [throwResults]) (getSelectedResolved model)
     in
         List.concat [checksToPerform, checksPerformed, selectedDiceCheck, selectedResolvedDiceCheck]
 
