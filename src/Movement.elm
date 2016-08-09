@@ -1,4 +1,4 @@
-module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, evadeCheck, updateEvade)
+module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, evadeCheck, update)
 
 import BoardData exposing (..)
 import Paths
@@ -10,8 +10,8 @@ import MonsterBowl exposing (Monster)
 type alias Model = { start : Place, path : List Place, evadeTests : DiceChecker.Model}
 initialModel = { start = Locale Train_Station, path = [], evadeTests = DiceChecker.initialChecks }
 
-updateEvade : DiceChecker.Msg -> Model -> Model
-updateEvade msg model = {model | evadeTests = DiceChecker.update msg model.evadeTests}
+update : DiceChecker.Msg -> Model -> Model
+update msg model = {model | evadeTests = DiceChecker.update msg model.evadeTests}
 
 path : Place -> Place -> List Neighborhood -> List Place
 path p1 p2 excluded =

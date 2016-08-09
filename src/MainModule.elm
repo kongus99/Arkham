@@ -15,18 +15,40 @@ import List.Extra exposing (zip, break)
 import Paths
 import Movement
 import DiceChecker exposing (..)
---update : (Bool, Bool) -> Model -> Model
-type alias ClickData = {shiftKey : Bool, ctrlKey : Bool, place : Place}
+
+type alias ClickData = {clickUpdate : Model -> Model}
 
 type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict Place (List Monster) String, monsterBowl : Maybe MonsterBowl.Bowl }
 initialModel = { movement = Movement.initialModel, investigator = defaultInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
 
 type Msg = UnspecifiedClick Point |
-           Click ClickData |
+           Click ClickData|
            DoubleClick Place |
-           ResolveDiceCheck UnresolvedCheck (List Int) |
-           CheckerClick DiceChecker.Msg
+           ResolveDiceCheck UnresolvedCheck (List Int)
 
+move place (shiftKey, ctrlKey) model =
+    case (shiftKey, ctrlKey) of
+        (False, False) ->
+            {model | movement = Movement.moveTo place model.monsters model.investigator model.movement}
+        (False, True) ->
+            let
+               (maybeMonster, bowl) = MonsterBowl.drawMonster model.monsterBowl
+               monsterList = Maybe.withDefault [] (AllDict.get place model.monsters)
+           in
+               case maybeMonster of
+                      Nothing -> model
+                      Just m -> {model | monsters = AllDict.insert place (m :: monsterList) model.monsters, monsterBowl = Just bowl}
+        (_, _) ->
+            let
+                monsterList = Maybe.withDefault [] (AllDict.get place model.monsters)
+            in
+                case monsterList of
+                    [] ->  {model | monsters = AllDict.remove place model.monsters}
+                    x :: [] -> {model | monsters = AllDict.remove place model.monsters}
+                    x :: xs -> {model | monsters = AllDict.insert place xs model.monsters}
+
+checkerClick msg model =
+    {model | movement = Movement.update msg model.movement}
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -42,25 +64,7 @@ update msg model =
             else
                 (model, Cmd.none)
         Click data ->
-            case (data.shiftKey, data.ctrlKey) of
-                (False, False) ->
-                    ({model | movement = Movement.moveTo data.place model.monsters model.investigator model.movement}, Cmd.none)
-                (False, True) ->
-                    let
-                       (maybeMonster, bowl) = MonsterBowl.drawMonster model.monsterBowl
-                       monsterList = Maybe.withDefault [] (AllDict.get data.place model.monsters)
-                   in
-                       case maybeMonster of
-                              Nothing -> (model, Cmd.none)
-                              Just m -> ({model | monsters = AllDict.insert data.place (m :: monsterList) model.monsters, monsterBowl = Just bowl}, Cmd.none)
-                (_, _) ->
-                    let
-                        monsterList = Maybe.withDefault [] (AllDict.get data.place model.monsters)
-                    in
-                        case monsterList of
-                            [] ->  ({model | monsters = AllDict.remove data.place model.monsters}, Cmd.none)
-                            x :: [] -> ({model | monsters = AllDict.remove data.place model.monsters}, Cmd.none)
-                            x :: xs -> ({model | monsters = AllDict.insert data.place xs model.monsters}, Cmd.none)
+            (data.clickUpdate model, Cmd.none)
         ResolveDiceCheck check results ->
             case check.checkType of
                 Evade ->
@@ -68,7 +72,6 @@ update msg model =
                         resolved = DiceChecker.resolveCheck check results
                     in
                         applyMoveToModel (Movement.evadeCheck resolved ResolveDiceCheck model.movement) model
-        CheckerClick c -> ({model | movement = Movement.updateEvade c model.movement}, Cmd.none)
 
 applyMoveToModel (movement, cmd) model=
     ({model | movement = movement}, cmd)
@@ -86,7 +89,7 @@ wholeBoard model =
                                                     , movementLines model
                                                     , List.map (Graphics.localeCircle localeMsg) allLocation
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
-                                                    , List.map (App.map CheckerClick) (DiceChecker.view model.movement.evadeTests)
+                                                    , List.map (App.map <| (\msg -> Click <| ClickData <| checkerClick msg)) (DiceChecker.view model.movement.evadeTests)
                                                     ])
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map UnspecifiedClick offsetPosition)][]
@@ -96,7 +99,7 @@ onGeneralClick : Place -> Attribute Msg
 onGeneralClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForGeneralClick p)
 
 msgForGeneralClick place (ctrl, shift) =
-    Json.succeed <| Click <| ClickData shift ctrl place
+    Json.succeed <| Click <| ClickData (move place (shift, ctrl))
 
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
