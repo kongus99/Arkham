@@ -130,26 +130,25 @@ checkDim = Dimension 150 225
 checkDimWithMargins = Dimension (checkDim.width * 4 // 3) (checkDim.height * 4 // 3)
 maxColumns = boardDim.width // checkDimWithMargins.width
 
-leftOffsets number =
+leftOffsets number maxWidth tileWidth maxInRow =
     let
-        remainder = number % maxColumns
+        remainder = number % maxInRow
         leftMargin (i, isFull) =
-            let lm = if isFull then (boardDim.width % checkDimWithMargins.width) // 2 else (boardDim.width - remainder * checkDimWithMargins.width) // 2
-            in lm + (i  * checkDimWithMargins.width)
-        indexes = List.scanl (\x -> \y -> (x + y) % maxColumns) 0 (List.repeat number 1)
+            let lm = if isFull then (maxWidth % tileWidth) // 2 else (maxWidth - remainder * tileWidth) // 2
+            in lm + (i  * tileWidth)
+        indexes = List.scanl (\x -> \y -> (x + y) % maxInRow) 0 (List.repeat number 1)
         isFullRow = List.append (List.repeat (number - remainder) True) (List.repeat remainder False)
     in
        List.map leftMargin <| (Lists.zip indexes isFullRow)
 
-topOffsets number =
+topOffsets number maxHeight tileHeight maxInRow =
     let
-        numOfRows = ceiling (toFloat number / toFloat maxColumns)
-        topMargin i = let tm = (boardDim.height - numOfRows * checkDimWithMargins.height) // 2
-                      in tm + (i  * checkDimWithMargins.height)
+        numOfRows = ceiling (toFloat number / toFloat maxInRow)
+        topMargin i = (maxHeight - numOfRows * tileHeight) // 2 + (i  * tileHeight)
         indexes = List.scanl (+) 0 (List.repeat (numOfRows - 1) 1)
         rowTopMargins = List.map topMargin indexes
     in
-        List.concat <| List.map (List.repeat maxColumns) rowTopMargins
+        List.concat <| List.map (List.repeat maxInRow) rowTopMargins
 
 createRectangle width height leftMargin topMargin (x,y) =
     let
@@ -161,7 +160,7 @@ createRectangle width height leftMargin topMargin (x,y) =
 
 calculateCheckerPositions number =
     let
-        topLeftPoints = Lists.zip (leftOffsets number) (topOffsets number)
+        topLeftPoints = Lists.zip (leftOffsets number boardDim.width checkDimWithMargins.width maxColumns) (topOffsets number boardDim.height checkDimWithMargins.height maxColumns)
         leftMargin = (checkDimWithMargins.width - checkDim.width) // 2
         topMargin = (checkDimWithMargins.height - checkDim.height) // 2
     in
