@@ -48,7 +48,7 @@ resolveCheck check results =
     let
         splitResults = splitList results (List.map (\t -> t.dices) check.throws)
         throwResults = List.map (resolveSingle check.successThreshold) (Lists.zip check.throws splitResults)
-        wasSuccess = Lists.find (\t -> t.wasSuccess) throwResults /= Nothing
+        wasSuccess = List.isEmpty <| List.filter (\t -> not t.wasSuccess) throwResults
     in
         {location = check.location,
          checkType = check.checkType,

@@ -10292,6 +10292,14 @@ var _elm_lang$elm_architecture_tutorial$BoardData$abbreviation = function (i) {
 			A2(_elm_lang$core$String$slice, 0, 1),
 			A2(_elm_lang$core$String$split, ' ', i.name)));
 };
+var _elm_lang$elm_architecture_tutorial$BoardData$Throw = F2(
+	function (a, b) {
+		return {dices: a, numOfSuccesses: b};
+	});
+var _elm_lang$elm_architecture_tutorial$BoardData$ThrowResult = F2(
+	function (a, b) {
+		return {dices: a, wasSuccess: b};
+	});
 var _elm_lang$elm_architecture_tutorial$BoardData$Investigator = F3(
 	function (a, b, c) {
 		return {name: a, sneak: b, movementPoints: c};
@@ -10944,11 +10952,40 @@ var _elm_lang$elm_architecture_tutorial$Graphics$singleDice = function (_p1) {
 				_elm_lang$core$Basics$toString(_p2._0))
 			]));
 };
-var _elm_lang$elm_architecture_tutorial$Graphics$checkDim = {width: 225, height: 150};
+var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F4(
+	function (check, op, generator, r) {
+		return A2(
+			_elm_lang$svg$Svg$rect,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$x(
+					_elm_lang$core$Basics$toString(r.x)),
+					_elm_lang$svg$Svg_Attributes$y(
+					_elm_lang$core$Basics$toString(r.y)),
+					_elm_lang$svg$Svg_Attributes$width(
+					_elm_lang$core$Basics$toString(r.width)),
+					_elm_lang$svg$Svg_Attributes$height(
+					_elm_lang$core$Basics$toString(r.height)),
+					_elm_lang$svg$Svg_Attributes$fill('white'),
+					_elm_lang$svg$Svg_Attributes$stroke('black'),
+					_elm_lang$svg$Svg_Attributes$opacity(op),
+					generator(check)
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$createRectangle = F5(
+	function (width, height, leftMargin, topMargin, _p3) {
+		var _p4 = _p3;
+		var ry = _p4._1 + topMargin;
+		var rx = _p4._0 + leftMargin;
+		var middle = {x: rx + ((width / 2) | 0), y: ry + ((height / 2) | 0)};
+		return {x: rx, y: ry, width: width, height: height, middle: middle};
+	});
 var _elm_lang$elm_architecture_tutorial$Graphics$locationCircle = function (location) {
 	var loc = function () {
-		var _p3 = location;
-		switch (_p3.ctor) {
+		var _p5 = location;
+		switch (_p5.ctor) {
 			case 'Train_Station':
 				return {cx: 264, cy: 112, radius: 64};
 			case 'Independence_Square':
@@ -11039,8 +11076,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics$localeCircle = F2(
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$neighborhoodRectangle = function (n) {
 	var st = function () {
-		var _p4 = n;
-		switch (_p4.ctor) {
+		var _p6 = n;
+		switch (_p6.ctor) {
 			case 'Northside':
 				return {x: 296, y: 396, width: 180, height: 80};
 			case 'Downtown':
@@ -11096,11 +11133,11 @@ var _elm_lang$elm_architecture_tutorial$Graphics$streetRectangle = F2(
 				[]));
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$middle = function (place) {
-	var _p5 = place;
-	if (_p5.ctor === 'Street') {
-		return _elm_lang$elm_architecture_tutorial$Graphics$neighborhoodRectangle(_p5._0).middle;
+	var _p7 = place;
+	if (_p7.ctor === 'Street') {
+		return _elm_lang$elm_architecture_tutorial$Graphics$neighborhoodRectangle(_p7._0).middle;
 	} else {
-		return _elm_lang$elm_architecture_tutorial$Graphics$locationCircle(_p5._0).middle;
+		return _elm_lang$elm_architecture_tutorial$Graphics$locationCircle(_p7._0).middle;
 	}
 };
 var _elm_lang$elm_architecture_tutorial$Graphics$positionCircle = F3(
@@ -11144,10 +11181,10 @@ var _elm_lang$elm_architecture_tutorial$Graphics$positionCircle = F3(
 				_elm_lang$core$Native_List.fromArray(
 					[])));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p6) {
-	var _p7 = _p6;
+var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p8) {
+	var _p9 = _p8;
 	var side = 40;
-	var mid = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p7._0);
+	var mid = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p9._0);
 	var rectX = mid.x - 60;
 	var textX = rectX + 33;
 	var rectY = mid.y - 20;
@@ -11185,16 +11222,17 @@ var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p6) 
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg$text(
-						_elm_lang$core$Basics$toString(_p7._1.awareness))
+						_elm_lang$core$Basics$toString(
+							_elm_lang$core$List$length(_p9._1)))
 					])),
 			_elm_lang$core$Native_List.fromArray(
 				[])));
 };
 var _elm_lang$elm_architecture_tutorial$Graphics$movement = F2(
-	function (color, _p8) {
-		var _p9 = _p8;
-		var p2 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p9._1);
-		var p1 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p9._0);
+	function (color, _p10) {
+		var _p11 = _p10;
+		var p2 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p11._1);
+		var p1 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p11._0);
 		return A2(
 			_elm_lang$svg$Svg$line,
 			_elm_lang$core$Native_List.fromArray(
@@ -11213,53 +11251,6 @@ var _elm_lang$elm_architecture_tutorial$Graphics$movement = F2(
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[]));
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F3(
-	function (check, op, generator) {
-		var middlePoint = _elm_lang$elm_architecture_tutorial$Graphics$middle(check.location);
-		var rectangleX = middlePoint.x - ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width / 2) | 0);
-		var rectangleY = middlePoint.y - ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height / 2) | 0);
-		return A2(
-			_elm_lang$svg$Svg$rect,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$x(
-					_elm_lang$core$Basics$toString(rectangleX)),
-					_elm_lang$svg$Svg_Attributes$y(
-					_elm_lang$core$Basics$toString(rectangleY)),
-					_elm_lang$svg$Svg_Attributes$width(
-					_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width)),
-					_elm_lang$svg$Svg_Attributes$height(
-					_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height)),
-					_elm_lang$svg$Svg_Attributes$fill('white'),
-					_elm_lang$svg$Svg_Attributes$stroke('black'),
-					_elm_lang$svg$Svg_Attributes$opacity(op),
-					generator(check)
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[]));
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$info = F3(
-	function (check, indexY, content) {
-		var length = ((5 * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 6) | 0;
-		var middlePoint = _elm_lang$elm_architecture_tutorial$Graphics$middle(check.location);
-		var posX = middlePoint.x;
-		var posY = (middlePoint.y - ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height / 2) | 0)) + (((indexY * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / 5) | 0);
-		return A2(
-			_elm_lang$svg$Svg$text$,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$x(
-					_elm_lang$core$Basics$toString(posX)),
-					_elm_lang$svg$Svg_Attributes$y(
-					_elm_lang$core$Basics$toString(posY)),
-					_elm_lang$svg$Svg_Attributes$textLength(
-					_elm_lang$core$Basics$toString(length)),
-					_elm_lang$svg$Svg_Attributes$lengthAdjust('spacingAndGlyphs'),
-					_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
-					_elm_lang$svg$Svg_Attributes$textAnchor('middle')
-				]),
-			content);
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$icon = F3(
 	function (check, link, generator) {
@@ -11285,118 +11276,13 @@ var _elm_lang$elm_architecture_tutorial$Graphics$icon = F3(
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$drawDiceCheck = F3(
-	function (generator, index, check) {
-		return check.isDetailed ? _elm_lang$core$Native_List.fromArray(
-			[
-				A3(
-				_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle,
-				check,
-				'1.0',
-				function (c) {
-					return _elm_lang$svg$Svg_Attributes$visibility('visible');
-				}),
-				A3(
-				_elm_lang$elm_architecture_tutorial$Graphics$info,
-				check,
-				1,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$svg$Svg$text(
-						_elm_lang$elm_architecture_tutorial$Graphics$testName(check.checkType))
-					])),
-				A3(
-				_elm_lang$elm_architecture_tutorial$Graphics$info,
-				check,
-				2,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$svg$Svg$text(
-						A2(
-							_elm_lang$core$String$append,
-							'Location: ',
-							_elm_lang$core$Basics$toString(check.location)))
-					])),
-				A3(
-				_elm_lang$elm_architecture_tutorial$Graphics$info,
-				check,
-				3,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$svg$Svg$text(
-						A2(
-							_elm_lang$core$String$append,
-							'Dices available: ',
-							_elm_lang$core$Basics$toString(check.dicesAmount)))
-					])),
-				A3(
-				_elm_lang$elm_architecture_tutorial$Graphics$info,
-				check,
-				4,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$svg$Svg$text(
-						A2(
-							_elm_lang$core$String$append,
-							'Successes required: ',
-							_elm_lang$core$Basics$toString(check.requiredSuccesses)))
-					])),
-				A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '0.0', generator)
-			]) : _elm_lang$core$Native_List.fromArray(
-			[
-				A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'sneak.png', generator)
-			]);
+var _elm_lang$elm_architecture_tutorial$Graphics$drawDiceCheck = F2(
+	function (generator, check) {
+		return A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'sneak.png', generator);
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck = F3(
-	function (generator, index, check) {
-		var _p10 = {ctor: '_Tuple2', _0: check.wasSuccess, _1: check.isDetailed};
-		_v7_0:
-		do {
-			if (_p10._0 === true) {
-				if (_p10._1 === true) {
-					break _v7_0;
-				} else {
-					return _elm_lang$core$Native_List.fromArray(
-						[
-							A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'ok.jpg', generator)
-						]);
-				}
-			} else {
-				if (_p10._1 === true) {
-					break _v7_0;
-				} else {
-					return _elm_lang$core$Native_List.fromArray(
-						[
-							A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'notOk.png', generator)
-						]);
-				}
-			}
-		} while(false);
-		return _elm_lang$core$Native_List.fromArray(
-			[
-				A3(
-				_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle,
-				check,
-				'1.0',
-				function (c) {
-					return _elm_lang$svg$Svg_Attributes$visibility('visible');
-				}),
-				A3(
-				_elm_lang$elm_architecture_tutorial$Graphics$info,
-				check,
-				1,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$svg$Svg$text(
-						_elm_lang$elm_architecture_tutorial$Graphics$testName(check.checkType))
-					])),
-				A3(
-				_elm_lang$elm_architecture_tutorial$Graphics$info,
-				check,
-				3,
-				A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics$singleDice, check.dices)),
-				A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '0.0', generator)
-			]);
+var _elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck = F2(
+	function (generator, check) {
+		return check.wasSuccess ? A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'ok.jpg', generator) : A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'notOk.png', generator);
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$Point = F2(
 	function (a, b) {
@@ -11406,42 +11292,278 @@ var _elm_lang$elm_architecture_tutorial$Graphics$Dimension = F2(
 	function (a, b) {
 		return {width: a, height: b};
 	});
-
-var _elm_lang$elm_architecture_tutorial$DiceChecker$toggleDetails = F2(
-	function (expectedCheck, check) {
-		return _elm_lang$core$Native_Utils.eq(expectedCheck, check) ? _elm_lang$core$Native_Utils.update(
+var _elm_lang$elm_architecture_tutorial$Graphics$boardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, 1606, 2384);
+var _elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay = F2(
+	function (check, generator) {
+		return A4(
+			_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle,
 			check,
-			{
-				isDetailed: _elm_lang$core$Basics$not(check.isDetailed)
-			}) : check;
+			'0.2',
+			generator,
+			{x: 0, y: 0, width: _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, height: _elm_lang$elm_architecture_tutorial$Graphics$boardDim.height});
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, 150, 225);
+var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
+	function (check, indexY, content, rectangle) {
+		var length = ((5 * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 6) | 0;
+		var middlePoint = rectangle.middle;
+		var posX = middlePoint.x;
+		var posY = (middlePoint.y - ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height / 2) | 0)) + (((indexY * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / 5) | 0);
+		return A2(
+			_elm_lang$svg$Svg$text$,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$x(
+					_elm_lang$core$Basics$toString(posX)),
+					_elm_lang$svg$Svg_Attributes$y(
+					_elm_lang$core$Basics$toString(posY)),
+					_elm_lang$svg$Svg_Attributes$textLength(
+					_elm_lang$core$Basics$toString(length)),
+					_elm_lang$svg$Svg_Attributes$lengthAdjust('spacingAndGlyphs'),
+					_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
+					_elm_lang$svg$Svg_Attributes$textAnchor('middle')
+				]),
+			content);
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width * 4) / 3) | 0, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height * 4) / 3) | 0);
+var _elm_lang$elm_architecture_tutorial$Graphics$maxColumns = (_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width / _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width) | 0;
+var _elm_lang$elm_architecture_tutorial$Graphics$leftOffsets = function (number) {
+	var indexes = A3(
+		_elm_lang$core$List$scanl,
+		F2(
+			function (x, y) {
+				return A2(_elm_lang$core$Basics_ops['%'], x + y, _elm_lang$elm_architecture_tutorial$Graphics$maxColumns);
+			}),
+		0,
+		A2(_elm_lang$core$List$repeat, number, 1));
+	var remainder = A2(_elm_lang$core$Basics_ops['%'], number, _elm_lang$elm_architecture_tutorial$Graphics$maxColumns);
+	var leftMargin = function (_p12) {
+		var _p13 = _p12;
+		var lm = _p13._1 ? ((A2(_elm_lang$core$Basics_ops['%'], _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width) / 2) | 0) : (((_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width - (remainder * _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width)) / 2) | 0);
+		return lm + (_p13._0 * _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width);
+	};
+	var isFullRow = A2(
+		_elm_lang$core$List$append,
+		A2(_elm_lang$core$List$repeat, number - remainder, true),
+		A2(_elm_lang$core$List$repeat, remainder, false));
+	return A2(
+		_elm_lang$core$List$map,
+		leftMargin,
+		A2(_elm_community$list_extra$List_Extra$zip, indexes, isFullRow));
+};
+var _elm_lang$elm_architecture_tutorial$Graphics$topOffsets = function (number) {
+	var numOfRows = _elm_lang$core$Basics$ceiling(
+		_elm_lang$core$Basics$toFloat(number) / _elm_lang$core$Basics$toFloat(_elm_lang$elm_architecture_tutorial$Graphics$maxColumns));
+	var topMargin = function (i) {
+		var tm = ((_elm_lang$elm_architecture_tutorial$Graphics$boardDim.height - (numOfRows * _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.height)) / 2) | 0;
+		return tm + (i * _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.height);
+	};
+	var indexes = A3(
+		_elm_lang$core$List$scanl,
+		F2(
+			function (x, y) {
+				return x + y;
+			}),
+		0,
+		A2(_elm_lang$core$List$repeat, numOfRows - 1, 1));
+	var rowTopMargins = A2(_elm_lang$core$List$map, topMargin, indexes);
+	return _elm_lang$core$List$concat(
+		A2(
+			_elm_lang$core$List$map,
+			_elm_lang$core$List$repeat(_elm_lang$elm_architecture_tutorial$Graphics$maxColumns),
+			rowTopMargins));
+};
+var _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions = function (number) {
+	var topMargin = ((_elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.height - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / 2) | 0;
+	var leftMargin = ((_elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 2) | 0;
+	var topLeftPoints = A2(
+		_elm_community$list_extra$List_Extra$zip,
+		_elm_lang$elm_architecture_tutorial$Graphics$leftOffsets(number),
+		_elm_lang$elm_architecture_tutorial$Graphics$topOffsets(number));
+	return A2(
+		_elm_lang$core$List$map,
+		A4(_elm_lang$elm_architecture_tutorial$Graphics$createRectangle, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height, leftMargin, topMargin),
+		topLeftPoints);
+};
+var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedDiceCheck = F2(
+	function (generator, check) {
+		var rectangles = _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions(
+			_elm_lang$core$List$length(check.$throws));
+		var throwRectangles = A2(_elm_community$list_extra$List_Extra$zip, check.$throws, rectangles);
+		return _elm_lang$core$List$concat(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$core$Native_List.fromArray(
+					[
+						A2(_elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay, check, generator)
+					]),
+					A2(
+					_elm_lang$core$List$map,
+					A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '1.0', generator),
+					rectangles),
+					A2(
+					_elm_lang$core$List$map,
+					A3(
+						_elm_lang$elm_architecture_tutorial$Graphics$info,
+						check,
+						1,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$svg$Svg$text(
+								_elm_lang$elm_architecture_tutorial$Graphics$testName(check.checkType))
+							])),
+					rectangles),
+					A2(
+					_elm_lang$core$List$map,
+					A3(
+						_elm_lang$elm_architecture_tutorial$Graphics$info,
+						check,
+						2,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$svg$Svg$text(
+								A2(
+									_elm_lang$core$String$append,
+									'Location: ',
+									_elm_lang$core$Basics$toString(check.location)))
+							])),
+					rectangles),
+					A2(
+					_elm_lang$core$List$map,
+					function (_p14) {
+						var _p15 = _p14;
+						return A4(
+							_elm_lang$elm_architecture_tutorial$Graphics$info,
+							check,
+							3,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$svg$Svg$text(
+									A2(
+										_elm_lang$core$String$append,
+										'Dices available: ',
+										_elm_lang$core$Basics$toString(_p15._0.dices)))
+								]),
+							_p15._1);
+					},
+					throwRectangles),
+					A2(
+					_elm_lang$core$List$map,
+					function (_p16) {
+						var _p17 = _p16;
+						return A4(
+							_elm_lang$elm_architecture_tutorial$Graphics$info,
+							check,
+							4,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$svg$Svg$text(
+									A2(
+										_elm_lang$core$String$append,
+										'Successes required: ',
+										_elm_lang$core$Basics$toString(_p17._0.numOfSuccesses)))
+								]),
+							_p17._1);
+					},
+					throwRectangles)
+				]));
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedResolvedDiceCheck = F2(
+	function (generator, check) {
+		var rectangles = _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions(
+			_elm_lang$core$List$length(check.$throws));
+		var throwRectangles = A2(_elm_community$list_extra$List_Extra$zip, check.$throws, rectangles);
+		return _elm_lang$core$List$concat(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$core$Native_List.fromArray(
+					[
+						A2(_elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay, check, generator)
+					]),
+					A2(
+					_elm_lang$core$List$map,
+					A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '1.0', generator),
+					rectangles),
+					A2(
+					_elm_lang$core$List$map,
+					A3(
+						_elm_lang$elm_architecture_tutorial$Graphics$info,
+						check,
+						1,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$svg$Svg$text(
+								_elm_lang$elm_architecture_tutorial$Graphics$testName(check.checkType))
+							])),
+					rectangles),
+					A2(
+					_elm_lang$core$List$map,
+					function (_p18) {
+						var _p19 = _p18;
+						return A4(
+							_elm_lang$elm_architecture_tutorial$Graphics$info,
+							check,
+							3,
+							A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics$singleDice, _p19._0.dices),
+							_p19._1);
+					},
+					throwRectangles)
+				]));
+	});
+
+var _elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedResolved = function (model) {
+	var _p0 = model.selected;
+	if (((_p0.ctor === 'Just') && (_p0._0.ctor === '_Tuple2')) && (_p0._0._0 === false)) {
+		return A2(_elm_community$list_extra$List_Extra$getAt, _p0._0._1, model.previousChecks);
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedUnresolved = function (model) {
+	var _p1 = model.selected;
+	if (((_p1.ctor === 'Just') && (_p1._0.ctor === '_Tuple2')) && (_p1._0._0 === true)) {
+		return A2(_elm_community$list_extra$List_Extra$getAt, _p1._0._1, model.currentChecks);
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$findCheck = F3(
+	function (check, isUnresolved, checks) {
+		return A2(
+			_elm_lang$core$Maybe$map,
+			function (i) {
+				return {ctor: '_Tuple2', _0: isUnresolved, _1: i};
+			},
+			A2(_elm_community$list_extra$List_Extra$elemIndex, check, checks));
 	});
 var _elm_lang$elm_architecture_tutorial$DiceChecker$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		if (_p0.ctor === 'UnresolvedDetailsToggle') {
-			return _elm_lang$core$Native_Utils.update(
-				model,
-				{
-					currentChecks: A2(
-						_elm_lang$core$List$map,
-						_elm_lang$elm_architecture_tutorial$DiceChecker$toggleDetails(_p0._0),
-						model.currentChecks)
-				});
-		} else {
-			return _elm_lang$core$Native_Utils.update(
-				model,
-				{
-					previousChecks: A2(
-						_elm_lang$core$List$map,
-						_elm_lang$elm_architecture_tutorial$DiceChecker$toggleDetails(_p0._0),
-						model.previousChecks)
-				});
+		var _p2 = msg;
+		switch (_p2.ctor) {
+			case 'UnresolvedDetails':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						selected: A3(_elm_lang$elm_architecture_tutorial$DiceChecker$findCheck, _p2._0, true, model.currentChecks)
+					});
+			case 'ResolvedDetails':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						selected: A3(_elm_lang$elm_architecture_tutorial$DiceChecker$findCheck, _p2._0, false, model.previousChecks)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{selected: _elm_lang$core$Maybe$Nothing});
 		}
 	});
-var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck = F2(
-	function (check, results) {
+var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveSingle = F2(
+	function (successThreshold, _p3) {
+		var _p4 = _p3;
+		var _p5 = _p4._1;
 		var rollSuccessful = function (res) {
-			return _elm_lang$core$Native_Utils.cmp(res, check.successThreshold) > -1;
+			return _elm_lang$core$Native_Utils.cmp(res, successThreshold) > -1;
 		};
 		var dices = A2(
 			_elm_lang$core$List$map,
@@ -11452,54 +11574,109 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck = F2(
 					_1: rollSuccessful(r)
 				};
 			},
-			results);
+			_p5);
 		var wasSuccess = _elm_lang$core$Native_Utils.cmp(
 			_elm_lang$core$List$length(
-				A2(_elm_lang$core$List$filter, rollSuccessful, results)),
-			check.requiredSuccesses) > -1;
-		return {location: check.location, checkType: check.checkType, dicesAmount: check.dicesAmount, dices: dices, wasSuccess: wasSuccess, isDetailed: check.isDetailed};
+				A2(_elm_lang$core$List$filter, rollSuccessful, _p5)),
+			_p4._0.numOfSuccesses) > -1;
+		return A2(_elm_lang$elm_architecture_tutorial$BoardData$ThrowResult, dices, wasSuccess);
+	});
+var _elm_lang$elm_architecture_tutorial$DiceChecker$splitList = F2(
+	function (list, amounts) {
+		var _p6 = amounts;
+		if (_p6.ctor === '[]') {
+			return _elm_lang$core$Native_List.fromArray(
+				[]);
+		} else {
+			var _p7 = _p6._0;
+			return A2(
+				_elm_lang$core$List_ops['::'],
+				A2(_elm_lang$core$List$take, _p7, list),
+				A2(
+					_elm_lang$elm_architecture_tutorial$DiceChecker$splitList,
+					A2(_elm_lang$core$List$drop, _p7, list),
+					_p6._1));
+		}
+	});
+var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck = F2(
+	function (check, results) {
+		var splitResults = A2(
+			_elm_lang$elm_architecture_tutorial$DiceChecker$splitList,
+			results,
+			A2(
+				_elm_lang$core$List$map,
+				function (t) {
+					return t.dices;
+				},
+				check.$throws));
+		var throwResults = A2(
+			_elm_lang$core$Debug$log,
+			'rolls',
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$elm_architecture_tutorial$DiceChecker$resolveSingle(check.successThreshold),
+				A2(_elm_community$list_extra$List_Extra$zip, check.$throws, splitResults)));
+		var wasSuccess = _elm_lang$core$List$isEmpty(
+			A2(
+				_elm_lang$core$List$filter,
+				function (t) {
+					return _elm_lang$core$Basics$not(t.wasSuccess);
+				},
+				throwResults));
+		return {location: check.location, checkType: check.checkType, $throws: throwResults, wasSuccess: wasSuccess};
 	});
 var _elm_lang$elm_architecture_tutorial$DiceChecker$generateCheck = F2(
 	function (check, wrapper) {
+		var total = _elm_lang$core$List$sum(
+			A2(
+				_elm_lang$core$List$map,
+				function (t) {
+					return t.dices;
+				},
+				check.$throws));
 		return A2(
 			_elm_lang$core$Random$generate,
 			wrapper,
 			A2(
 				_elm_lang$core$Random$list,
-				check.dicesAmount,
+				total,
 				A2(_elm_lang$core$Random$int, 1, 6)));
 	});
 var _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck = F2(
 	function (wrapper, model) {
-		var _p1 = model.currentChecks;
-		if (_p1.ctor === '[]') {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						currentChecks: _elm_lang$core$Native_List.fromArray(
-							[])
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
+		var _p8 = model.currentChecks;
+		if (_p8.ctor === '[]') {
+			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		} else {
-			var _p2 = _p1._0;
+			var _p9 = _p8._0;
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{currentChecks: _p1._1}),
+					{currentChecks: _p8._1}),
 				_1: A2(
 					_elm_lang$elm_architecture_tutorial$DiceChecker$generateCheck,
-					_p2,
-					wrapper(_p2))
+					_p9,
+					wrapper(_p9))
 			};
 		}
 	});
-var _elm_lang$elm_architecture_tutorial$DiceChecker$prepareCheck = F5(
-	function (location, checkType, dicesAmount, requiredSuccesses, successThreshold) {
-		return {location: location, checkType: checkType, dicesAmount: dicesAmount, requiredSuccesses: requiredSuccesses, successThreshold: successThreshold, isDetailed: false};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$prepareCheck = F4(
+	function (location, checkType, $throws, successThreshold) {
+		return {location: location, checkType: checkType, $throws: $throws, successThreshold: successThreshold};
+	});
+var _elm_lang$elm_architecture_tutorial$DiceChecker$hasPendingChecks = function (model) {
+	return _elm_lang$core$List$isEmpty(model.currentChecks);
+};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$generateNewChecks = F2(
+	function (checks, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				currentChecks: checks,
+				previousChecks: _elm_lang$core$Native_List.fromArray(
+					[])
+			});
 	});
 var _elm_lang$elm_architecture_tutorial$DiceChecker$clearPendingChecks = function (model) {
 	return _elm_lang$core$Native_Utils.update(
@@ -11524,38 +11701,63 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$addResolvedCheck = F2(
 var _elm_lang$elm_architecture_tutorial$DiceChecker$initialChecks = {
 	currentChecks: _elm_lang$core$Native_List.fromArray(
 		[]),
+	selected: _elm_lang$core$Maybe$Nothing,
 	previousChecks: _elm_lang$core$Native_List.fromArray(
 		[])
 };
-var _elm_lang$elm_architecture_tutorial$DiceChecker$Model = F2(
-	function (a, b) {
-		return {currentChecks: a, previousChecks: b};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$Model = F3(
+	function (a, b, c) {
+		return {currentChecks: a, selected: b, previousChecks: c};
 	});
-var _elm_lang$elm_architecture_tutorial$DiceChecker$ResolvedDetailsToggle = function (a) {
-	return {ctor: 'ResolvedDetailsToggle', _0: a};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$HideDetails = {ctor: 'HideDetails'};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$ResolvedDetails = function (a) {
+	return {ctor: 'ResolvedDetails', _0: a};
 };
-var _elm_lang$elm_architecture_tutorial$DiceChecker$UnresolvedDetailsToggle = function (a) {
-	return {ctor: 'UnresolvedDetailsToggle', _0: a};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$UnresolvedDetails = function (a) {
+	return {ctor: 'UnresolvedDetails', _0: a};
 };
 var _elm_lang$elm_architecture_tutorial$DiceChecker$view = function (model) {
+	var selectedResolvedDiceCheck = A2(
+		_elm_lang$core$Maybe$withDefault,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		A2(
+			_elm_lang$core$Maybe$map,
+			_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedResolvedDiceCheck(
+				function (c) {
+					return _elm_lang$svg$Svg_Events$onClick(_elm_lang$elm_architecture_tutorial$DiceChecker$HideDetails);
+				}),
+			_elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedResolved(model)));
+	var selectedDiceCheck = A2(
+		_elm_lang$core$Maybe$withDefault,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		A2(
+			_elm_lang$core$Maybe$map,
+			_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedDiceCheck(
+				function (c) {
+					return _elm_lang$svg$Svg_Events$onClick(_elm_lang$elm_architecture_tutorial$DiceChecker$HideDetails);
+				}),
+			_elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedUnresolved(model)));
 	var checksPerformed = A2(
-		_elm_lang$core$List$indexedMap,
+		_elm_lang$core$List$map,
 		_elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck(
 			function (check) {
 				return _elm_lang$svg$Svg_Events$onClick(
-					_elm_lang$elm_architecture_tutorial$DiceChecker$ResolvedDetailsToggle(check));
+					_elm_lang$elm_architecture_tutorial$DiceChecker$ResolvedDetails(check));
 			}),
 		model.previousChecks);
 	var checksToPerform = A2(
-		_elm_lang$core$List$indexedMap,
+		_elm_lang$core$List$map,
 		_elm_lang$elm_architecture_tutorial$Graphics$drawDiceCheck(
 			function (check) {
 				return _elm_lang$svg$Svg_Events$onClick(
-					_elm_lang$elm_architecture_tutorial$DiceChecker$UnresolvedDetailsToggle(check));
+					_elm_lang$elm_architecture_tutorial$DiceChecker$UnresolvedDetails(check));
 			}),
 		model.currentChecks);
 	return _elm_lang$core$List$concat(
-		A2(_elm_lang$core$List$append, checksToPerform, checksPerformed));
+		_elm_lang$core$Native_List.fromArray(
+			[checksToPerform, checksPerformed, selectedDiceCheck, selectedResolvedDiceCheck]));
 };
 
 var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode_ops[':='], 'keyCode', _elm_lang$core$Json_Decode$int);
@@ -11821,7 +12023,7 @@ var _elm_lang$elm_architecture_tutorial$Movement$finalizeMovement = F2(
 		var newModel = _elm_lang$core$Native_Utils.update(
 			model,
 			{evadeTests: tests});
-		return _elm_lang$core$List$isEmpty(model.evadeTests.currentChecks) ? {
+		return _elm_lang$elm_architecture_tutorial$DiceChecker$hasPendingChecks(model.evadeTests) ? {
 			ctor: '_Tuple2',
 			_0: A2(
 				_elm_lang$elm_architecture_tutorial$Movement$endMove,
@@ -11846,24 +12048,31 @@ var _elm_lang$elm_architecture_tutorial$Movement$evadeCheck = F3(
 var _elm_lang$elm_architecture_tutorial$Movement$prepareEvadeTests = F4(
 	function (path, monsters, investigator, model) {
 		var generateCheck = F2(
-			function (place, monster) {
-				return A5(_elm_lang$elm_architecture_tutorial$DiceChecker$prepareCheck, place, _elm_lang$elm_architecture_tutorial$BoardData$Evade, investigator.sneak - monster.awareness, 1, 5);
+			function (place, ms) {
+				return A4(
+					_elm_lang$elm_architecture_tutorial$DiceChecker$prepareCheck,
+					place,
+					_elm_lang$elm_architecture_tutorial$BoardData$Evade,
+					A2(
+						_elm_lang$core$List$map,
+						function (m) {
+							return A2(_elm_lang$elm_architecture_tutorial$BoardData$Throw, investigator.sneak - m.awareness, 1);
+						},
+						ms),
+					5);
 			});
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				currentChecks: A2(
-					_elm_lang$core$List$filterMap,
-					function (p) {
-						return A2(
-							_elm_lang$core$Maybe$map,
-							generateCheck(p),
-							A2(_eeue56$elm_all_dict$AllDict$get, p, monsters));
-					},
-					path),
-				previousChecks: _elm_lang$core$Native_List.fromArray(
-					[])
-			});
+		return A2(
+			_elm_lang$elm_architecture_tutorial$DiceChecker$generateNewChecks,
+			A2(
+				_elm_lang$core$List$filterMap,
+				function (p) {
+					return A2(
+						_elm_lang$core$Maybe$map,
+						generateCheck(p),
+						A2(_eeue56$elm_all_dict$AllDict$get, p, monsters));
+				},
+				path),
+			model);
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 	function (p1, p2, excluded) {
@@ -12017,6 +12226,10 @@ var _elm_lang$elm_architecture_tutorial$MainModule$initialModel = {
 	monsters: _eeue56$elm_all_dict$AllDict$empty(_elm_lang$elm_architecture_tutorial$BoardData$placeOrder),
 	monsterBowl: _elm_lang$core$Maybe$Nothing
 };
+var _elm_lang$elm_architecture_tutorial$MainModule$ClickData = F3(
+	function (a, b, c) {
+		return {shiftKey: a, ctrlKey: b, place: c};
+	});
 var _elm_lang$elm_architecture_tutorial$MainModule$Model = F4(
 	function (a, b, c, d) {
 		return {movement: a, investigator: b, monsters: c, monsterBowl: d};
@@ -12043,50 +12256,93 @@ var _elm_lang$elm_architecture_tutorial$MainModule$update = F2(
 					A2(_elm_lang$elm_architecture_tutorial$Movement$finalizeMovement, _elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck, model.movement),
 					model) : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'Click':
-				var movement = A4(_elm_lang$elm_architecture_tutorial$Movement$moveTo, _p2._0, model.monsters, model.investigator, model.movement);
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{movement: movement}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'CtrlClick':
-				var _p5 = _p2._0;
-				if (A2(_eeue56$elm_all_dict$AllDict$member, _p5, model.monsters)) {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								monsters: A2(_eeue56$elm_all_dict$AllDict$remove, _p5, model.monsters)
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				} else {
-					var _p3 = _elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster(model.monsterBowl);
-					var maybeMonster = _p3._0;
-					var bowl = _p3._1;
-					var _p4 = maybeMonster;
-					if (_p4.ctor === 'Nothing') {
-						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-					} else {
+				var _p7 = _p2._0;
+				var _p3 = {ctor: '_Tuple2', _0: _p7.shiftKey, _1: _p7.ctrlKey};
+				if (_p3._0 === false) {
+					if (_p3._1 === false) {
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
 								{
-									monsters: A3(_eeue56$elm_all_dict$AllDict$insert, _p5, _p4._0, model.monsters),
-									monsterBowl: _elm_lang$core$Maybe$Just(bowl)
+									movement: A4(_elm_lang$elm_architecture_tutorial$Movement$moveTo, _p7.place, model.monsters, model.investigator, model.movement)
 								}),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
+					} else {
+						var monsterList = A2(
+							_elm_lang$core$Maybe$withDefault,
+							_elm_lang$core$Native_List.fromArray(
+								[]),
+							A2(_eeue56$elm_all_dict$AllDict$get, _p7.place, model.monsters));
+						var _p4 = _elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster(model.monsterBowl);
+						var maybeMonster = _p4._0;
+						var bowl = _p4._1;
+						var _p5 = maybeMonster;
+						if (_p5.ctor === 'Nothing') {
+							return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+						} else {
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									model,
+									{
+										monsters: A3(
+											_eeue56$elm_all_dict$AllDict$insert,
+											_p7.place,
+											A2(_elm_lang$core$List_ops['::'], _p5._0, monsterList),
+											model.monsters),
+										monsterBowl: _elm_lang$core$Maybe$Just(bowl)
+									}),
+								_1: _elm_lang$core$Platform_Cmd$none
+							};
+						}
+					}
+				} else {
+					var monsterList = A2(
+						_elm_lang$core$Maybe$withDefault,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						A2(_eeue56$elm_all_dict$AllDict$get, _p7.place, model.monsters));
+					var _p6 = monsterList;
+					if (_p6.ctor === '[]') {
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{
+									monsters: A2(_eeue56$elm_all_dict$AllDict$remove, _p7.place, model.monsters)
+								}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					} else {
+						if (_p6._1.ctor === '[]') {
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									model,
+									{
+										monsters: A2(_eeue56$elm_all_dict$AllDict$remove, _p7.place, model.monsters)
+									}),
+								_1: _elm_lang$core$Platform_Cmd$none
+							};
+						} else {
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									model,
+									{
+										monsters: A3(_eeue56$elm_all_dict$AllDict$insert, _p7.place, _p6._1, model.monsters)
+									}),
+								_1: _elm_lang$core$Platform_Cmd$none
+							};
+						}
 					}
 				}
 			case 'ResolveDiceCheck':
-				var _p7 = _p2._0;
-				var _p6 = _p7.checkType;
-				var resolved = A2(_elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck, _p7, _p2._1);
+				var _p9 = _p2._0;
+				var _p8 = _p9.checkType;
+				var resolved = A2(_elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck, _p9, _p2._1);
 				return A2(
 					_elm_lang$elm_architecture_tutorial$MainModule$applyMoveToModel,
 					A3(_elm_lang$elm_architecture_tutorial$Movement$evadeCheck, resolved, _elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck, model.movement),
@@ -12106,26 +12362,31 @@ var _elm_lang$elm_architecture_tutorial$MainModule$update = F2(
 var _elm_lang$elm_architecture_tutorial$MainModule$DoubleClick = function (a) {
 	return {ctor: 'DoubleClick', _0: a};
 };
-var _elm_lang$elm_architecture_tutorial$MainModule$CtrlClick = function (a) {
-	return {ctor: 'CtrlClick', _0: a};
-};
 var _elm_lang$elm_architecture_tutorial$MainModule$Click = function (a) {
 	return {ctor: 'Click', _0: a};
 };
-var _elm_lang$elm_architecture_tutorial$MainModule$msgForCtrlClick = F2(
-	function (place, ctrl) {
-		return ctrl ? _elm_lang$core$Json_Decode$succeed(
-			_elm_lang$elm_architecture_tutorial$MainModule$CtrlClick(place)) : _elm_lang$core$Json_Decode$succeed(
-			_elm_lang$elm_architecture_tutorial$MainModule$Click(place));
+var _elm_lang$elm_architecture_tutorial$MainModule$msgForGeneralClick = F2(
+	function (place, _p10) {
+		var _p11 = _p10;
+		return _elm_lang$core$Json_Decode$succeed(
+			_elm_lang$elm_architecture_tutorial$MainModule$Click(
+				A3(_elm_lang$elm_architecture_tutorial$MainModule$ClickData, _p11._1, _p11._0, place)));
 	});
-var _elm_lang$elm_architecture_tutorial$MainModule$onCtrlClick = function (p) {
+var _elm_lang$elm_architecture_tutorial$MainModule$onGeneralClick = function (p) {
 	return A2(
 		_elm_lang$html$Html_Events$on,
 		'click',
 		A2(
 			_elm_lang$core$Json_Decode$andThen,
-			A2(_elm_lang$core$Json_Decode_ops[':='], 'ctrlKey', _elm_lang$core$Json_Decode$bool),
-			_elm_lang$elm_architecture_tutorial$MainModule$msgForCtrlClick(p)));
+			A3(
+				_elm_lang$core$Json_Decode$object2,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'ctrlKey', _elm_lang$core$Json_Decode$bool),
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'shiftKey', _elm_lang$core$Json_Decode$bool)),
+			_elm_lang$elm_architecture_tutorial$MainModule$msgForGeneralClick(p)));
 };
 var _elm_lang$elm_architecture_tutorial$MainModule$localeMsg = function (l) {
 	return _elm_lang$core$Native_List.fromArray(
@@ -12133,7 +12394,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$localeMsg = function (l) {
 			_elm_lang$html$Html_Events$onDoubleClick(
 			_elm_lang$elm_architecture_tutorial$MainModule$DoubleClick(
 				_elm_lang$elm_architecture_tutorial$BoardData$Locale(l))),
-			_elm_lang$elm_architecture_tutorial$MainModule$onCtrlClick(
+			_elm_lang$elm_architecture_tutorial$MainModule$onGeneralClick(
 			_elm_lang$elm_architecture_tutorial$BoardData$Locale(l))
 		]);
 };
@@ -12143,7 +12404,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$streetMsg = function (n) {
 			_elm_lang$html$Html_Events$onDoubleClick(
 			_elm_lang$elm_architecture_tutorial$MainModule$DoubleClick(
 				_elm_lang$elm_architecture_tutorial$BoardData$Street(n))),
-			_elm_lang$elm_architecture_tutorial$MainModule$onCtrlClick(
+			_elm_lang$elm_architecture_tutorial$MainModule$onGeneralClick(
 			_elm_lang$elm_architecture_tutorial$BoardData$Street(n))
 		]);
 };
@@ -12171,8 +12432,10 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 		_elm_lang$svg$Svg$svg,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$svg$Svg_Attributes$width('1606'),
-				_elm_lang$svg$Svg_Attributes$height('2384')
+				_elm_lang$svg$Svg_Attributes$width(
+				_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width)),
+				_elm_lang$svg$Svg_Attributes$height(
+				_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.height))
 			]),
 		_elm_lang$core$List$concat(
 			_elm_lang$core$Native_List.fromArray(
@@ -12220,7 +12483,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$main = {
 			init: {ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$MainModule$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
 			view: _elm_lang$elm_architecture_tutorial$MainModule$view,
 			update: _elm_lang$elm_architecture_tutorial$MainModule$update,
-			subscriptions: function (_p8) {
+			subscriptions: function (_p12) {
 				return _elm_lang$core$Platform_Sub$none;
 			}
 		})
