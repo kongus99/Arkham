@@ -8,18 +8,14 @@ import Html exposing (Html, span, button, div)
 import Svg exposing (svg, image, Attribute, Svg)
 import Svg.Attributes exposing (width, height, xlinkHref, x, y, class)
 import Html.Events exposing (on, onDoubleClick)
-import Html.App as App
 import Json.Decode as Json exposing ((:=), bool, andThen, object2)
-import List
-import List.Extra exposing (zip, break)
-import Paths
-import Movement
-import DiceChecker exposing (..)
+import Investigators
+import Html.App as App
 
 type alias ClickData = {clickUpdate : Model -> Model}
 
-type alias Model = { movement : Movement.Model, investigator : Investigator, monsters : AllDict Place (List Monster) String, monsterBowl : Maybe MonsterBowl.Bowl }
-initialModel = { movement = Movement.initialModel, investigator = defaultInvestigator, monsters = AllDict.empty placeOrder, monsterBowl = Nothing }
+type alias Model = { investigators : Investigators.Model, monsters : AllDict Place (List Monster) String, monsterBowl : Maybe MonsterBowl.Bowl }
+initialModel = Model Investigators.initialModel (AllDict.empty placeOrder) Nothing
 
 type Msg = UnspecifiedClick Point |
            Click ClickData|
@@ -29,7 +25,7 @@ type Msg = UnspecifiedClick Point |
 locationClick place (shiftKey, ctrlKey) model =
     case (shiftKey, ctrlKey) of
         (False, False) ->
-            {model | movement = Movement.moveTo place model.monsters model.investigator model.movement}
+            {model | investigators = Investigators.move place model.monsters model.investigators}
         (False, True) ->
             let
                (maybeMonster, bowl) = MonsterBowl.drawMonster model.monsterBowl
@@ -47,9 +43,6 @@ locationClick place (shiftKey, ctrlKey) model =
                     x :: [] -> {model | monsters = AllDict.remove place model.monsters}
                     x :: xs -> {model | monsters = AllDict.insert place xs model.monsters}
 
-checkerClick msg model =
-    {model | movement = Movement.update msg model.movement}
-
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
@@ -59,22 +52,17 @@ update msg model =
             in
                 (model, Cmd.none)
         DoubleClick place ->
-            if Movement.pathEnd model.movement == place && Movement.isValidPath model.investigator model.movement then
-                applyMoveToModel (Movement.finalizeMovement ResolveDiceCheck model.movement) model
-            else
-                (model, Cmd.none)
+            resolveInvestigatorUpdate (Investigators.finalizeMovement place ResolveDiceCheck) model
         Click data ->
             (data.clickUpdate model, Cmd.none)
         ResolveDiceCheck check results ->
-            case check.checkType of
-                Evade ->
-                    let
-                        resolved = DiceChecker.resolveCheck check results
-                    in
-                        applyMoveToModel (Movement.evadeCheck resolved ResolveDiceCheck model.movement) model
+            resolveInvestigatorUpdate (Investigators.resolveCheck check results ResolveDiceCheck) model
 
-applyMoveToModel (movement, cmd) model=
-    ({model | movement = movement}, cmd)
+resolveInvestigatorUpdate updater model =
+    let
+        (newInvestigators, cmd) = updater model.investigators
+    in
+        ({model | investigators = newInvestigators}, cmd)
 
 view : Model -> Html Msg
 view model =
@@ -83,13 +71,11 @@ view model =
 wholeBoard : Model -> Html Msg
 wholeBoard model =
     svg [ width <| toString boardDim.width , height <| toString boardDim.height] (List.concat[ [boardImage]
-                                                    , Graphics.positionCircle model.movement.start model.investigator (\i -> class "ccc")True
-                                                    , Graphics.positionCircle (Movement.pathEnd model.movement) model.investigator (\i -> class "ccc") False
+                                                    , Investigators.investigatorView model.investigators
                                                     , List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters)
-                                                    , movementLines model
                                                     , List.map (Graphics.localeCircle localeMsg) allLocation
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
-                                                    , List.map (App.map msgForCheckerClick) (DiceChecker.view model.movement.evadeTests)
+                                                    , Investigators.checkersView msgForCheckerClick model.investigators
                                                     ])
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map UnspecifiedClick offsetPosition)][]
@@ -102,7 +88,7 @@ msgForLocationClick place (ctrl, shift) =
     Json.succeed <| Click <| ClickData (locationClick place (shift, ctrl))
 
 msgForCheckerClick msg =
-    Click <| ClickData <| checkerClick msg
+    Click <| ClickData <| (\m -> {m | investigators = Investigators.showCheckDetails msg m.investigators})
 
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
@@ -111,15 +97,6 @@ localeMsg l =
 streetMsg : Neighborhood -> List(Attribute Msg)
 streetMsg n =
     [onDoubleClick <| DoubleClick <| Street n, onLocationClick <| Street n]
-
--- Movement lines
-movementLines : Model -> List (Svg c)
-movementLines model =
-    let
-        color = if Movement.isValidPath model.investigator model.movement then "green" else "red"
-        lines = zip (model.movement.start :: model.movement.path) model.movement.path
-    in
-        List.map (Graphics.movement color) lines
 
 -- mouse position
 offsetPosition : Json.Decoder Point
