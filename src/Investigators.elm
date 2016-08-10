@@ -18,28 +18,26 @@ initialState = InvestigatorState defaultInvestigator Movement.initialModel
 initialModel = Model [] <| Just initialState
 
 ---------------------------------------------
-resolveCheck : UnresolvedCheck -> List Int -> (UnresolvedCheck -> List Int -> c) -> Model -> (Model, Cmd c)
-resolveCheck check results msgGenerator model =
+resolveCheck : UnresolvedCheck -> List Int -> Model -> (Model, Cmd (UnresolvedCheck, List Int))
+resolveCheck check results model =
     let
-        performResolveCheck check results msgGenerator state =
+        performResolveCheck check results state =
             case check.checkType of
                 Evade ->
-                    let
-                        resolved = DiceChecker.resolveCheck check results
-                    in
-                        Movement.evadeCheck resolved msgGenerator state.movement
+                        Movement.evadeCheck (DiceChecker.resolveCheck check results) state.movement
     in
-        updateMovementWithCmd (performResolveCheck check results msgGenerator) model
+        updateMovementWithCmd (performResolveCheck check results) model
 
-finalizeMovement place msgGenerator model =
+finalizeMovement : Place -> Model -> (Model, Cmd (UnresolvedCheck, List Int))
+finalizeMovement place model =
     let
-        performFinalizeMovement place msgGenerator state=
+        performFinalizeMovement place state=
             if Movement.pathEnd state.movement == place && Movement.isValidPath state.investigator state.movement then
-                Movement.finalizeMovement msgGenerator state.movement
+                Movement.finalizeMovement state.movement
             else
                 (state.movement, Cmd.none)
     in
-        updateMovementWithCmd (performFinalizeMovement place msgGenerator) model
+        updateMovementWithCmd (performFinalizeMovement place) model
 
 move place monsters model =
     updateMovement (\s -> Movement.moveTo place monsters s.investigator s.movement) model

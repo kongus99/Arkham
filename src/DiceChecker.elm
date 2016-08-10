@@ -30,18 +30,18 @@ prepareCheck location checkType throws successThreshold =
     , successThreshold = successThreshold
     }
 
-runCheck : (UnresolvedCheck -> List Int -> a) -> Model -> (Model, Cmd a)
-runCheck wrapper model =
+runCheck : Model -> (Model, Cmd (UnresolvedCheck, List Int))
+runCheck model =
     case model.currentChecks of
         [] -> (model, Cmd.none)
-        c :: cs -> ({model | currentChecks = cs}, generateCheck c (wrapper c))
+        c :: cs -> ({model | currentChecks = cs}, Cmd.map (\res -> (c, res)) <| generateCheck c)
 
-generateCheck : UnresolvedCheck -> (List Int -> a) -> Cmd a
-generateCheck check wrapper =
+generateCheck : UnresolvedCheck -> Cmd (List Int)
+generateCheck check =
     let
         total = List.sum (List.map (\t -> t.dices) check.throws)
     in
-        Random.generate wrapper <| Random.list total (Random.int 1 6)
+        Random.generate identity <| Random.list total (Random.int 1 6)
 
 resolveCheck : UnresolvedCheck -> List Int -> ResolvedCheck
 resolveCheck check results =

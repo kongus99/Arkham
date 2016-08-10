@@ -10282,16 +10282,6 @@ _elm_lang$core$Native_Platform.effectManagers['Random'] = {pkg: 'elm-lang/core',
 var _elm_lang$elm_architecture_tutorial$BoardData$placeOrder = function (p) {
 	return _elm_lang$core$Basics$toString(p);
 };
-var _elm_lang$elm_architecture_tutorial$BoardData$firstInvestigator = {name: 'Agnes Baker', movementPoints: 4, sneak: 3};
-var _elm_lang$elm_architecture_tutorial$BoardData$abbreviation = function (i) {
-	return A2(
-		_elm_lang$core$String$join,
-		' ',
-		A2(
-			_elm_lang$core$List$map,
-			A2(_elm_lang$core$String$slice, 0, 1),
-			A2(_elm_lang$core$String$split, ' ', i.name)));
-};
 var _elm_lang$elm_architecture_tutorial$BoardData$Throw = F2(
 	function (a, b) {
 		return {dices: a, numOfSuccesses: b};
@@ -10300,10 +10290,16 @@ var _elm_lang$elm_architecture_tutorial$BoardData$ThrowResult = F2(
 	function (a, b) {
 		return {dices: a, wasSuccess: b};
 	});
-var _elm_lang$elm_architecture_tutorial$BoardData$Investigator = F3(
-	function (a, b, c) {
-		return {name: a, sneak: b, movementPoints: c};
+var _elm_lang$elm_architecture_tutorial$BoardData$Investigator = F4(
+	function (a, b, c, d) {
+		return {name: a, movementPoints: b, sneak: c, card: d};
 	});
+var _elm_lang$elm_architecture_tutorial$BoardData$defaultInvestigator = A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Agnes Baker', 4, 3, 'AgnesBaker.png');
+var _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators = _elm_lang$core$Native_List.fromArray(
+	[
+		_elm_lang$elm_architecture_tutorial$BoardData$defaultInvestigator,
+		A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Akachi Onyele', 5, 4, 'AkachiOnyele.png')
+	]);
 var _elm_lang$elm_architecture_tutorial$BoardData$Evade = {ctor: 'Evade'};
 var _elm_lang$elm_architecture_tutorial$BoardData$Uptown = {ctor: 'Uptown'};
 var _elm_lang$elm_architecture_tutorial$BoardData$Southside = {ctor: 'Southside'};
@@ -10933,25 +10929,6 @@ var _elm_lang$elm_architecture_tutorial$Graphics$testName = function (checkType)
 	var _p0 = checkType;
 	return 'Monster evasion';
 };
-var _elm_lang$elm_architecture_tutorial$Graphics$diceStyle = function (wasSuccess) {
-	return wasSuccess ? 'green' : 'red';
-};
-var _elm_lang$elm_architecture_tutorial$Graphics$singleDice = function (_p1) {
-	var _p2 = _p1;
-	return A2(
-		_elm_lang$svg$Svg$tspan,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$svg$Svg_Attributes$fill(
-				_elm_lang$elm_architecture_tutorial$Graphics$diceStyle(_p2._1)),
-				_elm_lang$svg$Svg_Attributes$fontWeight('bold')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$svg$Svg$text(
-				_elm_lang$core$Basics$toString(_p2._0))
-			]));
-};
 var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F4(
 	function (check, op, generator, r) {
 		return A2(
@@ -10975,12 +10952,59 @@ var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F4(
 				[]));
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$createRectangle = F5(
-	function (width, height, leftMargin, topMargin, _p3) {
-		var _p4 = _p3;
-		var ry = _p4._1 + topMargin;
-		var rx = _p4._0 + leftMargin;
+	function (width, height, leftMargin, topMargin, _p1) {
+		var _p2 = _p1;
+		var ry = _p2._1 + topMargin;
+		var rx = _p2._0 + leftMargin;
 		var middle = {x: rx + ((width / 2) | 0), y: ry + ((height / 2) | 0)};
 		return {x: rx, y: ry, width: width, height: height, middle: middle};
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$topOffsets = F4(
+	function (number, maxHeight, tileHeight, maxInRow) {
+		var numOfRows = _elm_lang$core$Basics$ceiling(
+			_elm_lang$core$Basics$toFloat(number) / _elm_lang$core$Basics$toFloat(maxInRow));
+		var topMargin = function (i) {
+			return (((maxHeight - (numOfRows * tileHeight)) / 2) | 0) + (i * tileHeight);
+		};
+		var indexes = A3(
+			_elm_lang$core$List$scanl,
+			F2(
+				function (x, y) {
+					return x + y;
+				}),
+			0,
+			A2(_elm_lang$core$List$repeat, numOfRows - 1, 1));
+		var rowTopMargins = A2(_elm_lang$core$List$map, topMargin, indexes);
+		return _elm_lang$core$List$concat(
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$core$List$repeat(maxInRow),
+				rowTopMargins));
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$leftOffsets = F4(
+	function (number, maxWidth, tileWidth, maxInRow) {
+		var indexes = A3(
+			_elm_lang$core$List$scanl,
+			F2(
+				function (x, y) {
+					return A2(_elm_lang$core$Basics_ops['%'], x + y, maxInRow);
+				}),
+			0,
+			A2(_elm_lang$core$List$repeat, number, 1));
+		var remainder = A2(_elm_lang$core$Basics_ops['%'], number, maxInRow);
+		var leftMargin = function (_p3) {
+			var _p4 = _p3;
+			var lm = _p4._1 ? ((A2(_elm_lang$core$Basics_ops['%'], maxWidth, tileWidth) / 2) | 0) : (((maxWidth - (remainder * tileWidth)) / 2) | 0);
+			return lm + (_p4._0 * tileWidth);
+		};
+		var isFullRow = A2(
+			_elm_lang$core$List$append,
+			A2(_elm_lang$core$List$repeat, number - remainder, true),
+			A2(_elm_lang$core$List$repeat, remainder, false));
+		return A2(
+			_elm_lang$core$List$map,
+			leftMargin,
+			A2(_elm_community$list_extra$List_Extra$zip, indexes, isFullRow));
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$locationCircle = function (location) {
 	var loc = function () {
@@ -11140,8 +11164,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics$middle = function (place) {
 		return _elm_lang$elm_architecture_tutorial$Graphics$locationCircle(_p7._0).middle;
 	}
 };
-var _elm_lang$elm_architecture_tutorial$Graphics$positionCircle = F3(
-	function (p, i, isFilled) {
+var _elm_lang$elm_architecture_tutorial$Graphics$positionCircle = F4(
+	function (p, i, msgGenerator, isFilled) {
 		var m = _elm_lang$elm_architecture_tutorial$Graphics$middle(p);
 		var circleX = _elm_lang$core$Basics$toString(m.x + 30);
 		var circleY = _elm_lang$core$Basics$toString(m.y);
@@ -11171,12 +11195,12 @@ var _elm_lang$elm_architecture_tutorial$Graphics$positionCircle = F3(
 							_elm_lang$svg$Svg_Attributes$textAnchor('middle'),
 							_elm_lang$svg$Svg_Attributes$x(circleX),
 							_elm_lang$svg$Svg_Attributes$y(circleY),
-							_elm_lang$svg$Svg_Attributes$fill('red')
+							_elm_lang$svg$Svg_Attributes$fill('red'),
+							msgGenerator(i)
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$svg$Svg$text(
-							_elm_lang$elm_architecture_tutorial$BoardData$abbreviation(i))
+							_elm_lang$svg$Svg$text('1')
 						])),
 				_elm_lang$core$Native_List.fromArray(
 					[])));
@@ -11304,11 +11328,11 @@ var _elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay = F2(
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, 150, 225);
 var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
-	function (check, indexY, content, rectangle) {
+	function (rowNumber, maxRows, content, rectangle) {
 		var length = ((5 * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 6) | 0;
 		var middlePoint = rectangle.middle;
 		var posX = middlePoint.x;
-		var posY = (middlePoint.y - ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height / 2) | 0)) + (((indexY * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / 5) | 0);
+		var posY = (middlePoint.y - ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height / 2) | 0)) + (((rowNumber * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / (maxRows + 1)) | 0);
 		return A2(
 			_elm_lang$svg$Svg$text$,
 			_elm_lang$core$Native_List.fromArray(
@@ -11325,88 +11349,61 @@ var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
 				]),
 			content);
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width * 4) / 3) | 0, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height * 4) / 3) | 0);
-var _elm_lang$elm_architecture_tutorial$Graphics$maxColumns = (_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width / _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width) | 0;
-var _elm_lang$elm_architecture_tutorial$Graphics$leftOffsets = function (number) {
-	var indexes = A3(
-		_elm_lang$core$List$scanl,
-		F2(
-			function (x, y) {
-				return A2(_elm_lang$core$Basics_ops['%'], x + y, _elm_lang$elm_architecture_tutorial$Graphics$maxColumns);
-			}),
-		0,
-		A2(_elm_lang$core$List$repeat, number, 1));
-	var remainder = A2(_elm_lang$core$Basics_ops['%'], number, _elm_lang$elm_architecture_tutorial$Graphics$maxColumns);
-	var leftMargin = function (_p12) {
-		var _p13 = _p12;
-		var lm = _p13._1 ? ((A2(_elm_lang$core$Basics_ops['%'], _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width) / 2) | 0) : (((_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width - (remainder * _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width)) / 2) | 0);
-		return lm + (_p13._0 * _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width);
-	};
-	var isFullRow = A2(
-		_elm_lang$core$List$append,
-		A2(_elm_lang$core$List$repeat, number - remainder, true),
-		A2(_elm_lang$core$List$repeat, remainder, false));
-	return A2(
-		_elm_lang$core$List$map,
-		leftMargin,
-		A2(_elm_community$list_extra$List_Extra$zip, indexes, isFullRow));
-};
-var _elm_lang$elm_architecture_tutorial$Graphics$topOffsets = function (number) {
-	var numOfRows = _elm_lang$core$Basics$ceiling(
-		_elm_lang$core$Basics$toFloat(number) / _elm_lang$core$Basics$toFloat(_elm_lang$elm_architecture_tutorial$Graphics$maxColumns));
-	var topMargin = function (i) {
-		var tm = ((_elm_lang$elm_architecture_tutorial$Graphics$boardDim.height - (numOfRows * _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.height)) / 2) | 0;
-		return tm + (i * _elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.height);
-	};
-	var indexes = A3(
-		_elm_lang$core$List$scanl,
-		F2(
-			function (x, y) {
-				return x + y;
-			}),
-		0,
-		A2(_elm_lang$core$List$repeat, numOfRows - 1, 1));
-	var rowTopMargins = A2(_elm_lang$core$List$map, topMargin, indexes);
-	return _elm_lang$core$List$concat(
-		A2(
-			_elm_lang$core$List$map,
-			_elm_lang$core$List$repeat(_elm_lang$elm_architecture_tutorial$Graphics$maxColumns),
-			rowTopMargins));
-};
+var _elm_lang$elm_architecture_tutorial$Graphics$investigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, 350, 493);
 var _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions = function (number) {
-	var topMargin = ((_elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.height - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / 2) | 0;
-	var leftMargin = ((_elm_lang$elm_architecture_tutorial$Graphics$checkDimWithMargins.width - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 2) | 0;
+	var checkDimWithMargins = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width * 4) / 3) | 0, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height * 4) / 3) | 0);
+	var maxColumns = (_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width / checkDimWithMargins.width) | 0;
 	var topLeftPoints = A2(
 		_elm_community$list_extra$List_Extra$zip,
-		_elm_lang$elm_architecture_tutorial$Graphics$leftOffsets(number),
-		_elm_lang$elm_architecture_tutorial$Graphics$topOffsets(number));
+		A4(_elm_lang$elm_architecture_tutorial$Graphics$leftOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, checkDimWithMargins.width, maxColumns),
+		A4(_elm_lang$elm_architecture_tutorial$Graphics$topOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics$boardDim.height, checkDimWithMargins.height, maxColumns));
+	var leftMargin = ((checkDimWithMargins.width - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 2) | 0;
+	var topMargin = ((checkDimWithMargins.height - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / 2) | 0;
 	return A2(
 		_elm_lang$core$List$map,
 		A4(_elm_lang$elm_architecture_tutorial$Graphics$createRectangle, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height, leftMargin, topMargin),
 		topLeftPoints);
 };
-var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedDiceCheck = F2(
-	function (generator, check) {
+var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck = F3(
+	function (msgGenerator, textGenerators, check) {
+		var maxTextRows = 2 + _elm_lang$core$List$length(textGenerators);
 		var rectangles = _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions(
 			_elm_lang$core$List$length(check.$throws));
 		var throwRectangles = A2(_elm_community$list_extra$List_Extra$zip, check.$throws, rectangles);
+		var generateText = F2(
+			function (i, gen) {
+				return A2(
+					_elm_lang$core$List$map,
+					function (_p12) {
+						var _p13 = _p12;
+						return A4(
+							_elm_lang$elm_architecture_tutorial$Graphics$info,
+							i + 3,
+							maxTextRows,
+							gen(_p13._0),
+							_p13._1);
+					},
+					throwRectangles);
+			});
+		var texts = _elm_lang$core$List$concat(
+			A2(_elm_lang$core$List$indexedMap, generateText, textGenerators));
 		return _elm_lang$core$List$concat(
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_elm_lang$core$Native_List.fromArray(
 					[
-						A2(_elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay, check, generator)
+						A2(_elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay, check, msgGenerator)
 					]),
 					A2(
 					_elm_lang$core$List$map,
-					A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '1.0', generator),
+					A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '1.0', msgGenerator),
 					rectangles),
 					A2(
 					_elm_lang$core$List$map,
 					A3(
 						_elm_lang$elm_architecture_tutorial$Graphics$info,
-						check,
 						1,
+						maxTextRows,
 						_elm_lang$core$Native_List.fromArray(
 							[
 								_elm_lang$svg$Svg$text(
@@ -11417,8 +11414,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedDiceCheck = F2(
 					_elm_lang$core$List$map,
 					A3(
 						_elm_lang$elm_architecture_tutorial$Graphics$info,
-						check,
 						2,
+						maxTextRows,
 						_elm_lang$core$Native_List.fromArray(
 							[
 								_elm_lang$svg$Svg$text(
@@ -11428,101 +11425,64 @@ var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedDiceCheck = F2(
 									_elm_lang$core$Basics$toString(check.location)))
 							])),
 					rectangles),
-					A2(
-					_elm_lang$core$List$map,
-					function (_p14) {
-						var _p15 = _p14;
-						return A4(
-							_elm_lang$elm_architecture_tutorial$Graphics$info,
-							check,
-							3,
-							_elm_lang$core$Native_List.fromArray(
-								[
-									_elm_lang$svg$Svg$text(
-									A2(
-										_elm_lang$core$String$append,
-										'Dices available: ',
-										_elm_lang$core$Basics$toString(_p15._0.dices)))
-								]),
-							_p15._1);
-					},
-					throwRectangles),
-					A2(
-					_elm_lang$core$List$map,
-					function (_p16) {
-						var _p17 = _p16;
-						return A4(
-							_elm_lang$elm_architecture_tutorial$Graphics$info,
-							check,
-							4,
-							_elm_lang$core$Native_List.fromArray(
-								[
-									_elm_lang$svg$Svg$text(
-									A2(
-										_elm_lang$core$String$append,
-										'Successes required: ',
-										_elm_lang$core$Basics$toString(_p17._0.numOfSuccesses)))
-								]),
-							_p17._1);
-					},
-					throwRectangles)
-				]));
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedResolvedDiceCheck = F2(
-	function (generator, check) {
-		var rectangles = _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions(
-			_elm_lang$core$List$length(check.$throws));
-		var throwRectangles = A2(_elm_community$list_extra$List_Extra$zip, check.$throws, rectangles);
-		return _elm_lang$core$List$concat(
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$core$Native_List.fromArray(
-					[
-						A2(_elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay, check, generator)
-					]),
-					A2(
-					_elm_lang$core$List$map,
-					A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '1.0', generator),
-					rectangles),
-					A2(
-					_elm_lang$core$List$map,
-					A3(
-						_elm_lang$elm_architecture_tutorial$Graphics$info,
-						check,
-						1,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$svg$Svg$text(
-								_elm_lang$elm_architecture_tutorial$Graphics$testName(check.checkType))
-							])),
-					rectangles),
-					A2(
-					_elm_lang$core$List$map,
-					function (_p18) {
-						var _p19 = _p18;
-						return A4(
-							_elm_lang$elm_architecture_tutorial$Graphics$info,
-							check,
-							3,
-							A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics$singleDice, _p19._0.dices),
-							_p19._1);
-					},
-					throwRectangles)
+					texts
 				]));
 	});
 
+var _elm_lang$elm_architecture_tutorial$DiceChecker$singleDice = function (_p0) {
+	var _p1 = _p0;
+	var diceStyle = function (wasSuccess) {
+		return wasSuccess ? 'green' : 'red';
+	};
+	return A2(
+		_elm_lang$svg$Svg$tspan,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$fill(
+				diceStyle(_p1._1)),
+				_elm_lang$svg$Svg_Attributes$fontWeight('bold')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg$text(
+				_elm_lang$core$Basics$toString(_p1._0))
+			]));
+};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$throwResults = function ($throw) {
+	return A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$DiceChecker$singleDice, $throw.dices);
+};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$successesRequired = function ($throw) {
+	return _elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$svg$Svg$text(
+			A2(
+				_elm_lang$core$String$append,
+				'Successes required: ',
+				_elm_lang$core$Basics$toString($throw.numOfSuccesses)))
+		]);
+};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$dicesAvailable = function ($throw) {
+	return _elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$svg$Svg$text(
+			A2(
+				_elm_lang$core$String$append,
+				'Dices available: ',
+				_elm_lang$core$Basics$toString($throw.dices)))
+		]);
+};
 var _elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedResolved = function (model) {
-	var _p0 = model.selected;
-	if (((_p0.ctor === 'Just') && (_p0._0.ctor === '_Tuple2')) && (_p0._0._0 === false)) {
-		return A2(_elm_community$list_extra$List_Extra$getAt, _p0._0._1, model.previousChecks);
+	var _p2 = model.selected;
+	if (((_p2.ctor === 'Just') && (_p2._0.ctor === '_Tuple2')) && (_p2._0._0 === false)) {
+		return A2(_elm_community$list_extra$List_Extra$getAt, _p2._0._1, model.previousChecks);
 	} else {
 		return _elm_lang$core$Maybe$Nothing;
 	}
 };
 var _elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedUnresolved = function (model) {
-	var _p1 = model.selected;
-	if (((_p1.ctor === 'Just') && (_p1._0.ctor === '_Tuple2')) && (_p1._0._0 === true)) {
-		return A2(_elm_community$list_extra$List_Extra$getAt, _p1._0._1, model.currentChecks);
+	var _p3 = model.selected;
+	if (((_p3.ctor === 'Just') && (_p3._0.ctor === '_Tuple2')) && (_p3._0._0 === true)) {
+		return A2(_elm_community$list_extra$List_Extra$getAt, _p3._0._1, model.currentChecks);
 	} else {
 		return _elm_lang$core$Maybe$Nothing;
 	}
@@ -11538,19 +11498,19 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$findCheck = F3(
 	});
 var _elm_lang$elm_architecture_tutorial$DiceChecker$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		switch (_p2.ctor) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
 			case 'UnresolvedDetails':
 				return _elm_lang$core$Native_Utils.update(
 					model,
 					{
-						selected: A3(_elm_lang$elm_architecture_tutorial$DiceChecker$findCheck, _p2._0, true, model.currentChecks)
+						selected: A3(_elm_lang$elm_architecture_tutorial$DiceChecker$findCheck, _p4._0, true, model.currentChecks)
 					});
 			case 'ResolvedDetails':
 				return _elm_lang$core$Native_Utils.update(
 					model,
 					{
-						selected: A3(_elm_lang$elm_architecture_tutorial$DiceChecker$findCheck, _p2._0, false, model.previousChecks)
+						selected: A3(_elm_lang$elm_architecture_tutorial$DiceChecker$findCheck, _p4._0, false, model.previousChecks)
 					});
 			default:
 				return _elm_lang$core$Native_Utils.update(
@@ -11559,9 +11519,9 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$update = F2(
 		}
 	});
 var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveSingle = F2(
-	function (successThreshold, _p3) {
-		var _p4 = _p3;
-		var _p5 = _p4._1;
+	function (successThreshold, _p5) {
+		var _p6 = _p5;
+		var _p7 = _p6._1;
 		var rollSuccessful = function (res) {
 			return _elm_lang$core$Native_Utils.cmp(res, successThreshold) > -1;
 		};
@@ -11574,28 +11534,28 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveSingle = F2(
 					_1: rollSuccessful(r)
 				};
 			},
-			_p5);
+			_p7);
 		var wasSuccess = _elm_lang$core$Native_Utils.cmp(
 			_elm_lang$core$List$length(
-				A2(_elm_lang$core$List$filter, rollSuccessful, _p5)),
-			_p4._0.numOfSuccesses) > -1;
+				A2(_elm_lang$core$List$filter, rollSuccessful, _p7)),
+			_p6._0.numOfSuccesses) > -1;
 		return A2(_elm_lang$elm_architecture_tutorial$BoardData$ThrowResult, dices, wasSuccess);
 	});
 var _elm_lang$elm_architecture_tutorial$DiceChecker$splitList = F2(
 	function (list, amounts) {
-		var _p6 = amounts;
-		if (_p6.ctor === '[]') {
+		var _p8 = amounts;
+		if (_p8.ctor === '[]') {
 			return _elm_lang$core$Native_List.fromArray(
 				[]);
 		} else {
-			var _p7 = _p6._0;
+			var _p9 = _p8._0;
 			return A2(
 				_elm_lang$core$List_ops['::'],
-				A2(_elm_lang$core$List$take, _p7, list),
+				A2(_elm_lang$core$List$take, _p9, list),
 				A2(
 					_elm_lang$elm_architecture_tutorial$DiceChecker$splitList,
-					A2(_elm_lang$core$List$drop, _p7, list),
-					_p6._1));
+					A2(_elm_lang$core$List$drop, _p9, list),
+					_p8._1));
 		}
 	});
 var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck = F2(
@@ -11610,12 +11570,9 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck = F2(
 				},
 				check.$throws));
 		var throwResults = A2(
-			_elm_lang$core$Debug$log,
-			'rolls',
-			A2(
-				_elm_lang$core$List$map,
-				_elm_lang$elm_architecture_tutorial$DiceChecker$resolveSingle(check.successThreshold),
-				A2(_elm_community$list_extra$List_Extra$zip, check.$throws, splitResults)));
+			_elm_lang$core$List$map,
+			_elm_lang$elm_architecture_tutorial$DiceChecker$resolveSingle(check.successThreshold),
+			A2(_elm_community$list_extra$List_Extra$zip, check.$throws, splitResults));
 		var wasSuccess = _elm_lang$core$List$isEmpty(
 			A2(
 				_elm_lang$core$List$filter,
@@ -11625,42 +11582,42 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck = F2(
 				throwResults));
 		return {location: check.location, checkType: check.checkType, $throws: throwResults, wasSuccess: wasSuccess};
 	});
-var _elm_lang$elm_architecture_tutorial$DiceChecker$generateCheck = F2(
-	function (check, wrapper) {
-		var total = _elm_lang$core$List$sum(
-			A2(
-				_elm_lang$core$List$map,
-				function (t) {
-					return t.dices;
+var _elm_lang$elm_architecture_tutorial$DiceChecker$generateCheck = function (check) {
+	var total = _elm_lang$core$List$sum(
+		A2(
+			_elm_lang$core$List$map,
+			function (t) {
+				return t.dices;
+			},
+			check.$throws));
+	return A2(
+		_elm_lang$core$Random$generate,
+		_elm_lang$core$Basics$identity,
+		A2(
+			_elm_lang$core$Random$list,
+			total,
+			A2(_elm_lang$core$Random$int, 1, 6)));
+};
+var _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck = function (model) {
+	var _p10 = model.currentChecks;
+	if (_p10.ctor === '[]') {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	} else {
+		var _p11 = _p10._0;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{currentChecks: _p10._1}),
+			_1: A2(
+				_elm_lang$core$Platform_Cmd$map,
+				function (res) {
+					return {ctor: '_Tuple2', _0: _p11, _1: res};
 				},
-				check.$throws));
-		return A2(
-			_elm_lang$core$Random$generate,
-			wrapper,
-			A2(
-				_elm_lang$core$Random$list,
-				total,
-				A2(_elm_lang$core$Random$int, 1, 6)));
-	});
-var _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck = F2(
-	function (wrapper, model) {
-		var _p8 = model.currentChecks;
-		if (_p8.ctor === '[]') {
-			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		} else {
-			var _p9 = _p8._0;
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{currentChecks: _p8._1}),
-				_1: A2(
-					_elm_lang$elm_architecture_tutorial$DiceChecker$generateCheck,
-					_p9,
-					wrapper(_p9))
-			};
-		}
-	});
+				_elm_lang$elm_architecture_tutorial$DiceChecker$generateCheck(_p11))
+		};
+	}
+};
 var _elm_lang$elm_architecture_tutorial$DiceChecker$prepareCheck = F4(
 	function (location, checkType, $throws, successThreshold) {
 		return {location: location, checkType: checkType, $throws: $throws, successThreshold: successThreshold};
@@ -11723,10 +11680,13 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$view = function (model) {
 			[]),
 		A2(
 			_elm_lang$core$Maybe$map,
-			_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedResolvedDiceCheck(
+			A2(
+				_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck,
 				function (c) {
 					return _elm_lang$svg$Svg_Events$onClick(_elm_lang$elm_architecture_tutorial$DiceChecker$HideDetails);
-				}),
+				},
+				_elm_lang$core$Native_List.fromArray(
+					[_elm_lang$elm_architecture_tutorial$DiceChecker$throwResults])),
 			_elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedResolved(model)));
 	var selectedDiceCheck = A2(
 		_elm_lang$core$Maybe$withDefault,
@@ -11734,10 +11694,13 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$view = function (model) {
 			[]),
 		A2(
 			_elm_lang$core$Maybe$map,
-			_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedDiceCheck(
+			A2(
+				_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck,
 				function (c) {
 					return _elm_lang$svg$Svg_Events$onClick(_elm_lang$elm_architecture_tutorial$DiceChecker$HideDetails);
-				}),
+				},
+				_elm_lang$core$Native_List.fromArray(
+					[_elm_lang$elm_architecture_tutorial$DiceChecker$dicesAvailable, _elm_lang$elm_architecture_tutorial$DiceChecker$successesRequired])),
 			_elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedUnresolved(model)));
 	var checksPerformed = A2(
 		_elm_lang$core$List$map,
@@ -11759,107 +11722,6 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$view = function (model) {
 		_elm_lang$core$Native_List.fromArray(
 			[checksToPerform, checksPerformed, selectedDiceCheck, selectedResolvedDiceCheck]));
 };
-
-var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode_ops[':='], 'keyCode', _elm_lang$core$Json_Decode$int);
-var _elm_lang$html$Html_Events$targetChecked = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['target', 'checked']),
-	_elm_lang$core$Json_Decode$bool);
-var _elm_lang$html$Html_Events$targetValue = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['target', 'value']),
-	_elm_lang$core$Json_Decode$string);
-var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
-var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
-var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
-var _elm_lang$html$Html_Events$onFocus = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'focus',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onBlur = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'blur',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
-	_elm_lang$html$Html_Events$defaultOptions,
-	{preventDefault: true});
-var _elm_lang$html$Html_Events$onSubmit = function (msg) {
-	return A3(
-		_elm_lang$html$Html_Events$onWithOptions,
-		'submit',
-		_elm_lang$html$Html_Events$onSubmitOptions,
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onCheck = function (tagger) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'change',
-		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
-};
-var _elm_lang$html$Html_Events$onInput = function (tagger) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'input',
-		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
-};
-var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseout',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseover',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseleave',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseenter',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mouseup',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'mousedown',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'dblclick',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$onClick = function (msg) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'click',
-		_elm_lang$core$Json_Decode$succeed(msg));
-};
-var _elm_lang$html$Html_Events$Options = F2(
-	function (a, b) {
-		return {stopPropagation: a, preventDefault: b};
-	});
 
 var _elm_lang$elm_architecture_tutorial$Paths$pathCollapse = F2(
 	function (currentData, pathToCollapse) {
@@ -12015,31 +11877,30 @@ var _elm_lang$elm_architecture_tutorial$Movement$endMove = F2(
 				evadeTests: _elm_lang$elm_architecture_tutorial$DiceChecker$clearPendingChecks(model.evadeTests)
 			});
 	});
-var _elm_lang$elm_architecture_tutorial$Movement$finalizeMovement = F2(
-	function (wrapper, model) {
-		var _p1 = A2(_elm_lang$elm_architecture_tutorial$DiceChecker$runCheck, wrapper, model.evadeTests);
-		var tests = _p1._0;
-		var cmd = _p1._1;
-		var newModel = _elm_lang$core$Native_Utils.update(
-			model,
-			{evadeTests: tests});
-		return _elm_lang$elm_architecture_tutorial$DiceChecker$hasPendingChecks(model.evadeTests) ? {
-			ctor: '_Tuple2',
-			_0: A2(
-				_elm_lang$elm_architecture_tutorial$Movement$endMove,
-				_elm_lang$elm_architecture_tutorial$Movement$pathEnd(model),
-				newModel),
-			_1: _elm_lang$core$Platform_Cmd$none
-		} : {ctor: '_Tuple2', _0: newModel, _1: cmd};
-	});
-var _elm_lang$elm_architecture_tutorial$Movement$evadeCheck = F3(
-	function (resolved, wrapper, model) {
+var _elm_lang$elm_architecture_tutorial$Movement$finalizeMovement = function (model) {
+	var _p1 = _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck(model.evadeTests);
+	var tests = _p1._0;
+	var cmd = _p1._1;
+	var newModel = _elm_lang$core$Native_Utils.update(
+		model,
+		{evadeTests: tests});
+	return _elm_lang$elm_architecture_tutorial$DiceChecker$hasPendingChecks(model.evadeTests) ? {
+		ctor: '_Tuple2',
+		_0: A2(
+			_elm_lang$elm_architecture_tutorial$Movement$endMove,
+			_elm_lang$elm_architecture_tutorial$Movement$pathEnd(model),
+			newModel),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {ctor: '_Tuple2', _0: newModel, _1: cmd};
+};
+var _elm_lang$elm_architecture_tutorial$Movement$evadeCheck = F2(
+	function (resolved, model) {
 		var newModel = _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				evadeTests: A2(_elm_lang$elm_architecture_tutorial$DiceChecker$addResolvedCheck, resolved, model.evadeTests)
 			});
-		return resolved.wasSuccess ? A2(_elm_lang$elm_architecture_tutorial$Movement$finalizeMovement, wrapper, newModel) : {
+		return resolved.wasSuccess ? _elm_lang$elm_architecture_tutorial$Movement$finalizeMovement(newModel) : {
 			ctor: '_Tuple2',
 			_0: A2(_elm_lang$elm_architecture_tutorial$Movement$endMove, resolved.location, newModel),
 			_1: _elm_lang$core$Platform_Cmd$none
@@ -12174,7 +12035,7 @@ var _elm_lang$elm_architecture_tutorial$Movement$moveTo = F4(
 			model,
 			{path: newPath, evadeTests: newEvadeTests});
 	});
-var _elm_lang$elm_architecture_tutorial$Movement$updateEvade = F2(
+var _elm_lang$elm_architecture_tutorial$Movement$update = F2(
 	function (msg, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
@@ -12193,170 +12054,385 @@ var _elm_lang$elm_architecture_tutorial$Movement$Model = F3(
 		return {start: a, path: b, evadeTests: c};
 	});
 
-var _elm_lang$elm_architecture_tutorial$MainModule$offsetPosition = A3(
-	_elm_lang$core$Json_Decode$object2,
-	_elm_lang$elm_architecture_tutorial$Graphics$Point,
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetX', _elm_lang$core$Json_Decode$int),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetY', _elm_lang$core$Json_Decode$int));
-var _elm_lang$elm_architecture_tutorial$MainModule$movementLines = function (model) {
+var _elm_lang$elm_architecture_tutorial$Investigators$checkersViewDraw = F2(
+	function (msgGenerator, state) {
+		return A2(
+			_elm_lang$core$List$map,
+			_elm_lang$html$Html_App$map(msgGenerator),
+			_elm_lang$elm_architecture_tutorial$DiceChecker$view(state.movement.evadeTests));
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$checkersView = F2(
+	function (msgGenerator, model) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			A2(
+				_elm_lang$core$Maybe$map,
+				_elm_lang$elm_architecture_tutorial$Investigators$checkersViewDraw(msgGenerator),
+				model.selected));
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$movementLinesDraw = function (state) {
 	var lines = A2(
 		_elm_community$list_extra$List_Extra$zip,
-		A2(_elm_lang$core$List_ops['::'], model.movement.start, model.movement.path),
-		model.movement.path);
-	var color = A2(_elm_lang$elm_architecture_tutorial$Movement$isValidPath, model.investigator, model.movement) ? 'green' : 'red';
+		A2(_elm_lang$core$List_ops['::'], state.movement.start, state.movement.path),
+		state.movement.path);
+	var color = A2(_elm_lang$elm_architecture_tutorial$Movement$isValidPath, state.investigator, state.movement) ? 'green' : 'red';
 	return A2(
 		_elm_lang$core$List$map,
 		_elm_lang$elm_architecture_tutorial$Graphics$movement(color),
 		lines);
 };
-var _elm_lang$elm_architecture_tutorial$MainModule$applyMoveToModel = F2(
-	function (_p0, model) {
+var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (state) {
+	return _elm_lang$core$List$concat(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A4(
+				_elm_lang$elm_architecture_tutorial$Graphics$positionCircle,
+				state.movement.start,
+				state.investigator,
+				function (i) {
+					return _elm_lang$svg$Svg_Attributes$class('ccc');
+				},
+				true),
+				A4(
+				_elm_lang$elm_architecture_tutorial$Graphics$positionCircle,
+				_elm_lang$elm_architecture_tutorial$Movement$pathEnd(state.movement),
+				state.investigator,
+				function (i) {
+					return _elm_lang$svg$Svg_Attributes$class('ccc');
+				},
+				false),
+				_elm_lang$elm_architecture_tutorial$Investigators$movementLinesDraw(state)
+			]));
+};
+var _elm_lang$elm_architecture_tutorial$Investigators$investigatorView = function (model) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		A2(_elm_lang$core$Maybe$map, _elm_lang$elm_architecture_tutorial$Investigators$positionDraw, model.selected));
+};
+var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
+	function (stateUpdater, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				selected: A2(
+					_elm_lang$core$Maybe$map,
+					function (s) {
+						return _elm_lang$core$Native_Utils.update(
+							s,
+							{
+								movement: stateUpdater(s)
+							});
+					},
+					model.selected)
+			});
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd = F2(
+	function (stateUpdater, model) {
+		var pair = A2(_elm_lang$core$Maybe$map, stateUpdater, model.selected);
+		var _p0 = pair;
+		if (_p0.ctor === 'Nothing') {
+			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: A2(
+					_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
+					function (s) {
+						return _p0._0._0;
+					},
+					model),
+				_1: _p0._0._1
+			};
+		}
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$showCheckDetails = F2(
+	function (msg, model) {
+		return A2(
+			_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
+			function (s) {
+				return A2(_elm_lang$elm_architecture_tutorial$Movement$update, msg, s.movement);
+			},
+			model);
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$move = F3(
+	function (place, monsters, model) {
+		return A2(
+			_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
+			function (s) {
+				return A4(_elm_lang$elm_architecture_tutorial$Movement$moveTo, place, monsters, s.investigator, s.movement);
+			},
+			model);
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$finalizeMovement = F2(
+	function (place, model) {
+		var performFinalizeMovement = F2(
+			function (place, state) {
+				return (_elm_lang$core$Native_Utils.eq(
+					_elm_lang$elm_architecture_tutorial$Movement$pathEnd(state.movement),
+					place) && A2(_elm_lang$elm_architecture_tutorial$Movement$isValidPath, state.investigator, state.movement)) ? _elm_lang$elm_architecture_tutorial$Movement$finalizeMovement(state.movement) : {ctor: '_Tuple2', _0: state.movement, _1: _elm_lang$core$Platform_Cmd$none};
+			});
+		return A2(
+			_elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd,
+			performFinalizeMovement(place),
+			model);
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$resolveCheck = F3(
+	function (check, results, model) {
+		var performResolveCheck = F3(
+			function (check, results, state) {
+				var _p1 = check.checkType;
+				return A2(
+					_elm_lang$elm_architecture_tutorial$Movement$evadeCheck,
+					A2(_elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck, check, results),
+					state.movement);
+			});
+		return A2(
+			_elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd,
+			A2(performResolveCheck, check, results),
+			model);
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F2(
+	function (a, b) {
+		return {investigator: a, movement: b};
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A2(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$BoardData$defaultInvestigator, _elm_lang$elm_architecture_tutorial$Movement$initialModel);
+var _elm_lang$elm_architecture_tutorial$Investigators$Model = F2(
+	function (a, b) {
+		return {investigatorList: a, selected: b};
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$initialModel = A2(
+	_elm_lang$elm_architecture_tutorial$Investigators$Model,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Maybe$Just(_elm_lang$elm_architecture_tutorial$Investigators$initialState));
+
+var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode_ops[':='], 'keyCode', _elm_lang$core$Json_Decode$int);
+var _elm_lang$html$Html_Events$targetChecked = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['target', 'checked']),
+	_elm_lang$core$Json_Decode$bool);
+var _elm_lang$html$Html_Events$targetValue = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['target', 'value']),
+	_elm_lang$core$Json_Decode$string);
+var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
+var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
+var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
+var _elm_lang$html$Html_Events$onFocus = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focus',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onBlur = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'blur',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
+	_elm_lang$html$Html_Events$defaultOptions,
+	{preventDefault: true});
+var _elm_lang$html$Html_Events$onSubmit = function (msg) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'submit',
+		_elm_lang$html$Html_Events$onSubmitOptions,
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onCheck = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'change',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
+};
+var _elm_lang$html$Html_Events$onInput = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'input',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
+};
+var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseout',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseover',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseleave',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseenter',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseup',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mousedown',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'dblclick',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$Options = F2(
+	function (a, b) {
+		return {stopPropagation: a, preventDefault: b};
+	});
+
+var _elm_lang$elm_architecture_tutorial$MainModule$offsetPosition = A3(
+	_elm_lang$core$Json_Decode$object2,
+	_elm_lang$elm_architecture_tutorial$Graphics$Point,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetX', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetY', _elm_lang$core$Json_Decode$int));
+var _elm_lang$elm_architecture_tutorial$MainModule$locationClick = F3(
+	function (place, _p0, model) {
 		var _p1 = _p0;
+		var _p2 = {ctor: '_Tuple2', _0: _p1._0, _1: _p1._1};
+		if (_p2._0 === false) {
+			if (_p2._1 === false) {
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						investigators: A3(_elm_lang$elm_architecture_tutorial$Investigators$move, place, model.monsters, model.investigators)
+					});
+			} else {
+				var monsterList = A2(
+					_elm_lang$core$Maybe$withDefault,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					A2(_eeue56$elm_all_dict$AllDict$get, place, model.monsters));
+				var _p3 = _elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster(model.monsterBowl);
+				var maybeMonster = _p3._0;
+				var bowl = _p3._1;
+				var _p4 = maybeMonster;
+				if (_p4.ctor === 'Nothing') {
+					return model;
+				} else {
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							monsters: A3(
+								_eeue56$elm_all_dict$AllDict$insert,
+								place,
+								A2(_elm_lang$core$List_ops['::'], _p4._0, monsterList),
+								model.monsters),
+							monsterBowl: _elm_lang$core$Maybe$Just(bowl)
+						});
+				}
+			}
+		} else {
+			var monsterList = A2(
+				_elm_lang$core$Maybe$withDefault,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				A2(_eeue56$elm_all_dict$AllDict$get, place, model.monsters));
+			var _p5 = monsterList;
+			if (_p5.ctor === '[]') {
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						monsters: A2(_eeue56$elm_all_dict$AllDict$remove, place, model.monsters)
+					});
+			} else {
+				if (_p5._1.ctor === '[]') {
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							monsters: A2(_eeue56$elm_all_dict$AllDict$remove, place, model.monsters)
+						});
+				} else {
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							monsters: A3(_eeue56$elm_all_dict$AllDict$insert, place, _p5._1, model.monsters)
+						});
+				}
+			}
+		}
+	});
+var _elm_lang$elm_architecture_tutorial$MainModule$ClickData = function (a) {
+	return {clickUpdate: a};
+};
+var _elm_lang$elm_architecture_tutorial$MainModule$Model = F3(
+	function (a, b, c) {
+		return {investigators: a, monsters: b, monsterBowl: c};
+	});
+var _elm_lang$elm_architecture_tutorial$MainModule$initialModel = A3(
+	_elm_lang$elm_architecture_tutorial$MainModule$Model,
+	_elm_lang$elm_architecture_tutorial$Investigators$initialModel,
+	_eeue56$elm_all_dict$AllDict$empty(_elm_lang$elm_architecture_tutorial$BoardData$placeOrder),
+	_elm_lang$core$Maybe$Nothing);
+var _elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck = function (a) {
+	return {ctor: 'ResolveDiceCheck', _0: a};
+};
+var _elm_lang$elm_architecture_tutorial$MainModule$resolveInvestigatorUpdate = F2(
+	function (updater, model) {
+		var _p6 = updater(model.investigators);
+		var newInvestigators = _p6._0;
+		var cmd = _p6._1;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
-				{movement: _p1._0}),
-			_1: _p1._1
+				{investigators: newInvestigators}),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck, cmd)
 		};
-	});
-var _elm_lang$elm_architecture_tutorial$MainModule$initialModel = {
-	movement: _elm_lang$elm_architecture_tutorial$Movement$initialModel,
-	investigator: _elm_lang$elm_architecture_tutorial$BoardData$firstInvestigator,
-	monsters: _eeue56$elm_all_dict$AllDict$empty(_elm_lang$elm_architecture_tutorial$BoardData$placeOrder),
-	monsterBowl: _elm_lang$core$Maybe$Nothing
-};
-var _elm_lang$elm_architecture_tutorial$MainModule$ClickData = F3(
-	function (a, b, c) {
-		return {shiftKey: a, ctrlKey: b, place: c};
-	});
-var _elm_lang$elm_architecture_tutorial$MainModule$Model = F4(
-	function (a, b, c, d) {
-		return {movement: a, investigator: b, monsters: c, monsterBowl: d};
-	});
-var _elm_lang$elm_architecture_tutorial$MainModule$CheckerClick = function (a) {
-	return {ctor: 'CheckerClick', _0: a};
-};
-var _elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck = F2(
-	function (a, b) {
-		return {ctor: 'ResolveDiceCheck', _0: a, _1: b};
 	});
 var _elm_lang$elm_architecture_tutorial$MainModule$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		switch (_p2.ctor) {
+		var _p7 = msg;
+		switch (_p7.ctor) {
 			case 'UnspecifiedClick':
-				var x = A2(_elm_lang$core$Debug$log, 'clicked', _p2._0);
+				var x = A2(_elm_lang$core$Debug$log, 'clicked', _p7._0);
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'DoubleClick':
-				return (_elm_lang$core$Native_Utils.eq(
-					_elm_lang$elm_architecture_tutorial$Movement$pathEnd(model.movement),
-					_p2._0) && A2(_elm_lang$elm_architecture_tutorial$Movement$isValidPath, model.investigator, model.movement)) ? A2(
-					_elm_lang$elm_architecture_tutorial$MainModule$applyMoveToModel,
-					A2(_elm_lang$elm_architecture_tutorial$Movement$finalizeMovement, _elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck, model.movement),
-					model) : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'Click':
-				var _p7 = _p2._0;
-				var _p3 = {ctor: '_Tuple2', _0: _p7.shiftKey, _1: _p7.ctrlKey};
-				if (_p3._0 === false) {
-					if (_p3._1 === false) {
-						return {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								model,
-								{
-									movement: A4(_elm_lang$elm_architecture_tutorial$Movement$moveTo, _p7.place, model.monsters, model.investigator, model.movement)
-								}),
-							_1: _elm_lang$core$Platform_Cmd$none
-						};
-					} else {
-						var monsterList = A2(
-							_elm_lang$core$Maybe$withDefault,
-							_elm_lang$core$Native_List.fromArray(
-								[]),
-							A2(_eeue56$elm_all_dict$AllDict$get, _p7.place, model.monsters));
-						var _p4 = _elm_lang$elm_architecture_tutorial$MonsterBowl$drawMonster(model.monsterBowl);
-						var maybeMonster = _p4._0;
-						var bowl = _p4._1;
-						var _p5 = maybeMonster;
-						if (_p5.ctor === 'Nothing') {
-							return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-						} else {
-							return {
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Native_Utils.update(
-									model,
-									{
-										monsters: A3(
-											_eeue56$elm_all_dict$AllDict$insert,
-											_p7.place,
-											A2(_elm_lang$core$List_ops['::'], _p5._0, monsterList),
-											model.monsters),
-										monsterBowl: _elm_lang$core$Maybe$Just(bowl)
-									}),
-								_1: _elm_lang$core$Platform_Cmd$none
-							};
-						}
-					}
-				} else {
-					var monsterList = A2(
-						_elm_lang$core$Maybe$withDefault,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						A2(_eeue56$elm_all_dict$AllDict$get, _p7.place, model.monsters));
-					var _p6 = monsterList;
-					if (_p6.ctor === '[]') {
-						return {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								model,
-								{
-									monsters: A2(_eeue56$elm_all_dict$AllDict$remove, _p7.place, model.monsters)
-								}),
-							_1: _elm_lang$core$Platform_Cmd$none
-						};
-					} else {
-						if (_p6._1.ctor === '[]') {
-							return {
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Native_Utils.update(
-									model,
-									{
-										monsters: A2(_eeue56$elm_all_dict$AllDict$remove, _p7.place, model.monsters)
-									}),
-								_1: _elm_lang$core$Platform_Cmd$none
-							};
-						} else {
-							return {
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Native_Utils.update(
-									model,
-									{
-										monsters: A3(_eeue56$elm_all_dict$AllDict$insert, _p7.place, _p6._1, model.monsters)
-									}),
-								_1: _elm_lang$core$Platform_Cmd$none
-							};
-						}
-					}
-				}
-			case 'ResolveDiceCheck':
-				var _p9 = _p2._0;
-				var _p8 = _p9.checkType;
-				var resolved = A2(_elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck, _p9, _p2._1);
 				return A2(
-					_elm_lang$elm_architecture_tutorial$MainModule$applyMoveToModel,
-					A3(_elm_lang$elm_architecture_tutorial$Movement$evadeCheck, resolved, _elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck, model.movement),
+					_elm_lang$elm_architecture_tutorial$MainModule$resolveInvestigatorUpdate,
+					_elm_lang$elm_architecture_tutorial$Investigators$finalizeMovement(_p7._0),
 					model);
-			default:
+			case 'Click':
 				return {
 					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							movement: A2(_elm_lang$elm_architecture_tutorial$Movement$updateEvade, _p2._0, model.movement)
-						}),
+					_0: _p7._0.clickUpdate(model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			default:
+				return A2(
+					_elm_lang$elm_architecture_tutorial$MainModule$resolveInvestigatorUpdate,
+					A2(_elm_lang$elm_architecture_tutorial$Investigators$resolveCheck, _p7._0._0, _p7._0._1),
+					model);
 		}
 	});
 var _elm_lang$elm_architecture_tutorial$MainModule$DoubleClick = function (a) {
@@ -12365,14 +12441,18 @@ var _elm_lang$elm_architecture_tutorial$MainModule$DoubleClick = function (a) {
 var _elm_lang$elm_architecture_tutorial$MainModule$Click = function (a) {
 	return {ctor: 'Click', _0: a};
 };
-var _elm_lang$elm_architecture_tutorial$MainModule$msgForGeneralClick = F2(
-	function (place, _p10) {
-		var _p11 = _p10;
+var _elm_lang$elm_architecture_tutorial$MainModule$msgForLocationClick = F2(
+	function (place, _p8) {
+		var _p9 = _p8;
 		return _elm_lang$core$Json_Decode$succeed(
 			_elm_lang$elm_architecture_tutorial$MainModule$Click(
-				A3(_elm_lang$elm_architecture_tutorial$MainModule$ClickData, _p11._1, _p11._0, place)));
+				_elm_lang$elm_architecture_tutorial$MainModule$ClickData(
+					A2(
+						_elm_lang$elm_architecture_tutorial$MainModule$locationClick,
+						place,
+						{ctor: '_Tuple2', _0: _p9._1, _1: _p9._0}))));
 	});
-var _elm_lang$elm_architecture_tutorial$MainModule$onGeneralClick = function (p) {
+var _elm_lang$elm_architecture_tutorial$MainModule$onLocationClick = function (p) {
 	return A2(
 		_elm_lang$html$Html_Events$on,
 		'click',
@@ -12386,7 +12466,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$onGeneralClick = function (p)
 					}),
 				A2(_elm_lang$core$Json_Decode_ops[':='], 'ctrlKey', _elm_lang$core$Json_Decode$bool),
 				A2(_elm_lang$core$Json_Decode_ops[':='], 'shiftKey', _elm_lang$core$Json_Decode$bool)),
-			_elm_lang$elm_architecture_tutorial$MainModule$msgForGeneralClick(p)));
+			_elm_lang$elm_architecture_tutorial$MainModule$msgForLocationClick(p)));
 };
 var _elm_lang$elm_architecture_tutorial$MainModule$localeMsg = function (l) {
 	return _elm_lang$core$Native_List.fromArray(
@@ -12394,7 +12474,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$localeMsg = function (l) {
 			_elm_lang$html$Html_Events$onDoubleClick(
 			_elm_lang$elm_architecture_tutorial$MainModule$DoubleClick(
 				_elm_lang$elm_architecture_tutorial$BoardData$Locale(l))),
-			_elm_lang$elm_architecture_tutorial$MainModule$onGeneralClick(
+			_elm_lang$elm_architecture_tutorial$MainModule$onLocationClick(
 			_elm_lang$elm_architecture_tutorial$BoardData$Locale(l))
 		]);
 };
@@ -12404,9 +12484,20 @@ var _elm_lang$elm_architecture_tutorial$MainModule$streetMsg = function (n) {
 			_elm_lang$html$Html_Events$onDoubleClick(
 			_elm_lang$elm_architecture_tutorial$MainModule$DoubleClick(
 				_elm_lang$elm_architecture_tutorial$BoardData$Street(n))),
-			_elm_lang$elm_architecture_tutorial$MainModule$onGeneralClick(
+			_elm_lang$elm_architecture_tutorial$MainModule$onLocationClick(
 			_elm_lang$elm_architecture_tutorial$BoardData$Street(n))
 		]);
+};
+var _elm_lang$elm_architecture_tutorial$MainModule$msgForCheckerClick = function (msg) {
+	return _elm_lang$elm_architecture_tutorial$MainModule$Click(
+		_elm_lang$elm_architecture_tutorial$MainModule$ClickData(
+			function (m) {
+				return _elm_lang$core$Native_Utils.update(
+					m,
+					{
+						investigators: A2(_elm_lang$elm_architecture_tutorial$Investigators$showCheckDetails, msg, m.investigators)
+					});
+			}));
 };
 var _elm_lang$elm_architecture_tutorial$MainModule$UnspecifiedClick = function (a) {
 	return {ctor: 'UnspecifiedClick', _0: a};
@@ -12442,17 +12533,11 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 				[
 					_elm_lang$core$Native_List.fromArray(
 					[_elm_lang$elm_architecture_tutorial$MainModule$boardImage]),
-					A3(_elm_lang$elm_architecture_tutorial$Graphics$positionCircle, model.movement.start, model.investigator, true),
-					A3(
-					_elm_lang$elm_architecture_tutorial$Graphics$positionCircle,
-					_elm_lang$elm_architecture_tutorial$Movement$pathEnd(model.movement),
-					model.investigator,
-					false),
+					_elm_lang$elm_architecture_tutorial$Investigators$investigatorView(model.investigators),
 					A2(
 					_elm_lang$core$List$concatMap,
 					_elm_lang$elm_architecture_tutorial$Graphics$monsterSquare,
 					_eeue56$elm_all_dict$AllDict$toList(model.monsters)),
-					_elm_lang$elm_architecture_tutorial$MainModule$movementLines(model),
 					A2(
 					_elm_lang$core$List$map,
 					_elm_lang$elm_architecture_tutorial$Graphics$localeCircle(_elm_lang$elm_architecture_tutorial$MainModule$localeMsg),
@@ -12461,10 +12546,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 					_elm_lang$core$List$map,
 					_elm_lang$elm_architecture_tutorial$Graphics$streetRectangle(_elm_lang$elm_architecture_tutorial$MainModule$streetMsg),
 					_elm_lang$elm_architecture_tutorial$BoardData$allNeighborhood),
-					A2(
-					_elm_lang$core$List$map,
-					_elm_lang$html$Html_App$map(_elm_lang$elm_architecture_tutorial$MainModule$CheckerClick),
-					_elm_lang$elm_architecture_tutorial$DiceChecker$view(model.movement.evadeTests))
+					A2(_elm_lang$elm_architecture_tutorial$Investigators$checkersView, _elm_lang$elm_architecture_tutorial$MainModule$msgForCheckerClick, model.investigators)
 				])));
 };
 var _elm_lang$elm_architecture_tutorial$MainModule$view = function (model) {
@@ -12483,7 +12565,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$main = {
 			init: {ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$MainModule$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
 			view: _elm_lang$elm_architecture_tutorial$MainModule$view,
 			update: _elm_lang$elm_architecture_tutorial$MainModule$update,
-			subscriptions: function (_p12) {
+			subscriptions: function (_p10) {
 				return _elm_lang$core$Platform_Sub$none;
 			}
 		})

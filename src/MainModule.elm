@@ -20,7 +20,7 @@ initialModel = Model Investigators.initialModel (AllDict.empty placeOrder) Nothi
 type Msg = UnspecifiedClick Point |
            Click ClickData|
            DoubleClick Place |
-           ResolveDiceCheck UnresolvedCheck (List Int)
+           ResolveDiceCheck (UnresolvedCheck, List Int)
 
 locationClick place (shiftKey, ctrlKey) model =
     case (shiftKey, ctrlKey) of
@@ -52,17 +52,17 @@ update msg model =
             in
                 (model, Cmd.none)
         DoubleClick place ->
-            resolveInvestigatorUpdate (Investigators.finalizeMovement place ResolveDiceCheck) model
+            resolveInvestigatorUpdate (Investigators.finalizeMovement place) model
         Click data ->
             (data.clickUpdate model, Cmd.none)
-        ResolveDiceCheck check results ->
-            resolveInvestigatorUpdate (Investigators.resolveCheck check results ResolveDiceCheck) model
+        ResolveDiceCheck (check, results) ->
+            resolveInvestigatorUpdate (Investigators.resolveCheck check results) model
 
 resolveInvestigatorUpdate updater model =
     let
         (newInvestigators, cmd) = updater model.investigators
     in
-        ({model | investigators = newInvestigators}, cmd)
+        ({model | investigators = newInvestigators}, Cmd.map ResolveDiceCheck cmd)
 
 view : Model -> Html Msg
 view model =

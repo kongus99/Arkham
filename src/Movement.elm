@@ -55,20 +55,20 @@ endMove : Place -> Model -> Model
 endMove place model =
     {model | path = [], start = place, evadeTests = DiceChecker.clearPendingChecks model.evadeTests}
 
-evadeCheck : ResolvedCheck -> (UnresolvedCheck -> List Int -> a) -> Model -> ( Model, Cmd a )
-evadeCheck resolved wrapper model =
+evadeCheck : ResolvedCheck -> Model -> ( Model, Cmd (UnresolvedCheck, List Int) )
+evadeCheck resolved model =
     let
         newModel = {model | evadeTests = addResolvedCheck resolved model.evadeTests }
     in
         if resolved.wasSuccess then
-            finalizeMovement wrapper newModel
+            finalizeMovement newModel
         else
             (endMove resolved.location newModel, Cmd.none)
 
-finalizeMovement : (UnresolvedCheck -> List Int -> a) -> Model -> (Model, Cmd a)
-finalizeMovement wrapper model=
+finalizeMovement : Model -> (Model, Cmd (UnresolvedCheck, List Int))
+finalizeMovement model =
     let
-        (tests, cmd) = runCheck wrapper model.evadeTests
+        (tests, cmd) = runCheck model.evadeTests
         newModel = {model | evadeTests = tests}
     in
         if DiceChecker.hasPendingChecks model.evadeTests then
