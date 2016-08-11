@@ -10925,6 +10925,92 @@ var _elm_lang$elm_architecture_tutorial$MonsterBowl$Bowl = F2(
 		return {monsters: a, index: b};
 	});
 
+var _elm_lang$elm_architecture_tutorial$GraphicTypes$Point = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension = F2(
+	function (a, b) {
+		return {width: a, height: b};
+	});
+
+var _elm_lang$elm_architecture_tutorial$PieChart$calculatePie = F5(
+	function (middle, radius, total, index, color) {
+		var angle2 = ((_elm_lang$core$Basics$toFloat(index + 1) * 2) * _elm_lang$core$Basics$pi) / _elm_lang$core$Basics$toFloat(total);
+		var x2 = _elm_lang$core$Basics$ceiling(
+			_elm_lang$core$Basics$toFloat(middle.x) + (_elm_lang$core$Basics$toFloat(radius) * _elm_lang$core$Basics$sin(angle2)));
+		var y2 = _elm_lang$core$Basics$ceiling(
+			_elm_lang$core$Basics$toFloat(middle.y) + (_elm_lang$core$Basics$toFloat(radius) * _elm_lang$core$Basics$cos(angle2)));
+		var angle1 = ((_elm_lang$core$Basics$toFloat(index) * 2) * _elm_lang$core$Basics$pi) / _elm_lang$core$Basics$toFloat(total);
+		var x1 = _elm_lang$core$Basics$ceiling(
+			_elm_lang$core$Basics$toFloat(middle.x) + (_elm_lang$core$Basics$toFloat(radius) * _elm_lang$core$Basics$sin(angle1)));
+		var y1 = _elm_lang$core$Basics$ceiling(
+			_elm_lang$core$Basics$toFloat(middle.y) + (_elm_lang$core$Basics$toFloat(radius) * _elm_lang$core$Basics$cos(angle1)));
+		var toDraw = _elm_lang$core$String$concat(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					' M ',
+					_elm_lang$core$Basics$toString(x1),
+					' ',
+					_elm_lang$core$Basics$toString(y1),
+					' A ',
+					_elm_lang$core$Basics$toString(radius),
+					' ',
+					_elm_lang$core$Basics$toString(radius),
+					', 0, 0, 0, ',
+					_elm_lang$core$Basics$toString(x2),
+					' ',
+					_elm_lang$core$Basics$toString(y2),
+					' L ',
+					_elm_lang$core$Basics$toString(middle.x),
+					' ',
+					_elm_lang$core$Basics$toString(middle.y),
+					' Z'
+				]));
+		return A2(
+			_elm_lang$svg$Svg$path,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$d(toDraw),
+					_elm_lang$svg$Svg_Attributes$fill(color)
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
+var _elm_lang$elm_architecture_tutorial$PieChart$chart = F3(
+	function (middle, radius, colors) {
+		return _elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$List$length(colors),
+			1) ? _elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$svg$Svg$circle,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$cx(
+						_elm_lang$core$Basics$toString(middle.x)),
+						_elm_lang$svg$Svg_Attributes$cy(
+						_elm_lang$core$Basics$toString(middle.y)),
+						_elm_lang$svg$Svg_Attributes$r(
+						_elm_lang$core$Basics$toString(radius)),
+						_elm_lang$svg$Svg_Attributes$fill(
+						A2(
+							_elm_lang$core$Maybe$withDefault,
+							'green',
+							_elm_lang$core$List$head(colors)))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[]))
+			]) : A2(
+			_elm_lang$core$List$indexedMap,
+			A3(
+				_elm_lang$elm_architecture_tutorial$PieChart$calculatePie,
+				middle,
+				radius,
+				_elm_lang$core$List$length(colors)),
+			colors);
+	});
+
 var _elm_lang$elm_architecture_tutorial$Graphics$testName = function (checkType) {
 	var _p0 = checkType;
 	return 'Monster evasion';
@@ -11006,10 +11092,122 @@ var _elm_lang$elm_architecture_tutorial$Graphics$leftOffsets = F4(
 			leftMargin,
 			A2(_elm_community$list_extra$List_Extra$zip, indexes, isFullRow));
 	});
+var _elm_lang$elm_architecture_tutorial$Graphics$investigatorDim = A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension, 350, 493);
+var _elm_lang$elm_architecture_tutorial$Graphics$checkDim = A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension, 150, 225);
+var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
+	function (rowNumber, maxRows, content, rectangle) {
+		var length = ((5 * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 6) | 0;
+		var middlePoint = rectangle.middle;
+		var posX = middlePoint.x;
+		var posY = (middlePoint.y - ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height / 2) | 0)) + (((rowNumber * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / (maxRows + 1)) | 0);
+		return A2(
+			_elm_lang$svg$Svg$text$,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$x(
+					_elm_lang$core$Basics$toString(posX)),
+					_elm_lang$svg$Svg_Attributes$y(
+					_elm_lang$core$Basics$toString(posY)),
+					_elm_lang$svg$Svg_Attributes$textLength(
+					_elm_lang$core$Basics$toString(length)),
+					_elm_lang$svg$Svg_Attributes$lengthAdjust('spacingAndGlyphs'),
+					_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
+					_elm_lang$svg$Svg_Attributes$textAnchor('middle')
+				]),
+			content);
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$boardDim = A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension, 1606, 2384);
+var _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions = function (number) {
+	var checkDimWithMargins = A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width * 4) / 3) | 0, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height * 4) / 3) | 0);
+	var maxColumns = (_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width / checkDimWithMargins.width) | 0;
+	var topLeftPoints = A2(
+		_elm_community$list_extra$List_Extra$zip,
+		A4(_elm_lang$elm_architecture_tutorial$Graphics$leftOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, checkDimWithMargins.width, maxColumns),
+		A4(_elm_lang$elm_architecture_tutorial$Graphics$topOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics$boardDim.height, checkDimWithMargins.height, maxColumns));
+	var leftMargin = ((checkDimWithMargins.width - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 2) | 0;
+	var topMargin = ((checkDimWithMargins.height - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / 2) | 0;
+	return A2(
+		_elm_lang$core$List$map,
+		A4(_elm_lang$elm_architecture_tutorial$Graphics$createRectangle, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height, leftMargin, topMargin),
+		topLeftPoints);
+};
+var _elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay = F2(
+	function (check, generator) {
+		return A4(
+			_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle,
+			check,
+			'0.2',
+			generator,
+			{x: 0, y: 0, width: _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, height: _elm_lang$elm_architecture_tutorial$Graphics$boardDim.height});
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck = F3(
+	function (msgGenerator, textGenerators, check) {
+		var maxTextRows = 2 + _elm_lang$core$List$length(textGenerators);
+		var rectangles = _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions(
+			_elm_lang$core$List$length(check.$throws));
+		var throwRectangles = A2(_elm_community$list_extra$List_Extra$zip, check.$throws, rectangles);
+		var generateText = F2(
+			function (i, gen) {
+				return A2(
+					_elm_lang$core$List$map,
+					function (_p5) {
+						var _p6 = _p5;
+						return A4(
+							_elm_lang$elm_architecture_tutorial$Graphics$info,
+							i + 3,
+							maxTextRows,
+							gen(_p6._0),
+							_p6._1);
+					},
+					throwRectangles);
+			});
+		var texts = _elm_lang$core$List$concat(
+			A2(_elm_lang$core$List$indexedMap, generateText, textGenerators));
+		return _elm_lang$core$List$concat(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$core$Native_List.fromArray(
+					[
+						A2(_elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay, check, msgGenerator)
+					]),
+					A2(
+					_elm_lang$core$List$map,
+					A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '1.0', msgGenerator),
+					rectangles),
+					A2(
+					_elm_lang$core$List$map,
+					A3(
+						_elm_lang$elm_architecture_tutorial$Graphics$info,
+						1,
+						maxTextRows,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$svg$Svg$text(
+								_elm_lang$elm_architecture_tutorial$Graphics$testName(check.checkType))
+							])),
+					rectangles),
+					A2(
+					_elm_lang$core$List$map,
+					A3(
+						_elm_lang$elm_architecture_tutorial$Graphics$info,
+						2,
+						maxTextRows,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$svg$Svg$text(
+								A2(
+									_elm_lang$core$String$append,
+									'Location: ',
+									_elm_lang$core$Basics$toString(check.location)))
+							])),
+					rectangles),
+					texts
+				]));
+	});
 var _elm_lang$elm_architecture_tutorial$Graphics$locationCircle = function (location) {
 	var loc = function () {
-		var _p5 = location;
-		switch (_p5.ctor) {
+		var _p7 = location;
+		switch (_p7.ctor) {
 			case 'Train_Station':
 				return {cx: 264, cy: 112, radius: 64};
 			case 'Independence_Square':
@@ -11100,8 +11298,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics$localeCircle = F2(
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$neighborhoodRectangle = function (n) {
 	var st = function () {
-		var _p6 = n;
-		switch (_p6.ctor) {
+		var _p8 = n;
+		switch (_p8.ctor) {
 			case 'Northside':
 				return {x: 296, y: 396, width: 180, height: 80};
 			case 'Downtown':
@@ -11157,11 +11355,11 @@ var _elm_lang$elm_architecture_tutorial$Graphics$streetRectangle = F2(
 				[]));
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$middle = function (place) {
-	var _p7 = place;
-	if (_p7.ctor === 'Street') {
-		return _elm_lang$elm_architecture_tutorial$Graphics$neighborhoodRectangle(_p7._0).middle;
+	var _p9 = place;
+	if (_p9.ctor === 'Street') {
+		return _elm_lang$elm_architecture_tutorial$Graphics$neighborhoodRectangle(_p9._0).middle;
 	} else {
-		return _elm_lang$elm_architecture_tutorial$Graphics$locationCircle(_p7._0).middle;
+		return _elm_lang$elm_architecture_tutorial$Graphics$locationCircle(_p9._0).middle;
 	}
 };
 var _elm_lang$elm_architecture_tutorial$Graphics$positionCircle = F4(
@@ -11205,10 +11403,19 @@ var _elm_lang$elm_architecture_tutorial$Graphics$positionCircle = F4(
 				_elm_lang$core$Native_List.fromArray(
 					[])));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p8) {
-	var _p9 = _p8;
+var _elm_lang$elm_architecture_tutorial$Graphics$investigatorStartPositions = F2(
+	function (p, colors) {
+		var m = _elm_lang$elm_architecture_tutorial$Graphics$middle(p);
+		return A3(
+			_elm_lang$elm_architecture_tutorial$PieChart$chart,
+			A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Point, m.x + 30, m.y),
+			20,
+			colors);
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p10) {
+	var _p11 = _p10;
 	var side = 40;
-	var mid = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p9._0);
+	var mid = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p11._0);
 	var rectX = mid.x - 60;
 	var textX = rectX + 33;
 	var rectY = mid.y - 20;
@@ -11247,16 +11454,16 @@ var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p8) 
 					[
 						_elm_lang$svg$Svg$text(
 						_elm_lang$core$Basics$toString(
-							_elm_lang$core$List$length(_p9._1)))
+							_elm_lang$core$List$length(_p11._1)))
 					])),
 			_elm_lang$core$Native_List.fromArray(
 				[])));
 };
 var _elm_lang$elm_architecture_tutorial$Graphics$movement = F2(
-	function (color, _p10) {
-		var _p11 = _p10;
-		var p2 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p11._1);
-		var p1 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p11._0);
+	function (color, _p12) {
+		var _p13 = _p12;
+		var p2 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p13._1);
+		var p1 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p13._0);
 		return A2(
 			_elm_lang$svg$Svg$line,
 			_elm_lang$core$Native_List.fromArray(
@@ -11307,126 +11514,6 @@ var _elm_lang$elm_architecture_tutorial$Graphics$drawDiceCheck = F2(
 var _elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck = F2(
 	function (generator, check) {
 		return check.wasSuccess ? A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'ok.jpg', generator) : A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'notOk.png', generator);
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$Point = F2(
-	function (a, b) {
-		return {x: a, y: b};
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$Dimension = F2(
-	function (a, b) {
-		return {width: a, height: b};
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$boardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, 1606, 2384);
-var _elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay = F2(
-	function (check, generator) {
-		return A4(
-			_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle,
-			check,
-			'0.2',
-			generator,
-			{x: 0, y: 0, width: _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, height: _elm_lang$elm_architecture_tutorial$Graphics$boardDim.height});
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, 150, 225);
-var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
-	function (rowNumber, maxRows, content, rectangle) {
-		var length = ((5 * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 6) | 0;
-		var middlePoint = rectangle.middle;
-		var posX = middlePoint.x;
-		var posY = (middlePoint.y - ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height / 2) | 0)) + (((rowNumber * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / (maxRows + 1)) | 0);
-		return A2(
-			_elm_lang$svg$Svg$text$,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$x(
-					_elm_lang$core$Basics$toString(posX)),
-					_elm_lang$svg$Svg_Attributes$y(
-					_elm_lang$core$Basics$toString(posY)),
-					_elm_lang$svg$Svg_Attributes$textLength(
-					_elm_lang$core$Basics$toString(length)),
-					_elm_lang$svg$Svg_Attributes$lengthAdjust('spacingAndGlyphs'),
-					_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
-					_elm_lang$svg$Svg_Attributes$textAnchor('middle')
-				]),
-			content);
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$investigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, 350, 493);
-var _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions = function (number) {
-	var checkDimWithMargins = A2(_elm_lang$elm_architecture_tutorial$Graphics$Dimension, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width * 4) / 3) | 0, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height * 4) / 3) | 0);
-	var maxColumns = (_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width / checkDimWithMargins.width) | 0;
-	var topLeftPoints = A2(
-		_elm_community$list_extra$List_Extra$zip,
-		A4(_elm_lang$elm_architecture_tutorial$Graphics$leftOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, checkDimWithMargins.width, maxColumns),
-		A4(_elm_lang$elm_architecture_tutorial$Graphics$topOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics$boardDim.height, checkDimWithMargins.height, maxColumns));
-	var leftMargin = ((checkDimWithMargins.width - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 2) | 0;
-	var topMargin = ((checkDimWithMargins.height - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / 2) | 0;
-	return A2(
-		_elm_lang$core$List$map,
-		A4(_elm_lang$elm_architecture_tutorial$Graphics$createRectangle, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height, leftMargin, topMargin),
-		topLeftPoints);
-};
-var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck = F3(
-	function (msgGenerator, textGenerators, check) {
-		var maxTextRows = 2 + _elm_lang$core$List$length(textGenerators);
-		var rectangles = _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions(
-			_elm_lang$core$List$length(check.$throws));
-		var throwRectangles = A2(_elm_community$list_extra$List_Extra$zip, check.$throws, rectangles);
-		var generateText = F2(
-			function (i, gen) {
-				return A2(
-					_elm_lang$core$List$map,
-					function (_p12) {
-						var _p13 = _p12;
-						return A4(
-							_elm_lang$elm_architecture_tutorial$Graphics$info,
-							i + 3,
-							maxTextRows,
-							gen(_p13._0),
-							_p13._1);
-					},
-					throwRectangles);
-			});
-		var texts = _elm_lang$core$List$concat(
-			A2(_elm_lang$core$List$indexedMap, generateText, textGenerators));
-		return _elm_lang$core$List$concat(
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$core$Native_List.fromArray(
-					[
-						A2(_elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay, check, msgGenerator)
-					]),
-					A2(
-					_elm_lang$core$List$map,
-					A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '1.0', msgGenerator),
-					rectangles),
-					A2(
-					_elm_lang$core$List$map,
-					A3(
-						_elm_lang$elm_architecture_tutorial$Graphics$info,
-						1,
-						maxTextRows,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$svg$Svg$text(
-								_elm_lang$elm_architecture_tutorial$Graphics$testName(check.checkType))
-							])),
-					rectangles),
-					A2(
-					_elm_lang$core$List$map,
-					A3(
-						_elm_lang$elm_architecture_tutorial$Graphics$info,
-						2,
-						maxTextRows,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$svg$Svg$text(
-								A2(
-									_elm_lang$core$String$append,
-									'Location: ',
-									_elm_lang$core$Basics$toString(check.location)))
-							])),
-					rectangles),
-					texts
-				]));
 	});
 
 var _elm_lang$elm_architecture_tutorial$DiceChecker$singleDice = function (_p0) {
@@ -12087,14 +12174,11 @@ var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (s
 	return _elm_lang$core$List$concat(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				A4(
-				_elm_lang$elm_architecture_tutorial$Graphics$positionCircle,
+				A2(
+				_elm_lang$elm_architecture_tutorial$Graphics$investigatorStartPositions,
 				state.movement.start,
-				state.investigator,
-				function (i) {
-					return _elm_lang$svg$Svg_Attributes$class('ccc');
-				},
-				true),
+				_elm_lang$core$Native_List.fromArray(
+					[state.color])),
 				A4(
 				_elm_lang$elm_architecture_tutorial$Graphics$positionCircle,
 				_elm_lang$elm_architecture_tutorial$Movement$pathEnd(state.movement),
@@ -12195,11 +12279,20 @@ var _elm_lang$elm_architecture_tutorial$Investigators$resolveCheck = F3(
 			A2(performResolveCheck, check, results),
 			model);
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F2(
-	function (a, b) {
-		return {investigator: a, movement: b};
+var _elm_lang$elm_architecture_tutorial$Investigators$investigatorColors = _elm_lang$core$Native_List.fromArray(
+	['red', 'green', 'blue', 'pink', 'violet', 'yellow', 'black', 'orange']);
+var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F3(
+	function (a, b, c) {
+		return {investigator: a, movement: b, color: c};
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A2(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$BoardData$defaultInvestigator, _elm_lang$elm_architecture_tutorial$Movement$initialModel);
+var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A3(
+	_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState,
+	_elm_lang$elm_architecture_tutorial$BoardData$defaultInvestigator,
+	_elm_lang$elm_architecture_tutorial$Movement$initialModel,
+	A2(
+		_elm_lang$core$Maybe$withDefault,
+		'green',
+		_elm_lang$core$List$head(_elm_lang$elm_architecture_tutorial$Investigators$investigatorColors)));
 var _elm_lang$elm_architecture_tutorial$Investigators$Model = F2(
 	function (a, b) {
 		return {investigatorList: a, selected: b};
@@ -12313,7 +12406,7 @@ var _elm_lang$html$Html_Events$Options = F2(
 
 var _elm_lang$elm_architecture_tutorial$MainModule$offsetPosition = A3(
 	_elm_lang$core$Json_Decode$object2,
-	_elm_lang$elm_architecture_tutorial$Graphics$Point,
+	_elm_lang$elm_architecture_tutorial$GraphicTypes$Point,
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetX', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetY', _elm_lang$core$Json_Decode$int));
 var _elm_lang$elm_architecture_tutorial$MainModule$locationClick = F3(

@@ -7,13 +7,8 @@ import List
 import List.Extra as Lists
 import MonsterBowl exposing (Monster)
 import String
-
-type alias Point = {x : Int, y : Int}
-type alias Dimension = {width : Int, height : Int}
-type alias LineConnective shape = { shape | middle : Point }
-type alias Circle = LineConnective {cx : Int, cy : Int, radius : Int}
-type alias Rectangle = LineConnective {x : Int, y : Int, width : Int, height : Int}
-type alias Color = String
+import PieChart
+import GraphicTypes exposing (..)
 
 neighborhoodRectangle: Neighborhood -> Rectangle
 neighborhoodRectangle n =
@@ -99,6 +94,14 @@ positionCircle p i msgGenerator isFilled =
         circle [cx <| circleX, cy <| circleY, r "20", strokeWidth "3", fill "green", stroke "green", fillOpacity (if isFilled then "1.0" else "0.0")][]
       ::text' [textAnchor "middle", x <| circleX, y <| circleY, fill "red", msgGenerator i][text "1"]
       ::[]
+
+investigatorStartPositions : Place -> List Color -> List (Svg a)
+investigatorStartPositions p colors  =
+    let
+        m = middle p
+    in
+        PieChart.chart (Point (m.x + 30) m.y) 20 colors
+
 monsterSquare : (Place, List Monster) -> List (Svg a)
 monsterSquare (place, monsters) =
     let

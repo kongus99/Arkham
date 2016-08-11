@@ -5,15 +5,18 @@ import Movement
 import DiceChecker
 import Array exposing (Array)
 import Graphics
+import GraphicTypes exposing (Color)
 import Svg.Attributes exposing (class)
 import List.Extra exposing (zip)
 import Html.App as App
 
-type alias InvestigatorState = { investigator : Investigator, movement : Movement.Model }
+investigatorColors = ["red", "green", "blue", "pink", "violet", "yellow", "black", "orange"]
+
+type alias InvestigatorState = { investigator : Investigator, movement : Movement.Model,  color : Color}
 
 type alias Model = { investigatorList : List InvestigatorState, selected : Maybe InvestigatorState }
 
-initialState = InvestigatorState defaultInvestigator Movement.initialModel
+initialState = InvestigatorState defaultInvestigator Movement.initialModel <| Maybe.withDefault "green" <| List.head investigatorColors
 
 initialModel = Model [] <| Just initialState
 
@@ -63,7 +66,7 @@ investigatorView model =
 
 positionDraw state =
     List.concat
-        [ Graphics.positionCircle state.movement.start state.investigator (\i -> class "ccc") True
+        [ Graphics.investigatorStartPositions state.movement.start [state.color]
         , Graphics.positionCircle (Movement.pathEnd state.movement) state.investigator (\i -> class "ccc") False
         , movementLinesDraw state]
 
