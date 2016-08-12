@@ -1,4 +1,4 @@
-module Investigators exposing (move, Model, initialModel, showCheckDetails, finalizeMovement, resolveCheck, investigatorView, checkersView)
+module Investigators exposing (move, Model, initialModel, showCheckDetails, finalizeMovement, resolveCheck, investigatorBoardView, checkersView)
 
 import BoardData exposing (..)
 import Movement
@@ -65,22 +65,27 @@ updateMovementWithCmd stateUpdater model =
             Just (movement, cmd) -> (updateMovement (\s -> movement) model, cmd)
 
 ---------------------------------------------
+allStates model =
+    List.append (Maybe.withDefault [] <| Maybe.map (\i -> [i]) model.selected) model.investigatorList
 
-investigatorView model =
-    positionDraw model
-
-positionDraw model =
+investigatorSideView model =
     let
-        allStates = List.append (Maybe.withDefault [] <| Maybe.map (\i -> [i]) model.selected) model.investigatorList
+        investigators = List.map (\s -> s.investigator) <| allStates model
+    in
+        List.concat <| (List.indexedMap Positions.minimalData investigators)
+
+investigatorBoardView model =
+    let
+        states = allStates model
         startPair state =
             (state.movement.start, state.color)
         endPair state =
             (Movement.pathEnd state.movement, state.color)
         linePairs state =
             List.map (\p -> (p, state.color)) <| zip (state.movement.start :: state.movement.path) state.movement.path
-        startPositions = groupList <| List.map startPair allStates
-        endPositions = groupList <| List.map endPair allStates
-        linePositions = groupList <| List.concat <| List.map linePairs allStates
+        startPositions = groupList <| List.map startPair states
+        endPositions = groupList <| List.map endPair states
+        linePositions = groupList <| List.concat <| List.map linePairs states
     in
         List.concat <| List.concat [(List.map Positions.start startPositions), (List.map Positions.end endPositions), (List.map Positions.connections linePositions)]
 

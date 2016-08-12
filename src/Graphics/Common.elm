@@ -9,11 +9,15 @@ type alias Circle = LineConnective {cx : Int, cy : Int, radius : Int}
 type alias Rectangle = LineConnective {x : Int, y : Int, width : Int, height : Int}
 type alias Color = String
 
+rectangle x y w h =
+    let
+        middle =  Point (x + (w // 2)) (y + (h // 2))
+    in
+        {x = x, y = y, width = w, height = h, middle = middle}
+
 neighborhoodRectangle: Neighborhood -> Rectangle
 neighborhoodRectangle n =
     let
-        rectangleMiddle r =
-            {x = r.x + (r.width // 2), y = r.y + (r.height // 2)}
         st =
            case n of
                 Northside ->            {x = 296, y = 396,  width = 180, height = 80}
@@ -26,7 +30,7 @@ neighborhoodRectangle n =
                 Uptown ->               {x = 469, y = 1669, width = 152, height = 84}
                 Southside ->            {x = 753, y = 1673, width = 180, height = 82}
     in
-        {x = st.x, y = st.y, width =  st.width, height = st.height, middle = rectangleMiddle st}
+        rectangle st.x st.y st.width st.height
 
 
 locationCircle: Location -> Circle

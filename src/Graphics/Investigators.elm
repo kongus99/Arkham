@@ -1,10 +1,20 @@
-module Graphics.Investigators exposing (start, end, connections)
+module Graphics.Investigators exposing (start, end, connections, minimalData)
 
 import BoardData exposing(..)
 import Graphics.Common exposing (..)
-import Svg exposing (Svg, path, circle, line)
-import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, fillOpacity, x1, x2, y1, y2, strokeLinecap)
+import Svg exposing (Svg, path, circle, line, rect)
+import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height)
 import String
+
+
+minimalData: Int -> Investigator -> List (Svg a)
+minimalData index inv =
+    let
+        outline = rectangle (index * 100) (index * 200) 100 200
+    in
+        rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, fill "red"][]
+--            ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString <| List.length monsters)]
+            ::[]
 
 connections : ((Place, Place), List Color) -> List (Svg a)
 connections ((start, end), colors) =

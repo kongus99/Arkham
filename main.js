@@ -10995,6 +10995,15 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle = functio
 		middle: circleMiddle(loc)
 	};
 };
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$Point = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangle = F4(
+	function (x, y, w, h) {
+		var middle = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, x + ((w / 2) | 0), y + ((h / 2) | 0));
+		return {x: x, y: y, width: w, height: h, middle: middle};
+	});
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle = function (n) {
 	var st = function () {
 		var _p1 = n;
@@ -11019,16 +11028,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle = 
 				return {x: 753, y: 1673, width: 180, height: 82};
 		}
 	}();
-	var rectangleMiddle = function (r) {
-		return {x: r.x + ((r.width / 2) | 0), y: r.y + ((r.height / 2) | 0)};
-	};
-	return {
-		x: st.x,
-		y: st.y,
-		width: st.width,
-		height: st.height,
-		middle: rectangleMiddle(st)
-	};
+	return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$rectangle, st.x, st.y, st.width, st.height);
 };
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$middle = function (place) {
 	var _p2 = place;
@@ -11038,10 +11038,6 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Common$middle = function (place
 		return _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle(_p2._0).middle;
 	}
 };
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$Point = F2(
-	function (a, b) {
-		return {x: a, y: b};
-	});
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension = F2(
 	function (a, b) {
 		return {width: a, height: b};
@@ -11197,6 +11193,30 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = fun
 			_elm_lang$core$List$length(_p6)),
 		_p6);
 };
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
+	function (index, inv) {
+		var outline = A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$rectangle, index * 100, index * 200, 100, 200);
+		return A2(
+			_elm_lang$core$List_ops['::'],
+			A2(
+				_elm_lang$svg$Svg$rect,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$x(
+						_elm_lang$core$Basics$toString(outline.x)),
+						_elm_lang$svg$Svg_Attributes$y(
+						_elm_lang$core$Basics$toString(outline.y)),
+						_elm_lang$svg$Svg_Attributes$width(
+						_elm_lang$core$Basics$toString(outline.width)),
+						_elm_lang$svg$Svg_Attributes$height(
+						_elm_lang$core$Basics$toString(outline.height)),
+						_elm_lang$svg$Svg_Attributes$fill('red')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
 
 var _elm_lang$elm_architecture_tutorial$Graphics$testName = function (checkType) {
 	var _p0 = checkType;
@@ -12203,7 +12223,33 @@ var _elm_lang$elm_architecture_tutorial$Investigators$groupList = function (pair
 		_elm_community$list_extra$List_Extra$foldl1(mergePairs),
 		grouped);
 };
-var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (model) {
+var _elm_lang$elm_architecture_tutorial$Investigators$allStates = function (model) {
+	return A2(
+		_elm_lang$core$List$append,
+		A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (i) {
+					return _elm_lang$core$Native_List.fromArray(
+						[i]);
+				},
+				model.selected)),
+		model.investigatorList);
+};
+var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = function (model) {
+	var investigators = A2(
+		_elm_lang$core$List$map,
+		function (s) {
+			return s.investigator;
+		},
+		_elm_lang$elm_architecture_tutorial$Investigators$allStates(model));
+	return _elm_lang$core$List$concat(
+		A2(_elm_lang$core$List$indexedMap, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData, investigators));
+};
+var _elm_lang$elm_architecture_tutorial$Investigators$investigatorBoardView = function (model) {
 	var linePairs = function (state) {
 		return A2(
 			_elm_lang$core$List$map,
@@ -12225,27 +12271,14 @@ var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (m
 	var startPair = function (state) {
 		return {ctor: '_Tuple2', _0: state.movement.start, _1: state.color};
 	};
-	var allStates = A2(
-		_elm_lang$core$List$append,
-		A2(
-			_elm_lang$core$Maybe$withDefault,
-			_elm_lang$core$Native_List.fromArray(
-				[]),
-			A2(
-				_elm_lang$core$Maybe$map,
-				function (i) {
-					return _elm_lang$core$Native_List.fromArray(
-						[i]);
-				},
-				model.selected)),
-		model.investigatorList);
+	var states = _elm_lang$elm_architecture_tutorial$Investigators$allStates(model);
 	var startPositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
-		A2(_elm_lang$core$List$map, startPair, allStates));
+		A2(_elm_lang$core$List$map, startPair, states));
 	var endPositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
-		A2(_elm_lang$core$List$map, endPair, allStates));
+		A2(_elm_lang$core$List$map, endPair, states));
 	var linePositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
 		_elm_lang$core$List$concat(
-			A2(_elm_lang$core$List$map, linePairs, allStates)));
+			A2(_elm_lang$core$List$map, linePairs, states)));
 	return _elm_lang$core$List$concat(
 		_elm_lang$core$List$concat(
 			_elm_lang$core$Native_List.fromArray(
@@ -12254,9 +12287,6 @@ var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (m
 					A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$end, endPositions),
 					A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections, linePositions)
 				])));
-};
-var _elm_lang$elm_architecture_tutorial$Investigators$investigatorView = function (model) {
-	return _elm_lang$elm_architecture_tutorial$Investigators$positionDraw(model);
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
 	function (stateUpdater, model) {
@@ -12690,7 +12720,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 				[
 					_elm_lang$core$Native_List.fromArray(
 					[_elm_lang$elm_architecture_tutorial$MainModule$boardImage]),
-					_elm_lang$elm_architecture_tutorial$Investigators$investigatorView(model.investigators),
+					_elm_lang$elm_architecture_tutorial$Investigators$investigatorBoardView(model.investigators),
 					A2(
 					_elm_lang$core$List$concatMap,
 					_elm_lang$elm_architecture_tutorial$Graphics$monsterSquare,

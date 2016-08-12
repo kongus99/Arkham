@@ -72,7 +72,7 @@ view model =
 wholeBoard : Model -> Html Msg
 wholeBoard model =
     svg [ width <| toString boardDim.width , height <| toString boardDim.height] (List.concat[ [boardImage]
-                                                    , Investigators.investigatorView model.investigators
+                                                    , Investigators.investigatorBoardView model.investigators
                                                     , List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters)
                                                     , List.map (Graphics.localeCircle localeMsg) allLocation
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
