@@ -1,4 +1,4 @@
-module Graphics.Positions exposing (start, end, connections)
+module Graphics.Investigators exposing (start, end, connections)
 
 import BoardData exposing(..)
 import Graphics.Common exposing (..)

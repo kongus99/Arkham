@@ -6,7 +6,7 @@ import DiceChecker
 import Array exposing (Array)
 import Graphics
 import Graphics.Common exposing (Color)
-import Graphics.Positions as Positions
+import Graphics.Investigators as Positions
 import Svg.Attributes exposing (class)
 import List.Extra exposing (zip)
 import Html.App as App

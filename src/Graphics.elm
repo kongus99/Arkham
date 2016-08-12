@@ -7,7 +7,7 @@ import List
 import List.Extra as Lists
 import MonsterBowl exposing (Monster)
 import String
-import Graphics.Positions as Positions
+import Graphics.Investigators as Investigators
 import Graphics.Common exposing (..)
 
 localeCircle : (Location -> List(Attribute a)) -> Location -> Svg a
