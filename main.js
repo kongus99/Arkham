@@ -10925,118 +10925,15 @@ var _elm_lang$elm_architecture_tutorial$MonsterBowl$Bowl = F2(
 		return {monsters: a, index: b};
 	});
 
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle = function (location) {
-	var loc = function () {
-		var _p0 = location;
-		switch (_p0.ctor) {
-			case 'Train_Station':
-				return {cx: 264, cy: 112, radius: 64};
-			case 'Independence_Square':
-				return {cx: 924, cy: 112, radius: 64};
-			case 'Bank_of_Arkham':
-				return {cx: 487, cy: 112, radius: 64};
-			case 'Arkham_Asylum':
-				return {cx: 706, cy: 112, radius: 64};
-			case 'Newspaper':
-				return {cx: 126, cy: 286, radius: 64};
-			case 'Hibb\'s_Roadhouse':
-				return {cx: 927, cy: 356, radius: 64};
-			case 'Velma\'s_Diner':
-				return {cx: 1148, cy: 351, radius: 64};
-			case 'Curiositie_Shoppe':
-				return {cx: 125, cy: 473, radius: 64};
-			case 'Unvisited_Isle':
-				return {cx: 124, cy: 759, radius: 64};
-			case 'Police_Station':
-				return {cx: 1148, cy: 551, radius: 64};
-			case 'Graveyard':
-				return {cx: 1148, cy: 845, radius: 64};
-			case 'River_Docks':
-				return {cx: 122, cy: 938, radius: 64};
-			case 'The_Unnamable':
-				return {cx: 342, cy: 1025, radius: 64};
-			case 'General_Store':
-				return {cx: 898, cy: 1017, radius: 64};
-			case 'Black_Cave':
-				return {cx: 1150, cy: 1030, radius: 64};
-			case 'Science_Building':
-				return {cx: 122, cy: 1195, radius: 64};
-			case 'The_Witch_House':
-				return {cx: 1150, cy: 1312, radius: 64};
-			case 'Silver_Twilight_Lodge':
-				return {cx: 936, cy: 1383, radius: 64};
-			case 'Library':
-				return {cx: 447, cy: 1382, radius: 64};
-			case 'Administration_Building':
-				return {cx: 243, cy: 1450, radius: 64};
-			case 'St_Mary\'s_Hospital':
-				return {cx: 122, cy: 1701, radius: 64};
-			case 'Ma\'s_Boarding_House':
-				return {cx: 1149, cy: 1640, radius: 64};
-			case 'South_Church':
-				return {cx: 1058, cy: 1901, radius: 64};
-			case 'Historical_Society':
-				return {cx: 816, cy: 1976, radius: 64};
-			case 'Woods':
-				return {cx: 562, cy: 1976, radius: 64};
-			case 'Ye_Olde_Magick_Shoppe':
-				return {cx: 282, cy: 1947, radius: 64};
-			default:
-				return {cx: 0, cy: 0, radius: 0};
-		}
-	}();
-	var circleMiddle = function (c) {
-		return {x: c.cx, y: c.cy};
-	};
-	return {
-		cx: loc.cx,
-		cy: loc.cy,
-		radius: loc.radius,
-		middle: circleMiddle(loc)
-	};
-};
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$Point = F2(
 	function (a, b) {
 		return {x: a, y: b};
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangle = F4(
-	function (x, y, w, h) {
-		var middle = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, x + ((w / 2) | 0), y + ((h / 2) | 0));
-		return {x: x, y: y, width: w, height: h, middle: middle};
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle = function (n) {
-	var st = function () {
-		var _p1 = n;
-		switch (_p1.ctor) {
-			case 'Northside':
-				return {x: 296, y: 396, width: 180, height: 80};
-			case 'Downtown':
-				return {x: 591, y: 393, width: 192, height: 82};
-			case 'Easttown':
-				return {x: 731, y: 621, width: 208, height: 82};
-			case 'Merchant_District':
-				return {x: 363, y: 808, width: 264, height: 80};
-			case 'Rivertown':
-				return {x: 720, y: 808, width: 182, height: 78};
-			case 'Miskatonic_University':
-				return {x: 379, y: 1177, width: 236, height: 84};
-			case 'French_Hill':
-				return {x: 721, y: 1219, width: 195, height: 84};
-			case 'Uptown':
-				return {x: 469, y: 1669, width: 152, height: 84};
-			default:
-				return {x: 753, y: 1673, width: 180, height: 82};
-		}
-	}();
-	return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$rectangle, st.x, st.y, st.width, st.height);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle = function (r) {
+	return A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, r.x + ((r.width / 2) | 0), r.y + ((r.height / 2) | 0));
 };
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$middle = function (place) {
-	var _p2 = place;
-	if (_p2.ctor === 'Street') {
-		return _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle(_p2._0).middle;
-	} else {
-		return _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle(_p2._0).middle;
-	}
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$circleMiddle = function (c) {
+	return A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, c.cx, c.cy);
 };
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension = F2(
 	function (a, b) {
@@ -11047,6 +10944,106 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim = A2(_elm_lang$
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$fullInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 350, 493);
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1200, 400);
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 300, 200);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$Circle = F3(
+	function (a, b, c) {
+		return {cx: a, cy: b, radius: c};
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle = function (location) {
+	var _p0 = location;
+	switch (_p0.ctor) {
+		case 'Train_Station':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 264, 112, 64);
+		case 'Independence_Square':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 924, 112, 64);
+		case 'Bank_of_Arkham':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 487, 112, 64);
+		case 'Arkham_Asylum':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 706, 112, 64);
+		case 'Newspaper':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 126, 286, 64);
+		case 'Hibb\'s_Roadhouse':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 927, 356, 64);
+		case 'Velma\'s_Diner':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1148, 351, 64);
+		case 'Curiositie_Shoppe':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 125, 473, 64);
+		case 'Unvisited_Isle':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 124, 759, 64);
+		case 'Police_Station':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1148, 551, 64);
+		case 'Graveyard':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1148, 845, 64);
+		case 'River_Docks':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 122, 938, 64);
+		case 'The_Unnamable':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 342, 1025, 64);
+		case 'General_Store':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 898, 1017, 64);
+		case 'Black_Cave':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1150, 1030, 64);
+		case 'Science_Building':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 122, 1195, 64);
+		case 'The_Witch_House':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1150, 1312, 64);
+		case 'Silver_Twilight_Lodge':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 936, 1383, 64);
+		case 'Library':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 447, 1382, 64);
+		case 'Administration_Building':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 243, 1450, 64);
+		case 'St_Mary\'s_Hospital':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 122, 1701, 64);
+		case 'Ma\'s_Boarding_House':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1149, 1640, 64);
+		case 'South_Church':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1058, 1901, 64);
+		case 'Historical_Society':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 816, 1976, 64);
+		case 'Woods':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 562, 1976, 64);
+		case 'Ye_Olde_Magick_Shoppe':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 282, 1947, 64);
+		default:
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 0, 0, 0);
+	}
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle = F4(
+	function (a, b, c, d) {
+		return {x: a, y: b, width: c, height: d};
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle = function (n) {
+	var _p1 = n;
+	switch (_p1.ctor) {
+		case 'Northside':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 296, 396, 180, 80);
+		case 'Downtown':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 591, 393, 192, 82);
+		case 'Easttown':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 731, 621, 208, 82);
+		case 'Merchant_District':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 363, 808, 264, 80);
+		case 'Rivertown':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 720, 808, 182, 78);
+		case 'Miskatonic_University':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 379, 1177, 236, 84);
+		case 'French_Hill':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 721, 1219, 195, 84);
+		case 'Uptown':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 469, 1669, 152, 84);
+		default:
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 753, 1673, 180, 82);
+	}
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$middle = function (place) {
+	var _p2 = place;
+	if (_p2.ctor === 'Street') {
+		return _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle(
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle(_p2._0));
+	} else {
+		return _elm_lang$elm_architecture_tutorial$Graphics_Common$circleMiddle(
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle(_p2._0));
+	}
+};
 
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculatePie = F5(
 	function (middle, radius, total, index, color) {
@@ -11209,11 +11206,12 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
 					_elm_lang$core$Basics$toString(_p8._1)
 				]));
 		var outline = A4(
-			_elm_lang$elm_architecture_tutorial$Graphics_Common$rectangle,
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle,
 			A2(_elm_lang$core$Basics_ops['%'], index * _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.width, _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width),
 			((index / 4) | 0) * _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height,
 			_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.width,
 			_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height);
+		var middle = _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle(outline);
 		return A2(
 			_elm_lang$core$List_ops['::'],
 			A2(
@@ -11241,9 +11239,9 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
 						[
 							_elm_lang$svg$Svg_Attributes$textAnchor('middle'),
 							_elm_lang$svg$Svg_Attributes$x(
-							_elm_lang$core$Basics$toString(outline.middle.x)),
+							_elm_lang$core$Basics$toString(middle.x)),
 							_elm_lang$svg$Svg_Attributes$y(
-							_elm_lang$core$Basics$toString(outline.middle.y)),
+							_elm_lang$core$Basics$toString(middle.y)),
 							_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
 							_elm_lang$svg$Svg_Attributes$fontSize('35')
 						]),

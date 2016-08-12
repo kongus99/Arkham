@@ -1,4 +1,3 @@
 Add PendingCheck as type
 Add turn log
-Remove middle and LineConnective interface from type
 Create separate graphics module for checks ?

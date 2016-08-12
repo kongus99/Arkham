@@ -9,11 +9,12 @@ import String
 minimalData: Int -> (Investigator, Int) -> List (Svg a)
 minimalData index (investigator, movesLeft) =
     let
-        outline = rectangle (index * smallInvestigatorDim.width % sideDim.width) ((index // 4) * smallInvestigatorDim.height) smallInvestigatorDim.width smallInvestigatorDim.height
+        outline = Rectangle (index * smallInvestigatorDim.width % sideDim.width) ((index // 4) * smallInvestigatorDim.height) smallInvestigatorDim.width smallInvestigatorDim.height
+        middle = rectangleMiddle outline
         investigatorInfo = String.concat [investigator.name, " ", toString movesLeft]
     in
         rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", fillOpacity "0.0"][]
-            ::text' [textAnchor "middle", x <| toString <| outline.middle.x, y <| toString <| outline.middle.y, fontFamily "Verdana", fontSize "35"][text investigatorInfo]
+            ::text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "35"][text investigatorInfo]
             ::[]
 
 connections : ((Place, Place), List Color) -> List (Svg a)
