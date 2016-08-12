@@ -1,4 +1,4 @@
-module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, evadeCheck, update, movesLeft)
+module Movement exposing (moveTo, pathEnd, Model, initialModel, finalizeMovement, evadeCheck, update, movesLeft)
 
 import BoardData exposing (..)
 import Paths
@@ -42,7 +42,9 @@ moveTo place monsters investigator model =
                     path model.start place <| List.filterMap toNeighborhood (AllDict.keys monsters)
         newEvadeTests = prepareEvadeTests (model.start :: newPath) monsters investigator model.evadeTests
     in
-        {model | path = newPath, evadeTests = newEvadeTests}
+        if movesLeft investigator newPath >= 0 then
+            {model | path = newPath, evadeTests = newEvadeTests}
+        else model
 
 prepareEvadeTests : List Place -> AllDict Place (List Monster) String -> Investigator -> DiceChecker.Model ->  DiceChecker.Model
 prepareEvadeTests path monsters investigator model =
@@ -84,8 +86,5 @@ toNeighborhood p =
 pathEnd model =
      Maybe.withDefault model.start <| List.head <| List.reverse model.path
 
-isValidPath investigator model =
-    List.length model.path <= investigator.movementPoints
-
-movesLeft investigator model =
-    investigator.movementPoints - List.length model.path
+movesLeft investigator path =
+    investigator.movementPoints - List.length path

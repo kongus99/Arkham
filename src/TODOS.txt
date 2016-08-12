@@ -1,4 +1,4 @@
 Add PendingCheck as type
-Remove isValid mechanism from movement
 Add turn log
 Remove middle and LineConnective interface from type
+Create separate graphics module for checks ?

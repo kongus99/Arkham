@@ -11985,14 +11985,8 @@ var _elm_lang$elm_architecture_tutorial$Paths$PathData = F3(
 	});
 
 var _elm_lang$elm_architecture_tutorial$Movement$movesLeft = F2(
-	function (investigator, model) {
-		return investigator.movementPoints - _elm_lang$core$List$length(model.path);
-	});
-var _elm_lang$elm_architecture_tutorial$Movement$isValidPath = F2(
-	function (investigator, model) {
-		return _elm_lang$core$Native_Utils.cmp(
-			_elm_lang$core$List$length(model.path),
-			investigator.movementPoints) < 1;
+	function (investigator, path) {
+		return investigator.movementPoints - _elm_lang$core$List$length(path);
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$pathEnd = function (model) {
 	return A2(
@@ -12174,9 +12168,11 @@ var _elm_lang$elm_architecture_tutorial$Movement$moveTo = F4(
 			monsters,
 			investigator,
 			model.evadeTests);
-		return _elm_lang$core$Native_Utils.update(
+		return (_elm_lang$core$Native_Utils.cmp(
+			A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, investigator, newPath),
+			0) > -1) ? _elm_lang$core$Native_Utils.update(
 			model,
-			{path: newPath, evadeTests: newEvadeTests});
+			{path: newPath, evadeTests: newEvadeTests}) : model;
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$update = F2(
 	function (msg, model) {
@@ -12282,7 +12278,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = fun
 			return {
 				ctor: '_Tuple2',
 				_0: s.investigator,
-				_1: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator, s.movement)
+				_1: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator, s.movement.path)
 			};
 		},
 		_elm_lang$elm_architecture_tutorial$Investigators$allStates(model));
@@ -12386,9 +12382,9 @@ var _elm_lang$elm_architecture_tutorial$Investigators$finalizeMovement = F2(
 	function (place, model) {
 		var performFinalizeMovement = F2(
 			function (place, state) {
-				return (_elm_lang$core$Native_Utils.eq(
+				return _elm_lang$core$Native_Utils.eq(
 					_elm_lang$elm_architecture_tutorial$Movement$pathEnd(state.movement),
-					place) && A2(_elm_lang$elm_architecture_tutorial$Movement$isValidPath, state.investigator, state.movement)) ? _elm_lang$elm_architecture_tutorial$Movement$finalizeMovement(state.movement) : {ctor: '_Tuple2', _0: state.movement, _1: _elm_lang$core$Platform_Cmd$none};
+					place) ? _elm_lang$elm_architecture_tutorial$Movement$finalizeMovement(state.movement) : {ctor: '_Tuple2', _0: state.movement, _1: _elm_lang$core$Platform_Cmd$none};
 			});
 		return A2(
 			_elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd,

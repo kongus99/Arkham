@@ -40,7 +40,7 @@ finalizeMovement : Place -> Model -> (Model, Cmd (UnresolvedCheck, List Int))
 finalizeMovement place model =
     let
         performFinalizeMovement place state=
-            if Movement.pathEnd state.movement == place && Movement.isValidPath state.investigator state.movement then
+            if Movement.pathEnd state.movement == place then
                 Movement.finalizeMovement state.movement
             else
                 (state.movement, Cmd.none)
@@ -70,7 +70,7 @@ allStates model =
 
 investigatorSideView model =
     let
-        investigators = List.map (\s -> (s.investigator, Movement.movesLeft s.investigator s.movement)) <| allStates model
+        investigators = List.map (\s -> (s.investigator, Movement.movesLeft s.investigator s.movement.path)) <| allStates model
     in
         List.concat <| (List.indexedMap Positions.minimalData investigators)
 
