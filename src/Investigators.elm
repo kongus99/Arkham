@@ -67,21 +67,27 @@ updateMovementWithCmd stateUpdater model =
 ---------------------------------------------
 
 investigatorView model =
-    startPositionDraw model
+    positionDraw model
 
-startPositionDraw model =
+positionDraw model =
     let
         allStates = List.append (Maybe.withDefault [] <| Maybe.map (\i -> [i]) model.selected) model.investigatorList
-        pairs = List.sortBy (\(p, _) -> toString p) <| List.map (\s -> (s.movement.start, [s.color])) allStates
-        grouped = Lists.groupWhile (\f->\s-> fst f == fst s) pairs
-        mergePairs pair1 pair2 =
-            (fst pair1, List.append (snd pair1) (snd pair2))
-        groupsReduced = List.filterMap (Lists.foldl1 mergePairs) grouped
+        startPositions = groupPositions (\s -> s.movement.start) allStates
+        endPositions = groupPositions (\s -> Movement.pathEnd s.movement) allStates
     in
-        List.concat (List.map Positions.start groupsReduced)
+        List.concat (List.append (List.map Positions.start startPositions) (List.map Positions.end endPositions))
 --        [ Graphics.investigatorStartPositions state.movement.start [state.color]]
 --        , Graphics.positionCircle (Movement.pathEnd state.movement) state.investigator (\i -> class "ccc") False
 --        , movementLinesDraw state]
+
+groupPositions positionExtractor allStates =
+    let
+        pairs = List.sortBy (\(p, _) -> toString p) <| List.map (\s -> (positionExtractor s, [s.color])) allStates
+        grouped = Lists.groupWhile (\f->\s-> fst f == fst s) pairs
+        mergePairs pair1 pair2 =
+            (fst pair1, List.append (snd pair1) (snd pair2))
+    in
+        List.filterMap (Lists.foldl1 mergePairs) grouped
 
 movementLinesDraw state =
     let

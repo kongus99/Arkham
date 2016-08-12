@@ -3,12 +3,17 @@ module Graphics.Investigators exposing (start, end, connections)
 import BoardData exposing(..)
 import Graphics.Common exposing (..)
 import Svg exposing (Svg, path, circle)
-import Svg.Attributes exposing (d, fill, cx, cy, r)
+import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, fillOpacity)
 import String
 
 connections = []
 
-end = []
+end : (Place, List Color) -> List (Svg a)
+end (p, colors) =
+    let
+        m = middle p
+    in
+        drawCircles (Point (m.x + 30) m.y) 20 colors
 
 start : (Place, List Color) -> List (Svg a)
 start (p, colors)  =
@@ -16,6 +21,13 @@ start (p, colors)  =
         m = middle p
     in
         drawPies (Point (m.x + 30) m.y) 20 colors
+
+drawCircles : Point -> Int -> List Color -> List (Svg a)
+drawCircles middle radius colors =
+    List.indexedMap (calculateCircle middle radius) colors
+
+calculateCircle middle radius index color =
+    circle [cx <| toString middle.x, cy <| toString middle.y, r <| toString (radius - 2 * index), strokeWidth "2", stroke color, fillOpacity "0.0"][]
 
 drawPies : Point -> Int -> List Color -> List (Svg a)
 drawPies middle radius colors =
