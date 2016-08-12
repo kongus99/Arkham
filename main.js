@@ -10925,16 +10925,129 @@ var _elm_lang$elm_architecture_tutorial$MonsterBowl$Bowl = F2(
 		return {monsters: a, index: b};
 	});
 
-var _elm_lang$elm_architecture_tutorial$GraphicTypes$Point = F2(
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle = function (location) {
+	var loc = function () {
+		var _p0 = location;
+		switch (_p0.ctor) {
+			case 'Train_Station':
+				return {cx: 264, cy: 112, radius: 64};
+			case 'Independence_Square':
+				return {cx: 924, cy: 112, radius: 64};
+			case 'Bank_of_Arkham':
+				return {cx: 487, cy: 112, radius: 64};
+			case 'Arkham_Asylum':
+				return {cx: 706, cy: 112, radius: 64};
+			case 'Newspaper':
+				return {cx: 126, cy: 286, radius: 64};
+			case 'Hibb\'s_Roadhouse':
+				return {cx: 927, cy: 356, radius: 64};
+			case 'Velma\'s_Diner':
+				return {cx: 1148, cy: 351, radius: 64};
+			case 'Curiositie_Shoppe':
+				return {cx: 125, cy: 473, radius: 64};
+			case 'Unvisited_Isle':
+				return {cx: 124, cy: 759, radius: 64};
+			case 'Police_Station':
+				return {cx: 1148, cy: 551, radius: 64};
+			case 'Graveyard':
+				return {cx: 1148, cy: 845, radius: 64};
+			case 'River_Docks':
+				return {cx: 122, cy: 938, radius: 64};
+			case 'The_Unnamable':
+				return {cx: 342, cy: 1025, radius: 64};
+			case 'General_Store':
+				return {cx: 898, cy: 1017, radius: 64};
+			case 'Black_Cave':
+				return {cx: 1150, cy: 1030, radius: 64};
+			case 'Science_Building':
+				return {cx: 122, cy: 1195, radius: 64};
+			case 'The_Witch_House':
+				return {cx: 1150, cy: 1312, radius: 64};
+			case 'Silver_Twilight_Lodge':
+				return {cx: 936, cy: 1383, radius: 64};
+			case 'Library':
+				return {cx: 447, cy: 1382, radius: 64};
+			case 'Administration_Building':
+				return {cx: 243, cy: 1450, radius: 64};
+			case 'St_Mary\'s_Hospital':
+				return {cx: 122, cy: 1701, radius: 64};
+			case 'Ma\'s_Boarding_House':
+				return {cx: 1149, cy: 1640, radius: 64};
+			case 'South_Church':
+				return {cx: 1058, cy: 1901, radius: 64};
+			case 'Historical_Society':
+				return {cx: 816, cy: 1976, radius: 64};
+			case 'Woods':
+				return {cx: 562, cy: 1976, radius: 64};
+			case 'Ye_Olde_Magick_Shoppe':
+				return {cx: 282, cy: 1947, radius: 64};
+			default:
+				return {cx: 0, cy: 0, radius: 0};
+		}
+	}();
+	var circleMiddle = function (c) {
+		return {x: c.cx, y: c.cy};
+	};
+	return {
+		cx: loc.cx,
+		cy: loc.cy,
+		radius: loc.radius,
+		middle: circleMiddle(loc)
+	};
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle = function (n) {
+	var st = function () {
+		var _p1 = n;
+		switch (_p1.ctor) {
+			case 'Northside':
+				return {x: 296, y: 396, width: 180, height: 80};
+			case 'Downtown':
+				return {x: 591, y: 393, width: 192, height: 82};
+			case 'Easttown':
+				return {x: 731, y: 621, width: 208, height: 82};
+			case 'Merchant_District':
+				return {x: 363, y: 808, width: 264, height: 80};
+			case 'Rivertown':
+				return {x: 720, y: 808, width: 182, height: 78};
+			case 'Miskatonic_University':
+				return {x: 379, y: 1177, width: 236, height: 84};
+			case 'French_Hill':
+				return {x: 721, y: 1219, width: 195, height: 84};
+			case 'Uptown':
+				return {x: 469, y: 1669, width: 152, height: 84};
+			default:
+				return {x: 753, y: 1673, width: 180, height: 82};
+		}
+	}();
+	var rectangleMiddle = function (r) {
+		return {x: r.x + ((r.width / 2) | 0), y: r.y + ((r.height / 2) | 0)};
+	};
+	return {
+		x: st.x,
+		y: st.y,
+		width: st.width,
+		height: st.height,
+		middle: rectangleMiddle(st)
+	};
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$middle = function (place) {
+	var _p2 = place;
+	if (_p2.ctor === 'Street') {
+		return _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle(_p2._0).middle;
+	} else {
+		return _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle(_p2._0).middle;
+	}
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$Point = F2(
 	function (a, b) {
 		return {x: a, y: b};
 	});
-var _elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension = F2(
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension = F2(
 	function (a, b) {
 		return {width: a, height: b};
 	});
 
-var _elm_lang$elm_architecture_tutorial$PieChart$calculatePie = F5(
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculatePie = F5(
 	function (middle, radius, total, index, color) {
 		var angle2 = ((_elm_lang$core$Basics$toFloat(index + 1) * 2) * _elm_lang$core$Basics$pi) / _elm_lang$core$Basics$toFloat(total);
 		var x2 = _elm_lang$core$Basics$ceiling(
@@ -10977,7 +11090,7 @@ var _elm_lang$elm_architecture_tutorial$PieChart$calculatePie = F5(
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	});
-var _elm_lang$elm_architecture_tutorial$PieChart$chart = F3(
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawPies = F3(
 	function (middle, radius, colors) {
 		return _elm_lang$core$Native_Utils.eq(
 			_elm_lang$core$List$length(colors),
@@ -11004,17 +11117,87 @@ var _elm_lang$elm_architecture_tutorial$PieChart$chart = F3(
 			]) : A2(
 			_elm_lang$core$List$indexedMap,
 			A3(
-				_elm_lang$elm_architecture_tutorial$PieChart$calculatePie,
+				_elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculatePie,
 				middle,
 				radius,
 				_elm_lang$core$List$length(colors)),
 			colors);
 	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculateCircle = F4(
+	function (middle, radius, index, color) {
+		return A2(
+			_elm_lang$svg$Svg$circle,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$cx(
+					_elm_lang$core$Basics$toString(middle.x)),
+					_elm_lang$svg$Svg_Attributes$cy(
+					_elm_lang$core$Basics$toString(middle.y)),
+					_elm_lang$svg$Svg_Attributes$r(
+					_elm_lang$core$Basics$toString(radius - (3 * index))),
+					_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
+					_elm_lang$svg$Svg_Attributes$stroke(color),
+					_elm_lang$svg$Svg_Attributes$fillOpacity('0.0')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawCircles = F3(
+	function (middle, radius, colors) {
+		return A2(
+			_elm_lang$core$List$indexedMap,
+			A2(_elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculateCircle, middle, radius),
+			colors);
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$start = function (_p0) {
+	var _p1 = _p0;
+	var m = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p1._0);
+	return A3(
+		_elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawPies,
+		A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, m.x + 30, m.y),
+		21,
+		_p1._1);
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$end = function (_p2) {
+	var _p3 = _p2;
+	var m = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p3._0);
+	return A3(
+		_elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawCircles,
+		A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, m.x + 30, m.y),
+		20,
+		_p3._1);
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = _elm_lang$core$Native_List.fromArray(
+	[]);
 
 var _elm_lang$elm_architecture_tutorial$Graphics$testName = function (checkType) {
 	var _p0 = checkType;
 	return 'Monster evasion';
 };
+var _elm_lang$elm_architecture_tutorial$Graphics$icon = F3(
+	function (check, link, generator) {
+		var middlePoint = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(check.location);
+		var iconSize = 16;
+		var posX = middlePoint.x - ((iconSize / 2) | 0);
+		var posY = (middlePoint.y - ((iconSize / 2) | 0)) - 25;
+		return A2(
+			_elm_lang$svg$Svg$image,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$xlinkHref(link),
+					_elm_lang$svg$Svg_Attributes$x(
+					_elm_lang$core$Basics$toString(posX)),
+					_elm_lang$svg$Svg_Attributes$y(
+					_elm_lang$core$Basics$toString(posY)),
+					_elm_lang$svg$Svg_Attributes$height(
+					_elm_lang$core$Basics$toString(iconSize)),
+					_elm_lang$svg$Svg_Attributes$width(
+					_elm_lang$core$Basics$toString(iconSize)),
+					generator(check)
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
 var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F4(
 	function (check, op, generator, r) {
 		return A2(
@@ -11036,6 +11219,14 @@ var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F4(
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[]));
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck = F2(
+	function (generator, check) {
+		return check.wasSuccess ? A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'ok.jpg', generator) : A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'notOk.png', generator);
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$drawDiceCheck = F2(
+	function (generator, check) {
+		return A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'sneak.png', generator);
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$createRectangle = F5(
 	function (width, height, leftMargin, topMargin, _p1) {
@@ -11092,8 +11283,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics$leftOffsets = F4(
 			leftMargin,
 			A2(_elm_community$list_extra$List_Extra$zip, indexes, isFullRow));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$investigatorDim = A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension, 350, 493);
-var _elm_lang$elm_architecture_tutorial$Graphics$checkDim = A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension, 150, 225);
+var _elm_lang$elm_architecture_tutorial$Graphics$investigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 350, 493);
+var _elm_lang$elm_architecture_tutorial$Graphics$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 225);
 var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
 	function (rowNumber, maxRows, content, rectangle) {
 		var length = ((5 * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 6) | 0;
@@ -11116,9 +11307,9 @@ var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
 				]),
 			content);
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$boardDim = A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension, 1606, 2384);
+var _elm_lang$elm_architecture_tutorial$Graphics$boardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1606, 2384);
 var _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions = function (number) {
-	var checkDimWithMargins = A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Dimension, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width * 4) / 3) | 0, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height * 4) / 3) | 0);
+	var checkDimWithMargins = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width * 4) / 3) | 0, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height * 4) / 3) | 0);
 	var maxColumns = (_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width / checkDimWithMargins.width) | 0;
 	var topLeftPoints = A2(
 		_elm_community$list_extra$List_Extra$zip,
@@ -11204,218 +11395,34 @@ var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck = F3(
 					texts
 				]));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$locationCircle = function (location) {
-	var loc = function () {
-		var _p7 = location;
-		switch (_p7.ctor) {
-			case 'Train_Station':
-				return {cx: 264, cy: 112, radius: 64};
-			case 'Independence_Square':
-				return {cx: 924, cy: 112, radius: 64};
-			case 'Bank_of_Arkham':
-				return {cx: 487, cy: 112, radius: 64};
-			case 'Arkham_Asylum':
-				return {cx: 706, cy: 112, radius: 64};
-			case 'Newspaper':
-				return {cx: 126, cy: 286, radius: 64};
-			case 'Hibb\'s_Roadhouse':
-				return {cx: 927, cy: 356, radius: 64};
-			case 'Velma\'s_Diner':
-				return {cx: 1148, cy: 351, radius: 64};
-			case 'Curiositie_Shoppe':
-				return {cx: 125, cy: 473, radius: 64};
-			case 'Unvisited_Isle':
-				return {cx: 124, cy: 759, radius: 64};
-			case 'Police_Station':
-				return {cx: 1148, cy: 551, radius: 64};
-			case 'Graveyard':
-				return {cx: 1148, cy: 845, radius: 64};
-			case 'River_Docks':
-				return {cx: 122, cy: 938, radius: 64};
-			case 'The_Unnamable':
-				return {cx: 342, cy: 1025, radius: 64};
-			case 'General_Store':
-				return {cx: 898, cy: 1017, radius: 64};
-			case 'Black_Cave':
-				return {cx: 1150, cy: 1030, radius: 64};
-			case 'Science_Building':
-				return {cx: 122, cy: 1195, radius: 64};
-			case 'The_Witch_House':
-				return {cx: 1150, cy: 1312, radius: 64};
-			case 'Silver_Twilight_Lodge':
-				return {cx: 936, cy: 1383, radius: 64};
-			case 'Library':
-				return {cx: 447, cy: 1382, radius: 64};
-			case 'Administration_Building':
-				return {cx: 243, cy: 1450, radius: 64};
-			case 'St_Mary\'s_Hospital':
-				return {cx: 122, cy: 1701, radius: 64};
-			case 'Ma\'s_Boarding_House':
-				return {cx: 1149, cy: 1640, radius: 64};
-			case 'South_Church':
-				return {cx: 1058, cy: 1901, radius: 64};
-			case 'Historical_Society':
-				return {cx: 816, cy: 1976, radius: 64};
-			case 'Woods':
-				return {cx: 562, cy: 1976, radius: 64};
-			case 'Ye_Olde_Magick_Shoppe':
-				return {cx: 282, cy: 1947, radius: 64};
-			default:
-				return {cx: 0, cy: 0, radius: 0};
-		}
-	}();
-	var circleMiddle = function (c) {
-		return {x: c.cx, y: c.cy};
-	};
-	return {
-		cx: loc.cx,
-		cy: loc.cy,
-		radius: loc.radius,
-		middle: circleMiddle(loc)
-	};
-};
-var _elm_lang$elm_architecture_tutorial$Graphics$localeCircle = F2(
-	function (generator, l) {
-		var generatedAttributes = generator(l);
-		var c = _elm_lang$elm_architecture_tutorial$Graphics$locationCircle(l);
-		var commonAttributes = _elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$svg$Svg_Attributes$cx(
-				_elm_lang$core$Basics$toString(c.cx)),
-				_elm_lang$svg$Svg_Attributes$cy(
-				_elm_lang$core$Basics$toString(c.cy)),
-				_elm_lang$svg$Svg_Attributes$r(
-				_elm_lang$core$Basics$toString(c.radius)),
-				_elm_lang$svg$Svg_Attributes$strokeWidth('1'),
-				_elm_lang$svg$Svg_Attributes$strokeOpacity('0.0'),
-				_elm_lang$svg$Svg_Attributes$fillOpacity('0.0')
-			]);
+var _elm_lang$elm_architecture_tutorial$Graphics$movement = F2(
+	function (color, _p7) {
+		var _p8 = _p7;
+		var p2 = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p8._1);
+		var p1 = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p8._0);
 		return A2(
-			_elm_lang$svg$Svg$circle,
-			A2(_elm_lang$core$List$append, commonAttributes, generatedAttributes),
+			_elm_lang$svg$Svg$line,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$x1(
+					_elm_lang$core$Basics$toString(p1.x)),
+					_elm_lang$svg$Svg_Attributes$y1(
+					_elm_lang$core$Basics$toString(p1.y)),
+					_elm_lang$svg$Svg_Attributes$x2(
+					_elm_lang$core$Basics$toString(p2.x)),
+					_elm_lang$svg$Svg_Attributes$y2(
+					_elm_lang$core$Basics$toString(p2.y)),
+					_elm_lang$svg$Svg_Attributes$stroke(color),
+					_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
+					_elm_lang$svg$Svg_Attributes$strokeLinecap('round')
+				]),
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$neighborhoodRectangle = function (n) {
-	var st = function () {
-		var _p8 = n;
-		switch (_p8.ctor) {
-			case 'Northside':
-				return {x: 296, y: 396, width: 180, height: 80};
-			case 'Downtown':
-				return {x: 591, y: 393, width: 192, height: 82};
-			case 'Easttown':
-				return {x: 731, y: 621, width: 208, height: 82};
-			case 'Merchant_District':
-				return {x: 363, y: 808, width: 264, height: 80};
-			case 'Rivertown':
-				return {x: 720, y: 808, width: 182, height: 78};
-			case 'Miskatonic_University':
-				return {x: 379, y: 1177, width: 236, height: 84};
-			case 'French_Hill':
-				return {x: 721, y: 1219, width: 195, height: 84};
-			case 'Uptown':
-				return {x: 469, y: 1669, width: 152, height: 84};
-			default:
-				return {x: 753, y: 1673, width: 180, height: 82};
-		}
-	}();
-	var rectangleMiddle = function (r) {
-		return {x: r.x + ((r.width / 2) | 0), y: r.y + ((r.height / 2) | 0)};
-	};
-	return {
-		x: st.x,
-		y: st.y,
-		width: st.width,
-		height: st.height,
-		middle: rectangleMiddle(st)
-	};
-};
-var _elm_lang$elm_architecture_tutorial$Graphics$streetRectangle = F2(
-	function (generator, n) {
-		var generatedAttributes = generator(n);
-		var r = _elm_lang$elm_architecture_tutorial$Graphics$neighborhoodRectangle(n);
-		var commonAttributes = _elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$svg$Svg_Attributes$x(
-				_elm_lang$core$Basics$toString(r.x)),
-				_elm_lang$svg$Svg_Attributes$y(
-				_elm_lang$core$Basics$toString(r.y)),
-				_elm_lang$svg$Svg_Attributes$width(
-				_elm_lang$core$Basics$toString(r.width)),
-				_elm_lang$svg$Svg_Attributes$height(
-				_elm_lang$core$Basics$toString(r.height)),
-				_elm_lang$svg$Svg_Attributes$strokeOpacity('0.0'),
-				_elm_lang$svg$Svg_Attributes$fillOpacity('0.0')
-			]);
-		return A2(
-			_elm_lang$svg$Svg$rect,
-			A2(_elm_lang$core$List$append, commonAttributes, generatedAttributes),
-			_elm_lang$core$Native_List.fromArray(
-				[]));
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$middle = function (place) {
-	var _p9 = place;
-	if (_p9.ctor === 'Street') {
-		return _elm_lang$elm_architecture_tutorial$Graphics$neighborhoodRectangle(_p9._0).middle;
-	} else {
-		return _elm_lang$elm_architecture_tutorial$Graphics$locationCircle(_p9._0).middle;
-	}
-};
-var _elm_lang$elm_architecture_tutorial$Graphics$positionCircle = F4(
-	function (p, i, msgGenerator, isFilled) {
-		var m = _elm_lang$elm_architecture_tutorial$Graphics$middle(p);
-		var circleX = _elm_lang$core$Basics$toString(m.x + 30);
-		var circleY = _elm_lang$core$Basics$toString(m.y);
-		return A2(
-			_elm_lang$core$List_ops['::'],
-			A2(
-				_elm_lang$svg$Svg$circle,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$svg$Svg_Attributes$cx(circleX),
-						_elm_lang$svg$Svg_Attributes$cy(circleY),
-						_elm_lang$svg$Svg_Attributes$r('20'),
-						_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
-						_elm_lang$svg$Svg_Attributes$fill('green'),
-						_elm_lang$svg$Svg_Attributes$stroke('green'),
-						_elm_lang$svg$Svg_Attributes$fillOpacity(
-						isFilled ? '1.0' : '0.0')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-			A2(
-				_elm_lang$core$List_ops['::'],
-				A2(
-					_elm_lang$svg$Svg$text$,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$svg$Svg_Attributes$textAnchor('middle'),
-							_elm_lang$svg$Svg_Attributes$x(circleX),
-							_elm_lang$svg$Svg_Attributes$y(circleY),
-							_elm_lang$svg$Svg_Attributes$fill('red'),
-							msgGenerator(i)
-						]),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$svg$Svg$text('1')
-						])),
-				_elm_lang$core$Native_List.fromArray(
-					[])));
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$investigatorStartPositions = F2(
-	function (p, colors) {
-		var m = _elm_lang$elm_architecture_tutorial$Graphics$middle(p);
-		return A3(
-			_elm_lang$elm_architecture_tutorial$PieChart$chart,
-			A2(_elm_lang$elm_architecture_tutorial$GraphicTypes$Point, m.x + 30, m.y),
-			20,
-			colors);
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p10) {
-	var _p11 = _p10;
+var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p9) {
+	var _p10 = _p9;
 	var side = 40;
-	var mid = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p11._0);
+	var mid = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p10._0);
 	var rectX = mid.x - 60;
 	var textX = rectX + 33;
 	var rectY = mid.y - 20;
@@ -11454,66 +11461,55 @@ var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p10)
 					[
 						_elm_lang$svg$Svg$text(
 						_elm_lang$core$Basics$toString(
-							_elm_lang$core$List$length(_p11._1)))
+							_elm_lang$core$List$length(_p10._1)))
 					])),
 			_elm_lang$core$Native_List.fromArray(
 				[])));
 };
-var _elm_lang$elm_architecture_tutorial$Graphics$movement = F2(
-	function (color, _p12) {
-		var _p13 = _p12;
-		var p2 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p13._1);
-		var p1 = _elm_lang$elm_architecture_tutorial$Graphics$middle(_p13._0);
+var _elm_lang$elm_architecture_tutorial$Graphics$streetRectangle = F2(
+	function (generator, n) {
+		var generatedAttributes = generator(n);
+		var r = _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle(n);
+		var commonAttributes = _elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$x(
+				_elm_lang$core$Basics$toString(r.x)),
+				_elm_lang$svg$Svg_Attributes$y(
+				_elm_lang$core$Basics$toString(r.y)),
+				_elm_lang$svg$Svg_Attributes$width(
+				_elm_lang$core$Basics$toString(r.width)),
+				_elm_lang$svg$Svg_Attributes$height(
+				_elm_lang$core$Basics$toString(r.height)),
+				_elm_lang$svg$Svg_Attributes$strokeOpacity('0.0'),
+				_elm_lang$svg$Svg_Attributes$fillOpacity('0.0')
+			]);
 		return A2(
-			_elm_lang$svg$Svg$line,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$x1(
-					_elm_lang$core$Basics$toString(p1.x)),
-					_elm_lang$svg$Svg_Attributes$y1(
-					_elm_lang$core$Basics$toString(p1.y)),
-					_elm_lang$svg$Svg_Attributes$x2(
-					_elm_lang$core$Basics$toString(p2.x)),
-					_elm_lang$svg$Svg_Attributes$y2(
-					_elm_lang$core$Basics$toString(p2.y)),
-					_elm_lang$svg$Svg_Attributes$stroke(color),
-					_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
-					_elm_lang$svg$Svg_Attributes$strokeLinecap('round')
-				]),
+			_elm_lang$svg$Svg$rect,
+			A2(_elm_lang$core$List$append, commonAttributes, generatedAttributes),
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$icon = F3(
-	function (check, link, generator) {
-		var middlePoint = _elm_lang$elm_architecture_tutorial$Graphics$middle(check.location);
-		var iconSize = 16;
-		var posX = middlePoint.x - ((iconSize / 2) | 0);
-		var posY = (middlePoint.y - ((iconSize / 2) | 0)) - 25;
+var _elm_lang$elm_architecture_tutorial$Graphics$localeCircle = F2(
+	function (generator, l) {
+		var generatedAttributes = generator(l);
+		var c = _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle(l);
+		var commonAttributes = _elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$cx(
+				_elm_lang$core$Basics$toString(c.cx)),
+				_elm_lang$svg$Svg_Attributes$cy(
+				_elm_lang$core$Basics$toString(c.cy)),
+				_elm_lang$svg$Svg_Attributes$r(
+				_elm_lang$core$Basics$toString(c.radius)),
+				_elm_lang$svg$Svg_Attributes$strokeWidth('1'),
+				_elm_lang$svg$Svg_Attributes$strokeOpacity('0.0'),
+				_elm_lang$svg$Svg_Attributes$fillOpacity('0.0')
+			]);
 		return A2(
-			_elm_lang$svg$Svg$image,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$xlinkHref(link),
-					_elm_lang$svg$Svg_Attributes$x(
-					_elm_lang$core$Basics$toString(posX)),
-					_elm_lang$svg$Svg_Attributes$y(
-					_elm_lang$core$Basics$toString(posY)),
-					_elm_lang$svg$Svg_Attributes$height(
-					_elm_lang$core$Basics$toString(iconSize)),
-					_elm_lang$svg$Svg_Attributes$width(
-					_elm_lang$core$Basics$toString(iconSize)),
-					generator(check)
-				]),
+			_elm_lang$svg$Svg$circle,
+			A2(_elm_lang$core$List$append, commonAttributes, generatedAttributes),
 			_elm_lang$core$Native_List.fromArray(
 				[]));
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$drawDiceCheck = F2(
-	function (generator, check) {
-		return A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'sneak.png', generator);
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck = F2(
-	function (generator, check) {
-		return check.wasSuccess ? A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'ok.jpg', generator) : A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'notOk.png', generator);
 	});
 
 var _elm_lang$elm_architecture_tutorial$DiceChecker$singleDice = function (_p0) {
@@ -12170,32 +12166,85 @@ var _elm_lang$elm_architecture_tutorial$Investigators$movementLinesDraw = functi
 		_elm_lang$elm_architecture_tutorial$Graphics$movement(color),
 		lines);
 };
-var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (state) {
-	return _elm_lang$core$List$concat(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$elm_architecture_tutorial$Graphics$investigatorStartPositions,
-				state.movement.start,
-				_elm_lang$core$Native_List.fromArray(
-					[state.color])),
-				A4(
-				_elm_lang$elm_architecture_tutorial$Graphics$positionCircle,
-				_elm_lang$elm_architecture_tutorial$Movement$pathEnd(state.movement),
-				state.investigator,
-				function (i) {
-					return _elm_lang$svg$Svg_Attributes$class('ccc');
+var _elm_lang$elm_architecture_tutorial$Investigators$groupPositions = F2(
+	function (positionExtractor, allStates) {
+		var mergePairs = F2(
+			function (pair1, pair2) {
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Basics$fst(pair1),
+					_1: A2(
+						_elm_lang$core$List$append,
+						_elm_lang$core$Basics$snd(pair1),
+						_elm_lang$core$Basics$snd(pair2))
+				};
+			});
+		var pairs = A2(
+			_elm_lang$core$List$sortBy,
+			function (_p0) {
+				var _p1 = _p0;
+				return _elm_lang$core$Basics$toString(_p1._0);
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (s) {
+					return {
+						ctor: '_Tuple2',
+						_0: positionExtractor(s),
+						_1: _elm_lang$core$Native_List.fromArray(
+							[s.color])
+					};
 				},
-				false),
-				_elm_lang$elm_architecture_tutorial$Investigators$movementLinesDraw(state)
-			]));
+				allStates));
+		var grouped = A2(
+			_elm_community$list_extra$List_Extra$groupWhile,
+			F2(
+				function (f, s) {
+					return _elm_lang$core$Native_Utils.eq(
+						_elm_lang$core$Basics$fst(f),
+						_elm_lang$core$Basics$fst(s));
+				}),
+			pairs);
+		return A2(
+			_elm_lang$core$List$filterMap,
+			_elm_community$list_extra$List_Extra$foldl1(mergePairs),
+			grouped);
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (model) {
+	var allStates = A2(
+		_elm_lang$core$List$append,
+		A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (i) {
+					return _elm_lang$core$Native_List.fromArray(
+						[i]);
+				},
+				model.selected)),
+		model.investigatorList);
+	var startPositions = A2(
+		_elm_lang$elm_architecture_tutorial$Investigators$groupPositions,
+		function (s) {
+			return s.movement.start;
+		},
+		allStates);
+	var endPositions = A2(
+		_elm_lang$elm_architecture_tutorial$Investigators$groupPositions,
+		function (s) {
+			return _elm_lang$elm_architecture_tutorial$Movement$pathEnd(s.movement);
+		},
+		allStates);
+	return _elm_lang$core$List$concat(
+		A2(
+			_elm_lang$core$List$append,
+			A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$start, startPositions),
+			A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$end, endPositions)));
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$investigatorView = function (model) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		A2(_elm_lang$core$Maybe$map, _elm_lang$elm_architecture_tutorial$Investigators$positionDraw, model.selected));
+	return _elm_lang$elm_architecture_tutorial$Investigators$positionDraw(model);
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
 	function (stateUpdater, model) {
@@ -12217,8 +12266,8 @@ var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
 var _elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd = F2(
 	function (stateUpdater, model) {
 		var pair = A2(_elm_lang$core$Maybe$map, stateUpdater, model.selected);
-		var _p0 = pair;
-		if (_p0.ctor === 'Nothing') {
+		var _p2 = pair;
+		if (_p2.ctor === 'Nothing') {
 			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		} else {
 			return {
@@ -12226,10 +12275,10 @@ var _elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd = F2
 				_0: A2(
 					_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
 					function (s) {
-						return _p0._0._0;
+						return _p2._0._0;
 					},
 					model),
-				_1: _p0._0._1
+				_1: _p2._0._1
 			};
 		}
 	});
@@ -12268,7 +12317,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$resolveCheck = F3(
 	function (check, results, model) {
 		var performResolveCheck = F3(
 			function (check, results, state) {
-				var _p1 = check.checkType;
+				var _p3 = check.checkType;
 				return A2(
 					_elm_lang$elm_architecture_tutorial$Movement$evadeCheck,
 					A2(_elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck, check, results),
@@ -12283,25 +12332,28 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorColors = _elm_
 	['red', 'green', 'blue', 'pink', 'violet', 'yellow', 'black', 'orange']);
 var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F3(
 	function (a, b, c) {
-		return {investigator: a, movement: b, color: c};
+		return {movement: a, color: b, investigator: c};
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A3(
-	_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState,
-	_elm_lang$elm_architecture_tutorial$BoardData$defaultInvestigator,
-	_elm_lang$elm_architecture_tutorial$Movement$initialModel,
-	A2(
-		_elm_lang$core$Maybe$withDefault,
-		'green',
-		_elm_lang$core$List$head(_elm_lang$elm_architecture_tutorial$Investigators$investigatorColors)));
+var _elm_lang$elm_architecture_tutorial$Investigators$initState = function (_p4) {
+	var _p5 = _p4;
+	return A3(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$Movement$initialModel, _p5._0, _p5._1);
+};
+var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A2(
+	_elm_lang$core$List$map,
+	_elm_lang$elm_architecture_tutorial$Investigators$initState,
+	A2(_elm_community$list_extra$List_Extra$zip, _elm_lang$elm_architecture_tutorial$Investigators$investigatorColors, _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators));
 var _elm_lang$elm_architecture_tutorial$Investigators$Model = F2(
 	function (a, b) {
 		return {investigatorList: a, selected: b};
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$initialModel = A2(
 	_elm_lang$elm_architecture_tutorial$Investigators$Model,
-	_elm_lang$core$Native_List.fromArray(
-		[]),
-	_elm_lang$core$Maybe$Just(_elm_lang$elm_architecture_tutorial$Investigators$initialState));
+	A2(
+		_elm_lang$core$Maybe$withDefault,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$List$tail(_elm_lang$elm_architecture_tutorial$Investigators$initialState)),
+	_elm_lang$core$List$head(_elm_lang$elm_architecture_tutorial$Investigators$initialState));
 
 var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode_ops[':='], 'keyCode', _elm_lang$core$Json_Decode$int);
 var _elm_lang$html$Html_Events$targetChecked = A2(
@@ -12406,7 +12458,7 @@ var _elm_lang$html$Html_Events$Options = F2(
 
 var _elm_lang$elm_architecture_tutorial$MainModule$offsetPosition = A3(
 	_elm_lang$core$Json_Decode$object2,
-	_elm_lang$elm_architecture_tutorial$GraphicTypes$Point,
+	_elm_lang$elm_architecture_tutorial$Graphics_Common$Point,
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetX', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetY', _elm_lang$core$Json_Decode$int));
 var _elm_lang$elm_architecture_tutorial$MainModule$locationClick = F3(

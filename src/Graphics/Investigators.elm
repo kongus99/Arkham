@@ -13,21 +13,21 @@ end (p, colors) =
     let
         m = middle p
     in
-        drawCircles (Point (m.x + 30) m.y) 20 colors
+        drawCircles (Point (m.x + 30) m.y) 21 colors
 
 start : (Place, List Color) -> List (Svg a)
 start (p, colors)  =
     let
         m = middle p
     in
-        drawPies (Point (m.x + 30) m.y) 20 colors
+        drawPies (Point (m.x + 30) m.y) 21 colors
 
 drawCircles : Point -> Int -> List Color -> List (Svg a)
 drawCircles middle radius colors =
     List.indexedMap (calculateCircle middle radius) colors
 
 calculateCircle middle radius index color =
-    circle [cx <| toString middle.x, cy <| toString middle.y, r <| toString (radius - 2 * index), strokeWidth "2", stroke color, fillOpacity "0.0"][]
+    circle [cx <| toString middle.x, cy <| toString middle.y, r <| toString (radius - 3 * index), strokeWidth "3", stroke color, fillOpacity "0.0"][]
 
 drawPies : Point -> Int -> List Color -> List (Svg a)
 drawPies middle radius colors =
