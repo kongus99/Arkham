@@ -5,20 +5,25 @@ import Movement
 import DiceChecker
 import Array exposing (Array)
 import Graphics
-import GraphicTypes exposing (Color)
+import Graphics.Common exposing (Color)
+import Graphics.Positions as Positions
 import Svg.Attributes exposing (class)
 import List.Extra exposing (zip)
 import Html.App as App
+import List.Extra as Lists
+import AllDict
 
 investigatorColors = ["red", "green", "blue", "pink", "violet", "yellow", "black", "orange"]
 
-type alias InvestigatorState = { investigator : Investigator, movement : Movement.Model,  color : Color}
+type alias InvestigatorState = { movement : Movement.Model,  color : Color, investigator : Investigator}
 
 type alias Model = { investigatorList : List InvestigatorState, selected : Maybe InvestigatorState }
 
-initialState = InvestigatorState defaultInvestigator Movement.initialModel <| Maybe.withDefault "green" <| List.head investigatorColors
+initState (c, i) = InvestigatorState Movement.initialModel c i
 
-initialModel = Model [] <| Just initialState
+initialState = List.map initState <| Lists.zip investigatorColors allInvestigators
+
+initialModel = Model (Maybe.withDefault [] <| List.tail initialState) (List.head initialState)
 
 ---------------------------------------------
 resolveCheck : UnresolvedCheck -> List Int -> Model -> (Model, Cmd (UnresolvedCheck, List Int))
@@ -62,13 +67,21 @@ updateMovementWithCmd stateUpdater model =
 ---------------------------------------------
 
 investigatorView model =
-    Maybe.withDefault [] <| Maybe.map positionDraw model.selected
+    startPositionDraw model
 
-positionDraw state =
-    List.concat
-        [ Graphics.investigatorStartPositions state.movement.start [state.color]
-        , Graphics.positionCircle (Movement.pathEnd state.movement) state.investigator (\i -> class "ccc") False
-        , movementLinesDraw state]
+startPositionDraw model =
+    let
+        allStates = List.append (Maybe.withDefault [] <| Maybe.map (\i -> [i]) model.selected) model.investigatorList
+        pairs = List.sortBy (\(p, _) -> toString p) <| List.map (\s -> (s.movement.start, [s.color])) allStates
+        grouped = Lists.groupWhile (\f->\s-> fst f == fst s) pairs
+        mergePairs pair1 pair2 =
+            (fst pair1, List.append (snd pair1) (snd pair2))
+        groupsReduced = List.filterMap (Lists.foldl1 mergePairs) grouped
+    in
+        List.concat (List.map Positions.start groupsReduced)
+--        [ Graphics.investigatorStartPositions state.movement.start [state.color]]
+--        , Graphics.positionCircle (Movement.pathEnd state.movement) state.investigator (\i -> class "ccc") False
+--        , movementLinesDraw state]
 
 movementLinesDraw state =
     let

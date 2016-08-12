@@ -1,12 +1,24 @@
-module PieChart exposing (chart)
+module Graphics.Positions exposing (start, end, connections)
 
-import GraphicTypes exposing (..)
+import BoardData exposing(..)
+import Graphics.Common exposing (..)
 import Svg exposing (Svg, path, circle)
 import Svg.Attributes exposing (d, fill, cx, cy, r)
 import String
 
-chart : Point -> Int -> List Color -> List (Svg a)
-chart middle radius colors =
+connections = []
+
+end = []
+
+start : (Place, List Color) -> List (Svg a)
+start (p, colors)  =
+    let
+        m = middle p
+    in
+        drawPies (Point (m.x + 30) m.y) 20 colors
+
+drawPies : Point -> Int -> List Color -> List (Svg a)
+drawPies middle radius colors =
     if List.length colors == 1 then
         [circle [cx <| toString middle.x, cy <| toString middle.y, r <| toString radius, fill <| Maybe.withDefault "green" <| List.head colors][]]
     else List.indexedMap (calculatePie middle radius (List.length colors)) colors

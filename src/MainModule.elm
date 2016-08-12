@@ -2,8 +2,7 @@ module MainModule exposing (..)
 
 import BoardData exposing (..)
 import Graphics exposing (boardDim)
-import PieChart
-import GraphicTypes exposing (Point)
+import Graphics.Common exposing (Point)
 import MonsterBowl exposing (Monster)
 import AllDict exposing (AllDict)
 import Html exposing (Html, span, button, div)
