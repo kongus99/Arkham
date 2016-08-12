@@ -1,8 +1,8 @@
 module MainModule exposing (..)
 
 import BoardData exposing (..)
-import Graphics exposing (boardDim)
-import Graphics.Common exposing (Point)
+import Graphics
+import Graphics.Common exposing (Point, boardDim, sideDim)
 import MonsterBowl exposing (Monster)
 import AllDict exposing (AllDict)
 import Html exposing (Html, span, button, div)
@@ -79,7 +79,7 @@ wholeBoard model =
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
                                                     , Investigators.checkersView msgForCheckerClick model.investigators
                                                     ])
-         , svg [ width <| toString 1200 , height <| toString 400] (Investigators.investigatorSideView model.investigators)]
+         , svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView model.investigators)]
 
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)][]

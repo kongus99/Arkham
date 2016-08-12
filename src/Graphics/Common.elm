@@ -73,3 +73,9 @@ middle place =
     case place of
         Street s -> (neighborhoodRectangle s).middle
         Locale l -> (locationCircle l).middle
+
+boardDim = Dimension 1606 2384
+checkDim = Dimension 150 225
+fullInvestigatorDim = Dimension 350 493
+sideDim = Dimension 1200 400
+smallInvestigatorDim = Dimension 300 200

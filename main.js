@@ -11042,6 +11042,11 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension = F2(
 	function (a, b) {
 		return {width: a, height: b};
 	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1606, 2384);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 225);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$fullInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 350, 493);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1200, 400);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 300, 200);
 
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculatePie = F5(
 	function (middle, radius, total, index, color) {
@@ -11205,10 +11210,10 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
 				]));
 		var outline = A4(
 			_elm_lang$elm_architecture_tutorial$Graphics_Common$rectangle,
-			A2(_elm_lang$core$Basics_ops['%'], index * 300, 1200),
-			((index / 4) | 0) * 200,
-			300,
-			200);
+			A2(_elm_lang$core$Basics_ops['%'], index * _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.width, _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width),
+			((index / 4) | 0) * _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height,
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.width,
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height);
 		return A2(
 			_elm_lang$core$List_ops['::'],
 			A2(
@@ -11278,6 +11283,28 @@ var _elm_lang$elm_architecture_tutorial$Graphics$icon = F3(
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	});
+var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
+	function (rowNumber, maxRows, content, rectangle) {
+		var length = ((5 * _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.width) / 6) | 0;
+		var middlePoint = rectangle.middle;
+		var posX = middlePoint.x;
+		var posY = (middlePoint.y - ((_elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.height / 2) | 0)) + (((rowNumber * _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.height) / (maxRows + 1)) | 0);
+		return A2(
+			_elm_lang$svg$Svg$text$,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$x(
+					_elm_lang$core$Basics$toString(posX)),
+					_elm_lang$svg$Svg_Attributes$y(
+					_elm_lang$core$Basics$toString(posY)),
+					_elm_lang$svg$Svg_Attributes$textLength(
+					_elm_lang$core$Basics$toString(length)),
+					_elm_lang$svg$Svg_Attributes$lengthAdjust('spacingAndGlyphs'),
+					_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
+					_elm_lang$svg$Svg_Attributes$textAnchor('middle')
+				]),
+			content);
+	});
 var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F4(
 	function (check, op, generator, r) {
 		return A2(
@@ -11299,6 +11326,15 @@ var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F4(
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[]));
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay = F2(
+	function (check, generator) {
+		return A4(
+			_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle,
+			check,
+			'0.2',
+			generator,
+			{x: 0, y: 0, width: _elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim.width, height: _elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim.height});
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck = F2(
 	function (generator, check) {
@@ -11363,54 +11399,20 @@ var _elm_lang$elm_architecture_tutorial$Graphics$leftOffsets = F4(
 			leftMargin,
 			A2(_elm_community$list_extra$List_Extra$zip, indexes, isFullRow));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$investigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 350, 493);
-var _elm_lang$elm_architecture_tutorial$Graphics$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 225);
-var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
-	function (rowNumber, maxRows, content, rectangle) {
-		var length = ((5 * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 6) | 0;
-		var middlePoint = rectangle.middle;
-		var posX = middlePoint.x;
-		var posY = (middlePoint.y - ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height / 2) | 0)) + (((rowNumber * _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / (maxRows + 1)) | 0);
-		return A2(
-			_elm_lang$svg$Svg$text$,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$x(
-					_elm_lang$core$Basics$toString(posX)),
-					_elm_lang$svg$Svg_Attributes$y(
-					_elm_lang$core$Basics$toString(posY)),
-					_elm_lang$svg$Svg_Attributes$textLength(
-					_elm_lang$core$Basics$toString(length)),
-					_elm_lang$svg$Svg_Attributes$lengthAdjust('spacingAndGlyphs'),
-					_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
-					_elm_lang$svg$Svg_Attributes$textAnchor('middle')
-				]),
-			content);
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$boardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1606, 2384);
 var _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions = function (number) {
-	var checkDimWithMargins = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.width * 4) / 3) | 0, ((_elm_lang$elm_architecture_tutorial$Graphics$checkDim.height * 4) / 3) | 0);
-	var maxColumns = (_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width / checkDimWithMargins.width) | 0;
+	var checkDimWithMargins = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, ((_elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.width * 4) / 3) | 0, ((_elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.height * 4) / 3) | 0);
+	var maxColumns = (_elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim.width / checkDimWithMargins.width) | 0;
 	var topLeftPoints = A2(
 		_elm_community$list_extra$List_Extra$zip,
-		A4(_elm_lang$elm_architecture_tutorial$Graphics$leftOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, checkDimWithMargins.width, maxColumns),
-		A4(_elm_lang$elm_architecture_tutorial$Graphics$topOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics$boardDim.height, checkDimWithMargins.height, maxColumns));
-	var leftMargin = ((checkDimWithMargins.width - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width) / 2) | 0;
-	var topMargin = ((checkDimWithMargins.height - _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height) / 2) | 0;
+		A4(_elm_lang$elm_architecture_tutorial$Graphics$leftOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim.width, checkDimWithMargins.width, maxColumns),
+		A4(_elm_lang$elm_architecture_tutorial$Graphics$topOffsets, number, _elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim.height, checkDimWithMargins.height, maxColumns));
+	var leftMargin = ((checkDimWithMargins.width - _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.width) / 2) | 0;
+	var topMargin = ((checkDimWithMargins.height - _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.height) / 2) | 0;
 	return A2(
 		_elm_lang$core$List$map,
-		A4(_elm_lang$elm_architecture_tutorial$Graphics$createRectangle, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.width, _elm_lang$elm_architecture_tutorial$Graphics$checkDim.height, leftMargin, topMargin),
+		A4(_elm_lang$elm_architecture_tutorial$Graphics$createRectangle, _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.width, _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.height, leftMargin, topMargin),
 		topLeftPoints);
 };
-var _elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay = F2(
-	function (check, generator) {
-		return A4(
-			_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle,
-			check,
-			'0.2',
-			generator,
-			{x: 0, y: 0, width: _elm_lang$elm_architecture_tutorial$Graphics$boardDim.width, height: _elm_lang$elm_architecture_tutorial$Graphics$boardDim.height});
-	});
 var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck = F3(
 	function (msgGenerator, textGenerators, check) {
 		var maxTextRows = 2 + _elm_lang$core$List$length(textGenerators);
@@ -12182,16 +12184,16 @@ var _elm_lang$elm_architecture_tutorial$Movement$update = F2(
 				evadeTests: A2(_elm_lang$elm_architecture_tutorial$DiceChecker$update, msg, model.evadeTests)
 			});
 	});
-var _elm_lang$elm_architecture_tutorial$Movement$initialModel = {
-	start: _elm_lang$elm_architecture_tutorial$BoardData$Locale(_elm_lang$elm_architecture_tutorial$BoardData$Train_Station),
-	path: _elm_lang$core$Native_List.fromArray(
-		[]),
-	evadeTests: _elm_lang$elm_architecture_tutorial$DiceChecker$initialChecks
-};
 var _elm_lang$elm_architecture_tutorial$Movement$Model = F3(
 	function (a, b, c) {
 		return {start: a, path: b, evadeTests: c};
 	});
+var _elm_lang$elm_architecture_tutorial$Movement$initialModel = A3(
+	_elm_lang$elm_architecture_tutorial$Movement$Model,
+	_elm_lang$elm_architecture_tutorial$BoardData$Locale(_elm_lang$elm_architecture_tutorial$BoardData$Train_Station),
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$elm_architecture_tutorial$DiceChecker$initialChecks);
 
 var _elm_lang$elm_architecture_tutorial$Investigators$checkersViewDraw = F2(
 	function (msgGenerator, state) {
@@ -12733,9 +12735,9 @@ var _elm_lang$elm_architecture_tutorial$MainModule$boardImage = A2(
 			_elm_lang$svg$Svg_Attributes$x('0'),
 			_elm_lang$svg$Svg_Attributes$y('0'),
 			_elm_lang$svg$Svg_Attributes$width(
-			_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width)),
+			_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim.width)),
 			_elm_lang$svg$Svg_Attributes$height(
-			_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.height)),
+			_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim.height)),
 			A2(
 			_elm_lang$html$Html_Events$on,
 			'click',
@@ -12755,9 +12757,9 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg_Attributes$width(
-						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width)),
+						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim.width)),
 						_elm_lang$svg$Svg_Attributes$height(
-						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.height))
+						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim.height))
 					]),
 				_elm_lang$core$List$concat(
 					_elm_lang$core$Native_List.fromArray(
@@ -12784,9 +12786,9 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg_Attributes$width(
-						_elm_lang$core$Basics$toString(1200)),
+						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width)),
 						_elm_lang$svg$Svg_Attributes$height(
-						_elm_lang$core$Basics$toString(400))
+						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.height))
 					]),
 				_elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView(model.investigators))
 			]));

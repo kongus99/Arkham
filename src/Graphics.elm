@@ -42,12 +42,6 @@ monsterSquare (place, monsters) =
       ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString <| List.length monsters)]
       ::[]
 
-
-boardDim = Dimension 1606 2384
-checkDim = Dimension 150 225
-
-investigatorDim = Dimension 350 493
-
 leftOffsets number maxWidth tileWidth maxInRow =
     let
         remainder = number % maxInRow

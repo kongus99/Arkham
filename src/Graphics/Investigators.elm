@@ -9,7 +9,7 @@ import String
 minimalData: Int -> (Investigator, Int) -> List (Svg a)
 minimalData index (investigator, movesLeft) =
     let
-        outline = rectangle (index * 300 % 1200) ((index // 4) * 200) 300 200
+        outline = rectangle (index * smallInvestigatorDim.width % sideDim.width) ((index // 4) * smallInvestigatorDim.height) smallInvestigatorDim.width smallInvestigatorDim.height
         investigatorInfo = String.concat [investigator.name, " ", toString movesLeft]
     in
         rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", fillOpacity "0.0"][]
