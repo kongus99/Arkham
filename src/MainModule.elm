@@ -71,15 +71,18 @@ view model =
 
 wholeBoard : Model -> Html Msg
 wholeBoard model =
-    svg [ width <| toString boardDim.width , height <| toString boardDim.height] (List.concat[ [boardImage]
+    div[][ svg [ width <| toString boardDim.width , height <| toString boardDim.height] (List.concat
+                                                    [ [boardImage]
                                                     , Investigators.investigatorBoardView model.investigators
                                                     , List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters)
                                                     , List.map (Graphics.localeCircle localeMsg) allLocation
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
                                                     , Investigators.checkersView msgForCheckerClick model.investigators
                                                     ])
+         , svg [ width <| toString 1200 , height <| toString 400] (Investigators.investigatorSideView model.investigators)]
+
 boardImage =
-  image [xlinkHref "board.jpg", x "0", y "0", width "1606", height "2384", on "click" (Json.map UnspecifiedClick offsetPosition)][]
+  image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)][]
 
 --Msg generators
 onLocationClick : Place -> Attribute Msg

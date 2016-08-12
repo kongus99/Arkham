@@ -1,4 +1,4 @@
-module Investigators exposing (move, Model, initialModel, showCheckDetails, finalizeMovement, resolveCheck, investigatorBoardView, checkersView)
+module Investigators exposing (move, Model, initialModel, showCheckDetails, finalizeMovement, resolveCheck, investigatorBoardView, checkersView, investigatorSideView)
 
 import BoardData exposing (..)
 import Movement
@@ -70,7 +70,7 @@ allStates model =
 
 investigatorSideView model =
     let
-        investigators = List.map (\s -> s.investigator) <| allStates model
+        investigators = List.map (\s -> (s.investigator, Movement.movesLeft s.investigator s.movement)) <| allStates model
     in
         List.concat <| (List.indexedMap Positions.minimalData investigators)
 

@@ -1,4 +1,4 @@
-module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, evadeCheck, update)
+module Movement exposing (moveTo, pathEnd, isValidPath, Model, initialModel, finalizeMovement, evadeCheck, update, movesLeft)
 
 import BoardData exposing (..)
 import Paths
@@ -87,3 +87,5 @@ pathEnd model =
 isValidPath investigator model =
     List.length model.path <= investigator.movementPoints
 
+movesLeft investigator model =
+    investigator.movementPoints - List.length model.path

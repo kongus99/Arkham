@@ -2,18 +2,18 @@ module Graphics.Investigators exposing (start, end, connections, minimalData)
 
 import BoardData exposing(..)
 import Graphics.Common exposing (..)
-import Svg exposing (Svg, path, circle, line, rect)
-import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height)
+import Svg exposing (Svg, path, circle, line, rect, text', text)
+import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize)
 import String
 
-
-minimalData: Int -> Investigator -> List (Svg a)
-minimalData index inv =
+minimalData: Int -> (Investigator, Int) -> List (Svg a)
+minimalData index (investigator, movesLeft) =
     let
-        outline = rectangle (index * 100) (index * 200) 100 200
+        outline = rectangle (index * 300 % 1200) ((index // 4) * 200) 300 200
+        investigatorInfo = String.concat [investigator.name, " ", toString movesLeft]
     in
-        rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, fill "red"][]
---            ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString <| List.length monsters)]
+        rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", fillOpacity "0.0"][]
+            ::text' [textAnchor "middle", x <| toString <| outline.middle.x, y <| toString <| outline.middle.y, fontFamily "Verdana", fontSize "35"][text investigatorInfo]
             ::[]
 
 connections : ((Place, Place), List Color) -> List (Svg a)

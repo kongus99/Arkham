@@ -11194,8 +11194,21 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = fun
 		_p6);
 };
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
-	function (index, inv) {
-		var outline = A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$rectangle, index * 100, index * 200, 100, 200);
+	function (index, _p7) {
+		var _p8 = _p7;
+		var investigatorInfo = _elm_lang$core$String$concat(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_p8._0.name,
+					' ',
+					_elm_lang$core$Basics$toString(_p8._1)
+				]));
+		var outline = A4(
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$rectangle,
+			A2(_elm_lang$core$Basics_ops['%'], index * 300, 1200),
+			((index / 4) | 0) * 200,
+			300,
+			200);
 		return A2(
 			_elm_lang$core$List_ops['::'],
 			A2(
@@ -11210,12 +11223,31 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
 						_elm_lang$core$Basics$toString(outline.width)),
 						_elm_lang$svg$Svg_Attributes$height(
 						_elm_lang$core$Basics$toString(outline.height)),
-						_elm_lang$svg$Svg_Attributes$fill('red')
+						_elm_lang$svg$Svg_Attributes$stroke('black'),
+						_elm_lang$svg$Svg_Attributes$fillOpacity('0.0')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
-			_elm_lang$core$Native_List.fromArray(
-				[]));
+			A2(
+				_elm_lang$core$List_ops['::'],
+				A2(
+					_elm_lang$svg$Svg$text$,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg_Attributes$textAnchor('middle'),
+							_elm_lang$svg$Svg_Attributes$x(
+							_elm_lang$core$Basics$toString(outline.middle.x)),
+							_elm_lang$svg$Svg_Attributes$y(
+							_elm_lang$core$Basics$toString(outline.middle.y)),
+							_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
+							_elm_lang$svg$Svg_Attributes$fontSize('35')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg$text(investigatorInfo)
+						])),
+				_elm_lang$core$Native_List.fromArray(
+					[])));
 	});
 
 var _elm_lang$elm_architecture_tutorial$Graphics$testName = function (checkType) {
@@ -11952,6 +11984,10 @@ var _elm_lang$elm_architecture_tutorial$Paths$PathData = F3(
 		return {goal: a, adjacent: b, excluded: c};
 	});
 
+var _elm_lang$elm_architecture_tutorial$Movement$movesLeft = F2(
+	function (investigator, model) {
+		return investigator.movementPoints - _elm_lang$core$List$length(model.path);
+	});
 var _elm_lang$elm_architecture_tutorial$Movement$isValidPath = F2(
 	function (investigator, model) {
 		return _elm_lang$core$Native_Utils.cmp(
@@ -12243,7 +12279,11 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = fun
 	var investigators = A2(
 		_elm_lang$core$List$map,
 		function (s) {
-			return s.investigator;
+			return {
+				ctor: '_Tuple2',
+				_0: s.investigator,
+				_1: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator, s.movement)
+			};
 		},
 		_elm_lang$elm_architecture_tutorial$Investigators$allStates(model));
 	return _elm_lang$core$List$concat(
@@ -12696,8 +12736,10 @@ var _elm_lang$elm_architecture_tutorial$MainModule$boardImage = A2(
 			_elm_lang$svg$Svg_Attributes$xlinkHref('board.jpg'),
 			_elm_lang$svg$Svg_Attributes$x('0'),
 			_elm_lang$svg$Svg_Attributes$y('0'),
-			_elm_lang$svg$Svg_Attributes$width('1606'),
-			_elm_lang$svg$Svg_Attributes$height('2384'),
+			_elm_lang$svg$Svg_Attributes$width(
+			_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width)),
+			_elm_lang$svg$Svg_Attributes$height(
+			_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.height)),
 			A2(
 			_elm_lang$html$Html_Events$on,
 			'click',
@@ -12707,34 +12749,51 @@ var _elm_lang$elm_architecture_tutorial$MainModule$boardImage = A2(
 		[]));
 var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model) {
 	return A2(
-		_elm_lang$svg$Svg$svg,
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$svg$Svg_Attributes$width(
-				_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width)),
-				_elm_lang$svg$Svg_Attributes$height(
-				_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.height))
-			]),
-		_elm_lang$core$List$concat(
-			_elm_lang$core$Native_List.fromArray(
-				[
+				A2(
+				_elm_lang$svg$Svg$svg,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$width(
+						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.width)),
+						_elm_lang$svg$Svg_Attributes$height(
+						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics$boardDim.height))
+					]),
+				_elm_lang$core$List$concat(
 					_elm_lang$core$Native_List.fromArray(
-					[_elm_lang$elm_architecture_tutorial$MainModule$boardImage]),
-					_elm_lang$elm_architecture_tutorial$Investigators$investigatorBoardView(model.investigators),
-					A2(
-					_elm_lang$core$List$concatMap,
-					_elm_lang$elm_architecture_tutorial$Graphics$monsterSquare,
-					_eeue56$elm_all_dict$AllDict$toList(model.monsters)),
-					A2(
-					_elm_lang$core$List$map,
-					_elm_lang$elm_architecture_tutorial$Graphics$localeCircle(_elm_lang$elm_architecture_tutorial$MainModule$localeMsg),
-					_elm_lang$elm_architecture_tutorial$BoardData$allLocation),
-					A2(
-					_elm_lang$core$List$map,
-					_elm_lang$elm_architecture_tutorial$Graphics$streetRectangle(_elm_lang$elm_architecture_tutorial$MainModule$streetMsg),
-					_elm_lang$elm_architecture_tutorial$BoardData$allNeighborhood),
-					A2(_elm_lang$elm_architecture_tutorial$Investigators$checkersView, _elm_lang$elm_architecture_tutorial$MainModule$msgForCheckerClick, model.investigators)
-				])));
+						[
+							_elm_lang$core$Native_List.fromArray(
+							[_elm_lang$elm_architecture_tutorial$MainModule$boardImage]),
+							_elm_lang$elm_architecture_tutorial$Investigators$investigatorBoardView(model.investigators),
+							A2(
+							_elm_lang$core$List$concatMap,
+							_elm_lang$elm_architecture_tutorial$Graphics$monsterSquare,
+							_eeue56$elm_all_dict$AllDict$toList(model.monsters)),
+							A2(
+							_elm_lang$core$List$map,
+							_elm_lang$elm_architecture_tutorial$Graphics$localeCircle(_elm_lang$elm_architecture_tutorial$MainModule$localeMsg),
+							_elm_lang$elm_architecture_tutorial$BoardData$allLocation),
+							A2(
+							_elm_lang$core$List$map,
+							_elm_lang$elm_architecture_tutorial$Graphics$streetRectangle(_elm_lang$elm_architecture_tutorial$MainModule$streetMsg),
+							_elm_lang$elm_architecture_tutorial$BoardData$allNeighborhood),
+							A2(_elm_lang$elm_architecture_tutorial$Investigators$checkersView, _elm_lang$elm_architecture_tutorial$MainModule$msgForCheckerClick, model.investigators)
+						]))),
+				A2(
+				_elm_lang$svg$Svg$svg,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$width(
+						_elm_lang$core$Basics$toString(1200)),
+						_elm_lang$svg$Svg_Attributes$height(
+						_elm_lang$core$Basics$toString(400))
+					]),
+				_elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView(model.investigators))
+			]));
 };
 var _elm_lang$elm_architecture_tutorial$MainModule$view = function (model) {
 	return A2(
