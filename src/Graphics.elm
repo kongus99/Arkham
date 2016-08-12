@@ -42,13 +42,6 @@ monsterSquare (place, monsters) =
       ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString <| List.length monsters)]
       ::[]
 
-movement: Color -> (Place, Place) -> Svg a
-movement color (start, end) =
-    let
-        p1 = middle start
-        p2 = middle end
-    in
-        line [x1 <| toString p1.x, y1 <| toString p1.y, x2 <| toString p2.x, y2 <| toString p2.y, stroke color, strokeWidth "3", strokeLinecap "round"] []
 
 boardDim = Dimension 1606 2384
 checkDim = Dimension 150 225

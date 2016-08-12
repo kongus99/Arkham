@@ -2,32 +2,35 @@ module Graphics.Investigators exposing (start, end, connections)
 
 import BoardData exposing(..)
 import Graphics.Common exposing (..)
-import Svg exposing (Svg, path, circle)
-import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, fillOpacity)
+import Svg exposing (Svg, path, circle, line)
+import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, fillOpacity, x1, x2, y1, y2, strokeLinecap)
 import String
 
-connections = []
+connections : ((Place, Place), List Color) -> List (Svg a)
+connections ((start, end), colors) =
+    List.indexedMap (calculateLine (middle start) (middle end) (List.length colors)) colors
+
+calculateLine p1 p2 total index color =
+    let
+        height = 3 * total // 2 - (index * 3)
+        start = Point p1.x (p1.y + height)
+        end = Point p2.x (p2.y + height)
+    in
+        line [x1 <| toString start.x, y1 <| toString start.y, x2 <| toString end.x, y2 <| toString end.y, stroke color, strokeWidth "3", strokeLinecap "round"] []
 
 end : (Place, List Color) -> List (Svg a)
 end (p, colors) =
-    let
-        m = middle p
-    in
-        drawCircles (Point (m.x + 30) m.y) 21 colors
+    List.indexedMap (calculateCircle (middle p) 24) colors
+
+calculateCircle middle radius index color =
+    circle [cx <| toString (middle.x + 30), cy <| toString middle.y, r <| toString (radius - 3 * index), strokeWidth "3", stroke color, fillOpacity "0.0"][]
 
 start : (Place, List Color) -> List (Svg a)
 start (p, colors)  =
     let
         m = middle p
     in
-        drawPies (Point (m.x + 30) m.y) 21 colors
-
-drawCircles : Point -> Int -> List Color -> List (Svg a)
-drawCircles middle radius colors =
-    List.indexedMap (calculateCircle middle radius) colors
-
-calculateCircle middle radius index color =
-    circle [cx <| toString middle.x, cy <| toString middle.y, r <| toString (radius - 3 * index), strokeWidth "3", stroke color, fillOpacity "0.0"][]
+        drawPies (Point (m.x + 30) m.y) 24 colors
 
 drawPies : Point -> Int -> List Color -> List (Svg a)
 drawPies middle radius colors =

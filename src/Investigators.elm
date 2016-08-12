@@ -72,29 +72,27 @@ investigatorView model =
 positionDraw model =
     let
         allStates = List.append (Maybe.withDefault [] <| Maybe.map (\i -> [i]) model.selected) model.investigatorList
-        startPositions = groupPositions (\s -> s.movement.start) allStates
-        endPositions = groupPositions (\s -> Movement.pathEnd s.movement) allStates
+        startPair state =
+            (state.movement.start, state.color)
+        endPair state =
+            (Movement.pathEnd state.movement, state.color)
+        linePairs state =
+            List.map (\p -> (p, state.color)) <| zip (state.movement.start :: state.movement.path) state.movement.path
+        startPositions = groupList <| List.map startPair allStates
+        endPositions = groupList <| List.map endPair allStates
+        linePositions = groupList <| List.concat <| List.map linePairs allStates
     in
-        List.concat (List.append (List.map Positions.start startPositions) (List.map Positions.end endPositions))
---        [ Graphics.investigatorStartPositions state.movement.start [state.color]]
---        , Graphics.positionCircle (Movement.pathEnd state.movement) state.investigator (\i -> class "ccc") False
---        , movementLinesDraw state]
+        List.concat <| List.concat [(List.map Positions.start startPositions), (List.map Positions.end endPositions), (List.map Positions.connections linePositions)]
 
-groupPositions positionExtractor allStates =
+groupList : List ( a, b ) -> List ( a, List b )
+groupList pairsToGroup =
     let
-        pairs = List.sortBy (\(p, _) -> toString p) <| List.map (\s -> (positionExtractor s, [s.color])) allStates
-        grouped = Lists.groupWhile (\f->\s-> fst f == fst s) pairs
+        sorted = List.sortBy (\(p, _) -> toString p) <| List.map (\(k, v) -> (k, [v])) pairsToGroup
+        grouped = Lists.groupWhile (\f->\s-> fst f == fst s) sorted
         mergePairs pair1 pair2 =
             (fst pair1, List.append (snd pair1) (snd pair2))
     in
         List.filterMap (Lists.foldl1 mergePairs) grouped
-
-movementLinesDraw state =
-    let
-        color = if Movement.isValidPath state.investigator state.movement then "green" else "red"
-        lines = zip (state.movement.start :: state.movement.path) state.movement.path
-    in
-        List.map (Graphics.movement color) lines
 
 checkersView msgGenerator model =
     Maybe.withDefault [] <| Maybe.map (checkersViewDraw msgGenerator) model.selected

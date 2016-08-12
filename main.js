@@ -11123,6 +11123,15 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawPies = F3(
 				_elm_lang$core$List$length(colors)),
 			colors);
 	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$start = function (_p0) {
+	var _p1 = _p0;
+	var m = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p1._0);
+	return A3(
+		_elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawPies,
+		A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, m.x + 30, m.y),
+		24,
+		_p1._1);
+};
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculateCircle = F4(
 	function (middle, radius, index, color) {
 		return A2(
@@ -11130,7 +11139,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculateCircle =
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_elm_lang$svg$Svg_Attributes$cx(
-					_elm_lang$core$Basics$toString(middle.x)),
+					_elm_lang$core$Basics$toString(middle.x + 30)),
 					_elm_lang$svg$Svg_Attributes$cy(
 					_elm_lang$core$Basics$toString(middle.y)),
 					_elm_lang$svg$Svg_Attributes$r(
@@ -11142,33 +11151,52 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculateCircle =
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawCircles = F3(
-	function (middle, radius, colors) {
-		return A2(
-			_elm_lang$core$List$indexedMap,
-			A2(_elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculateCircle, middle, radius),
-			colors);
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$start = function (_p0) {
-	var _p1 = _p0;
-	var m = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p1._0);
-	return A3(
-		_elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawPies,
-		A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, m.x + 30, m.y),
-		21,
-		_p1._1);
-};
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$end = function (_p2) {
 	var _p3 = _p2;
-	var m = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p3._0);
-	return A3(
-		_elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawCircles,
-		A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, m.x + 30, m.y),
-		20,
+	return A2(
+		_elm_lang$core$List$indexedMap,
+		A2(
+			_elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculateCircle,
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p3._0),
+			24),
 		_p3._1);
 };
-var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = _elm_lang$core$Native_List.fromArray(
-	[]);
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculateLine = F5(
+	function (p1, p2, total, index, color) {
+		var height = (((3 * total) / 2) | 0) - (index * 3);
+		var start = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, p1.x, p1.y + height);
+		var end = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, p2.x, p2.y + height);
+		return A2(
+			_elm_lang$svg$Svg$line,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$x1(
+					_elm_lang$core$Basics$toString(start.x)),
+					_elm_lang$svg$Svg_Attributes$y1(
+					_elm_lang$core$Basics$toString(start.y)),
+					_elm_lang$svg$Svg_Attributes$x2(
+					_elm_lang$core$Basics$toString(end.x)),
+					_elm_lang$svg$Svg_Attributes$y2(
+					_elm_lang$core$Basics$toString(end.y)),
+					_elm_lang$svg$Svg_Attributes$stroke(color),
+					_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
+					_elm_lang$svg$Svg_Attributes$strokeLinecap('round')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = function (_p4) {
+	var _p5 = _p4;
+	var _p6 = _p5._1;
+	return A2(
+		_elm_lang$core$List$indexedMap,
+		A3(
+			_elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculateLine,
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p5._0._0),
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p5._0._1),
+			_elm_lang$core$List$length(_p6)),
+		_p6);
+};
 
 var _elm_lang$elm_architecture_tutorial$Graphics$testName = function (checkType) {
 	var _p0 = checkType;
@@ -11395,34 +11423,10 @@ var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck = F3(
 					texts
 				]));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$movement = F2(
-	function (color, _p7) {
-		var _p8 = _p7;
-		var p2 = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p8._1);
-		var p1 = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p8._0);
-		return A2(
-			_elm_lang$svg$Svg$line,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$x1(
-					_elm_lang$core$Basics$toString(p1.x)),
-					_elm_lang$svg$Svg_Attributes$y1(
-					_elm_lang$core$Basics$toString(p1.y)),
-					_elm_lang$svg$Svg_Attributes$x2(
-					_elm_lang$core$Basics$toString(p2.x)),
-					_elm_lang$svg$Svg_Attributes$y2(
-					_elm_lang$core$Basics$toString(p2.y)),
-					_elm_lang$svg$Svg_Attributes$stroke(color),
-					_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
-					_elm_lang$svg$Svg_Attributes$strokeLinecap('round')
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[]));
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p9) {
-	var _p10 = _p9;
+var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p7) {
+	var _p8 = _p7;
 	var side = 40;
-	var mid = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p10._0);
+	var mid = _elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p8._0);
 	var rectX = mid.x - 60;
 	var textX = rectX + 33;
 	var rectY = mid.y - 20;
@@ -11461,7 +11465,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics$monsterSquare = function (_p9) 
 					[
 						_elm_lang$svg$Svg$text(
 						_elm_lang$core$Basics$toString(
-							_elm_lang$core$List$length(_p10._1)))
+							_elm_lang$core$List$length(_p8._1)))
 					])),
 			_elm_lang$core$Native_List.fromArray(
 				[])));
@@ -12155,62 +12159,72 @@ var _elm_lang$elm_architecture_tutorial$Investigators$checkersView = F2(
 				_elm_lang$elm_architecture_tutorial$Investigators$checkersViewDraw(msgGenerator),
 				model.selected));
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$movementLinesDraw = function (state) {
-	var lines = A2(
-		_elm_community$list_extra$List_Extra$zip,
-		A2(_elm_lang$core$List_ops['::'], state.movement.start, state.movement.path),
-		state.movement.path);
-	var color = A2(_elm_lang$elm_architecture_tutorial$Movement$isValidPath, state.investigator, state.movement) ? 'green' : 'red';
-	return A2(
-		_elm_lang$core$List$map,
-		_elm_lang$elm_architecture_tutorial$Graphics$movement(color),
-		lines);
-};
-var _elm_lang$elm_architecture_tutorial$Investigators$groupPositions = F2(
-	function (positionExtractor, allStates) {
-		var mergePairs = F2(
-			function (pair1, pair2) {
+var _elm_lang$elm_architecture_tutorial$Investigators$groupList = function (pairsToGroup) {
+	var mergePairs = F2(
+		function (pair1, pair2) {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Basics$fst(pair1),
+				_1: A2(
+					_elm_lang$core$List$append,
+					_elm_lang$core$Basics$snd(pair1),
+					_elm_lang$core$Basics$snd(pair2))
+			};
+		});
+	var sorted = A2(
+		_elm_lang$core$List$sortBy,
+		function (_p0) {
+			var _p1 = _p0;
+			return _elm_lang$core$Basics$toString(_p1._0);
+		},
+		A2(
+			_elm_lang$core$List$map,
+			function (_p2) {
+				var _p3 = _p2;
 				return {
 					ctor: '_Tuple2',
-					_0: _elm_lang$core$Basics$fst(pair1),
-					_1: A2(
-						_elm_lang$core$List$append,
-						_elm_lang$core$Basics$snd(pair1),
-						_elm_lang$core$Basics$snd(pair2))
+					_0: _p3._0,
+					_1: _elm_lang$core$Native_List.fromArray(
+						[_p3._1])
 				};
-			});
-		var pairs = A2(
-			_elm_lang$core$List$sortBy,
-			function (_p0) {
-				var _p1 = _p0;
-				return _elm_lang$core$Basics$toString(_p1._0);
+			},
+			pairsToGroup));
+	var grouped = A2(
+		_elm_community$list_extra$List_Extra$groupWhile,
+		F2(
+			function (f, s) {
+				return _elm_lang$core$Native_Utils.eq(
+					_elm_lang$core$Basics$fst(f),
+					_elm_lang$core$Basics$fst(s));
+			}),
+		sorted);
+	return A2(
+		_elm_lang$core$List$filterMap,
+		_elm_community$list_extra$List_Extra$foldl1(mergePairs),
+		grouped);
+};
+var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (model) {
+	var linePairs = function (state) {
+		return A2(
+			_elm_lang$core$List$map,
+			function (p) {
+				return {ctor: '_Tuple2', _0: p, _1: state.color};
 			},
 			A2(
-				_elm_lang$core$List$map,
-				function (s) {
-					return {
-						ctor: '_Tuple2',
-						_0: positionExtractor(s),
-						_1: _elm_lang$core$Native_List.fromArray(
-							[s.color])
-					};
-				},
-				allStates));
-		var grouped = A2(
-			_elm_community$list_extra$List_Extra$groupWhile,
-			F2(
-				function (f, s) {
-					return _elm_lang$core$Native_Utils.eq(
-						_elm_lang$core$Basics$fst(f),
-						_elm_lang$core$Basics$fst(s));
-				}),
-			pairs);
-		return A2(
-			_elm_lang$core$List$filterMap,
-			_elm_community$list_extra$List_Extra$foldl1(mergePairs),
-			grouped);
-	});
-var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (model) {
+				_elm_community$list_extra$List_Extra$zip,
+				A2(_elm_lang$core$List_ops['::'], state.movement.start, state.movement.path),
+				state.movement.path));
+	};
+	var endPair = function (state) {
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$elm_architecture_tutorial$Movement$pathEnd(state.movement),
+			_1: state.color
+		};
+	};
+	var startPair = function (state) {
+		return {ctor: '_Tuple2', _0: state.movement.start, _1: state.color};
+	};
 	var allStates = A2(
 		_elm_lang$core$List$append,
 		A2(
@@ -12225,23 +12239,21 @@ var _elm_lang$elm_architecture_tutorial$Investigators$positionDraw = function (m
 				},
 				model.selected)),
 		model.investigatorList);
-	var startPositions = A2(
-		_elm_lang$elm_architecture_tutorial$Investigators$groupPositions,
-		function (s) {
-			return s.movement.start;
-		},
-		allStates);
-	var endPositions = A2(
-		_elm_lang$elm_architecture_tutorial$Investigators$groupPositions,
-		function (s) {
-			return _elm_lang$elm_architecture_tutorial$Movement$pathEnd(s.movement);
-		},
-		allStates);
+	var startPositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
+		A2(_elm_lang$core$List$map, startPair, allStates));
+	var endPositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
+		A2(_elm_lang$core$List$map, endPair, allStates));
+	var linePositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
+		_elm_lang$core$List$concat(
+			A2(_elm_lang$core$List$map, linePairs, allStates)));
 	return _elm_lang$core$List$concat(
-		A2(
-			_elm_lang$core$List$append,
-			A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$start, startPositions),
-			A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$end, endPositions)));
+		_elm_lang$core$List$concat(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$start, startPositions),
+					A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$end, endPositions),
+					A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections, linePositions)
+				])));
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$investigatorView = function (model) {
 	return _elm_lang$elm_architecture_tutorial$Investigators$positionDraw(model);
@@ -12266,8 +12278,8 @@ var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
 var _elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd = F2(
 	function (stateUpdater, model) {
 		var pair = A2(_elm_lang$core$Maybe$map, stateUpdater, model.selected);
-		var _p2 = pair;
-		if (_p2.ctor === 'Nothing') {
+		var _p4 = pair;
+		if (_p4.ctor === 'Nothing') {
 			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		} else {
 			return {
@@ -12275,10 +12287,10 @@ var _elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd = F2
 				_0: A2(
 					_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
 					function (s) {
-						return _p2._0._0;
+						return _p4._0._0;
 					},
 					model),
-				_1: _p2._0._1
+				_1: _p4._0._1
 			};
 		}
 	});
@@ -12317,7 +12329,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$resolveCheck = F3(
 	function (check, results, model) {
 		var performResolveCheck = F3(
 			function (check, results, state) {
-				var _p3 = check.checkType;
+				var _p5 = check.checkType;
 				return A2(
 					_elm_lang$elm_architecture_tutorial$Movement$evadeCheck,
 					A2(_elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck, check, results),
@@ -12334,9 +12346,9 @@ var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F3(
 	function (a, b, c) {
 		return {movement: a, color: b, investigator: c};
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$initState = function (_p4) {
-	var _p5 = _p4;
-	return A3(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$Movement$initialModel, _p5._0, _p5._1);
+var _elm_lang$elm_architecture_tutorial$Investigators$initState = function (_p6) {
+	var _p7 = _p6;
+	return A3(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$Movement$initialModel, _p7._0, _p7._1);
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A2(
 	_elm_lang$core$List$map,
