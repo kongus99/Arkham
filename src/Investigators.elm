@@ -1,6 +1,7 @@
 module Investigators exposing (move, Model, initialModel, showCheckDetails, finalizeMovement, resolveCheck, investigatorBoardView, checkersView, investigatorSideView)
 
 import BoardData exposing (..)
+import Selection exposing (..)
 import Movement
 import DiceChecker
 import Array exposing (Array)
@@ -17,13 +18,13 @@ investigatorColors = ["red", "green", "blue", "pink", "violet", "yellow", "black
 
 type alias InvestigatorState = { movement : Movement.Model,  color : Color, investigator : Investigator}
 
-type alias Model = { investigatorList : List InvestigatorState, selected : Maybe InvestigatorState }
+type alias Model = { investigatorList : List (Selection InvestigatorState) }
 
 initState (c, i) = InvestigatorState Movement.initialModel c i
 
 initialState = List.map initState <| Lists.zip investigatorColors allInvestigators
 
-initialModel = Model (Maybe.withDefault [] <| List.tail initialState) (List.head initialState)
+initialModel = Model (List.map NotSelected (Maybe.withDefault [] <| List.tail initialState))
 
 ---------------------------------------------
 resolveCheck : UnresolvedCheck -> List Int -> Model -> (Model, Cmd (UnresolvedCheck, List Int))
@@ -54,29 +55,28 @@ showCheckDetails msg model =
     updateMovement (\s -> Movement.update msg s.movement) model
 
 updateMovement stateUpdater model =
-    {model | selected = Maybe.map (\s -> {s | movement = stateUpdater s}) model.selected}
+    {model | investigatorList = Selection.map (\s -> {s | movement = stateUpdater s}) (Just identity) model.investigatorList}
 
 updateMovementWithCmd stateUpdater model =
     let
-        pair = Maybe.map stateUpdater model.selected
+        selected = Maybe.map Selection.unpack <| Lists.find Selection.isSelected model.investigatorList
+        pair = Maybe.map stateUpdater selected
     in
         case pair of
             Nothing -> (model, Cmd.none)
             Just (movement, cmd) -> (updateMovement (\s -> movement) model, cmd)
 
 ---------------------------------------------
-allStates model =
-    List.append (Maybe.withDefault [] <| Maybe.map (\i -> [i]) model.selected) model.investigatorList
 
 investigatorSideView model =
     let
-        investigators = List.map (\s -> (s.investigator, Movement.movesLeft s.investigator s.movement.path)) <| allStates model
+        investigators = Selection.map (\s -> (s.investigator, Movement.movesLeft s.investigator s.movement.path)) Nothing model.investigatorList
     in
-        List.concat <| (List.indexedMap Positions.minimalData investigators)
+        List.concat <| (List.indexedMap Positions.minimalData <| List.map Selection.unpack investigators)
 
 investigatorBoardView model =
     let
-        states = allStates model
+        states = List.map Selection.unpack model.investigatorList
         startPair state =
             (state.movement.start, state.color)
         endPair state =
@@ -100,7 +100,7 @@ groupList pairsToGroup =
         List.filterMap (Lists.foldl1 mergePairs) grouped
 
 checkersView msgGenerator model =
-    Maybe.withDefault [] <| Maybe.map (checkersViewDraw msgGenerator) model.selected
+    Maybe.withDefault [] <| Maybe.map (checkersViewDraw msgGenerator) <| Maybe.map Selection.unpack <| Lists.find Selection.isSelected model.investigatorList
 
 checkersViewDraw msgGenerator state =
     List.map (App.map msgGenerator) (DiceChecker.view state.movement.evadeTests)
