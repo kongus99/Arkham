@@ -1,7 +1,7 @@
 module Investigators exposing (move, Model, initialModel, showCheckDetails, finalizeMovement, resolveCheck, investigatorBoardView, checkersView, investigatorSideView)
 
 import BoardData exposing (..)
-import Selection exposing (..)
+import Selection exposing (Selection)
 import Movement
 import DiceChecker
 import Array exposing (Array)
@@ -24,7 +24,7 @@ initState (c, i) = InvestigatorState Movement.initialModel c i
 
 initialState = List.map initState <| Lists.zip investigatorColors allInvestigators
 
-initialModel = Model (List.map NotSelected (Maybe.withDefault [] <| List.tail initialState))
+initialModel = Model (List.map Selection.NotSelected initialState)
 
 ---------------------------------------------
 resolveCheck : UnresolvedCheck -> List Int -> Model -> (Model, Cmd (UnresolvedCheck, List Int))
@@ -72,7 +72,7 @@ investigatorSideView model =
     let
         investigators = Selection.map (\s -> (s.investigator, Movement.movesLeft s.investigator s.movement.path)) Nothing model.investigatorList
     in
-        List.concat <| (List.indexedMap Positions.minimalData <| List.map Selection.unpack investigators)
+        List.concat <| (List.indexedMap Positions.minimalData investigators)
 
 investigatorBoardView model =
     let

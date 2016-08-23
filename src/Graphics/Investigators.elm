@@ -1,19 +1,25 @@
 module Graphics.Investigators exposing (start, end, connections, minimalData)
 
 import BoardData exposing(..)
+import Selection exposing (Selection)
 import Graphics.Common exposing (..)
 import Svg exposing (Svg, path, circle, line, rect, text', text)
-import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize)
+import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, strokeDasharray, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize)
 import String
 
-minimalData: Int -> (Investigator, Int) -> List (Svg a)
-minimalData index (investigator, movesLeft) =
+withMargin m r =
+    Rectangle (r.x + m) (r.y + m) (r.width - m * 2) (r.height - m * 2)
+
+minimalData: Int -> Selection (Investigator, Int) -> List (Svg a)
+minimalData index selection =
     let
-        outline = Rectangle (index * smallInvestigatorDim.width % sideDim.width) ((index // 4) * smallInvestigatorDim.height) smallInvestigatorDim.width smallInvestigatorDim.height
+        (investigator, movesLeft) = Selection.unpack selection
+        dashArray = if Selection.isSelected selection then "2 5" else ""
+        outline = Rectangle (index * smallInvestigatorDim.width % sideDim.width) ((index // 4) * smallInvestigatorDim.height) smallInvestigatorDim.width smallInvestigatorDim.height |> withMargin 3
         middle = rectangleMiddle outline
         investigatorInfo = String.concat [investigator.name, " ", toString movesLeft]
     in
-        rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", fillOpacity "0.0"][]
+        rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", strokeDasharray dashArray, fillOpacity "0.0"][]
             ::text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "35"][text investigatorInfo]
             ::[]
 
