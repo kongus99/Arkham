@@ -12,6 +12,7 @@ import Html.Events exposing (on, onDoubleClick)
 import Json.Decode as Json exposing ((:=), bool, andThen, object2)
 import Investigators
 import Html.App as App
+import DiceChecker
 
 type alias ClickData = {clickUpdate : Model -> Model}
 
@@ -23,6 +24,7 @@ type Msg = UnspecifiedClick Point |
            DoubleClick Place |
            ResolveDiceCheck ResolvedCheck
 
+locationClick : Place -> ( Bool, Bool ) -> Model -> Model
 locationClick place (shiftKey, ctrlKey) model =
     case (shiftKey, ctrlKey) of
         (False, False) ->
@@ -88,12 +90,6 @@ boardImage =
 onLocationClick : Place -> Attribute Msg
 onLocationClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForLocationClick p)
 
-msgForLocationClick place (ctrl, shift) =
-    Json.succeed <| Click <| ClickData (locationClick place (shift, ctrl))
-
-msgForCheckerClick msg =
-    Click <| ClickData <| (\m -> {m | investigators = Investigators.showCheckDetails msg m.investigators})
-
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
     [onDoubleClick <| DoubleClick <| Locale l, onLocationClick <| Locale l]
@@ -101,6 +97,14 @@ localeMsg l =
 streetMsg : Neighborhood -> List(Attribute Msg)
 streetMsg n =
     [onDoubleClick <| DoubleClick <| Street n, onLocationClick <| Street n]
+
+msgForLocationClick : Place -> ( Bool, Bool ) -> Json.Decoder Msg
+msgForLocationClick place (ctrl, shift) =
+    Json.succeed <| Click <| ClickData (locationClick place (shift, ctrl))
+
+msgForCheckerClick: DiceChecker.Msg -> Msg
+msgForCheckerClick msg =
+    Click <| ClickData <| (\m -> {m | investigators = Investigators.showCheckDetails msg m.investigators})
 
 -- mouse position
 offsetPosition : Json.Decoder Point
