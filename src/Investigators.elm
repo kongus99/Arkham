@@ -1,9 +1,9 @@
-module Investigators exposing (move, Model, initialModel, showCheckDetails, finalizeMovement, resolveCheck, investigatorBoardView, checkersView, investigatorSideView)
+module Investigators exposing (move, select, Model, initialModel, showCheckDetails, finalizeMovement, resolveCheck, investigatorBoardView, checkersView, investigatorSideView)
 
 import BoardData exposing (..)
 import Selection exposing (Selection)
 import Movement
-import Svg exposing (Svg)
+import Svg exposing (Svg, Attribute)
 import DiceChecker
 import Array exposing (Array)
 import Graphics
@@ -52,6 +52,9 @@ finalizeMovement place model =
 move place monsters model =
     updateMovement (\s -> Movement.moveTo place monsters s.investigator s.movement) model
 
+select investigator model =
+    {model | investigatorList = Selection.selectNew (\s -> s.investigator == investigator) model.investigatorList }
+
 showCheckDetails msg model =
     updateMovement (\s -> Movement.update msg s.movement) model
 
@@ -68,12 +71,12 @@ updateMovementWithCmd stateUpdater model =
             Just (movement, cmd) -> (updateMovement (\s -> movement) model, cmd)
 
 ---------------------------------------------
-
-investigatorSideView model =
+investigatorSideView : (Investigator -> Attribute a) -> Model -> List (Svg a)
+investigatorSideView msgGenerator model =
     let
         investigators = Selection.map (\s -> (s.investigator, Movement.movesLeft s.investigator s.movement.path)) Nothing model.investigatorList
     in
-        List.concat <| (List.indexedMap Positions.minimalData investigators)
+        List.concat <| (List.indexedMap (Positions.minimalData msgGenerator) investigators)
 
 investigatorBoardView :Model -> List (Svg a)
 investigatorBoardView model =
@@ -101,8 +104,9 @@ groupList pairsToGroup =
     in
         List.filterMap (Lists.foldl1 mergePairs) grouped
 
+checkersView : (DiceChecker.Msg -> a) -> Model -> List (Svg a)
 checkersView msgGenerator model =
-    Maybe.withDefault [] <| Maybe.map (checkersViewDraw msgGenerator) <| Maybe.map Selection.unpack <| Lists.find Selection.isSelected model.investigatorList
+    Maybe.withDefault [] <| Maybe.map (\s -> checkersViewDraw msgGenerator <| Selection.unpack s) <| Lists.find Selection.isSelected model.investigatorList
 
 checkersViewDraw msgGenerator state =
     List.map (App.map msgGenerator) (DiceChecker.view state.movement.evadeTests)

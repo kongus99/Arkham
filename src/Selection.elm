@@ -11,6 +11,16 @@ map selected notSelected selections =
                 NotSelected a -> NotSelected <| f2 a
     in
         List.map (innerMap selected <| Maybe.withDefault selected notSelected) selections
+selectNew : (a -> Bool) -> List (Selection a) -> List (Selection a)
+selectNew selectCheck elements =
+    let
+        selectIfNecessary s =
+            let
+                e = unpack s
+            in
+                if selectCheck e then Selected e else NotSelected e
+    in
+        List.map selectIfNecessary elements
 
 unpack s =
     case s of

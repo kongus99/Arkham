@@ -10968,6 +10968,14 @@ var _elm_lang$elm_architecture_tutorial$Selection$map = F3(
 				A2(_elm_lang$core$Maybe$withDefault, selected, notSelected)),
 			selections);
 	});
+var _elm_lang$elm_architecture_tutorial$Selection$selectNew = F2(
+	function (selectCheck, elements) {
+		var selectIfNecessary = function (s) {
+			var e = _elm_lang$elm_architecture_tutorial$Selection$unpack(s);
+			return selectCheck(e) ? _elm_lang$elm_architecture_tutorial$Selection$Selected(e) : _elm_lang$elm_architecture_tutorial$Selection$NotSelected(e);
+		};
+		return A2(_elm_lang$core$List$map, selectIfNecessary, elements);
+	});
 
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$Point = F2(
 	function (a, b) {
@@ -11243,8 +11251,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$withMargin = F2(
 	function (m, r) {
 		return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, r.x + m, r.y + m, r.width - (m * 2), r.height - (m * 2));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
-	function (index, selection) {
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F3(
+	function (msgGenerator, index, selection) {
 		var outline = A2(
 			_elm_lang$elm_architecture_tutorial$Graphics_Investigators$withMargin,
 			3,
@@ -11282,7 +11290,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
 						_elm_lang$core$Basics$toString(outline.height)),
 						_elm_lang$svg$Svg_Attributes$stroke('black'),
 						_elm_lang$svg$Svg_Attributes$strokeDasharray(dashArray),
-						_elm_lang$svg$Svg_Attributes$fillOpacity('0.0')
+						_elm_lang$svg$Svg_Attributes$fillOpacity('0.0'),
+						msgGenerator(investigator)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
@@ -12257,11 +12266,13 @@ var _elm_lang$elm_architecture_tutorial$Investigators$checkersView = F2(
 				[]),
 			A2(
 				_elm_lang$core$Maybe$map,
-				_elm_lang$elm_architecture_tutorial$Investigators$checkersViewDraw(msgGenerator),
-				A2(
-					_elm_lang$core$Maybe$map,
-					_elm_lang$elm_architecture_tutorial$Selection$unpack,
-					A2(_elm_community$list_extra$List_Extra$find, _elm_lang$elm_architecture_tutorial$Selection$isSelected, model.investigatorList))));
+				function (s) {
+					return A2(
+						_elm_lang$elm_architecture_tutorial$Investigators$checkersViewDraw,
+						msgGenerator,
+						_elm_lang$elm_architecture_tutorial$Selection$unpack(s));
+				},
+				A2(_elm_community$list_extra$List_Extra$find, _elm_lang$elm_architecture_tutorial$Selection$isSelected, model.investigatorList)));
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$groupList = function (pairsToGroup) {
 	var mergePairs = F2(
@@ -12346,21 +12357,25 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorBoardView = fu
 					A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections, linePositions)
 				])));
 };
-var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = function (model) {
-	var investigators = A3(
-		_elm_lang$elm_architecture_tutorial$Selection$map,
-		function (s) {
-			return {
-				ctor: '_Tuple2',
-				_0: s.investigator,
-				_1: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator, s.movement.path)
-			};
-		},
-		_elm_lang$core$Maybe$Nothing,
-		model.investigatorList);
-	return _elm_lang$core$List$concat(
-		A2(_elm_lang$core$List$indexedMap, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData, investigators));
-};
+var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = F2(
+	function (msgGenerator, model) {
+		var investigators = A3(
+			_elm_lang$elm_architecture_tutorial$Selection$map,
+			function (s) {
+				return {
+					ctor: '_Tuple2',
+					_0: s.investigator,
+					_1: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator, s.movement.path)
+				};
+			},
+			_elm_lang$core$Maybe$Nothing,
+			model.investigatorList);
+		return _elm_lang$core$List$concat(
+			A2(
+				_elm_lang$core$List$indexedMap,
+				_elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData(msgGenerator),
+				investigators));
+	});
 var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
 	function (stateUpdater, model) {
 		return _elm_lang$core$Native_Utils.update(
@@ -12410,6 +12425,19 @@ var _elm_lang$elm_architecture_tutorial$Investigators$showCheckDetails = F2(
 				return A2(_elm_lang$elm_architecture_tutorial$Movement$update, msg, s.movement);
 			},
 			model);
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$select = F2(
+	function (investigator, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				investigatorList: A2(
+					_elm_lang$elm_architecture_tutorial$Selection$selectNew,
+					function (s) {
+						return _elm_lang$core$Native_Utils.eq(s.investigator, investigator);
+					},
+					model.investigatorList)
+			});
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$move = F3(
 	function (place, monsters, model) {
@@ -12571,6 +12599,14 @@ var _elm_lang$elm_architecture_tutorial$MainModule$offsetPosition = A3(
 	_elm_lang$elm_architecture_tutorial$Graphics_Common$Point,
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetX', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'offsetY', _elm_lang$core$Json_Decode$int));
+var _elm_lang$elm_architecture_tutorial$MainModule$investigatorClick = F2(
+	function (investigator, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				investigators: A2(_elm_lang$elm_architecture_tutorial$Investigators$select, investigator, model.investigators)
+			});
+	});
 var _elm_lang$elm_architecture_tutorial$MainModule$locationClick = F3(
 	function (place, _p0, model) {
 		var _p1 = _p0;
@@ -12696,6 +12732,12 @@ var _elm_lang$elm_architecture_tutorial$MainModule$DoubleClick = function (a) {
 var _elm_lang$elm_architecture_tutorial$MainModule$Click = function (a) {
 	return {ctor: 'Click', _0: a};
 };
+var _elm_lang$elm_architecture_tutorial$MainModule$investigatorMsg = function (i) {
+	return _elm_lang$html$Html_Events$onClick(
+		_elm_lang$elm_architecture_tutorial$MainModule$Click(
+			_elm_lang$elm_architecture_tutorial$MainModule$ClickData(
+				_elm_lang$elm_architecture_tutorial$MainModule$investigatorClick(i))));
+};
 var _elm_lang$elm_architecture_tutorial$MainModule$msgForLocationClick = F2(
 	function (place, _p8) {
 		var _p9 = _p8;
@@ -12820,7 +12862,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 						_elm_lang$svg$Svg_Attributes$height(
 						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.height))
 					]),
-				_elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView(model.investigators))
+				A2(_elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView, _elm_lang$elm_architecture_tutorial$MainModule$investigatorMsg, model.investigators))
 			]));
 };
 var _elm_lang$elm_architecture_tutorial$MainModule$view = function (model) {

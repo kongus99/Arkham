@@ -8,7 +8,7 @@ import AllDict exposing (AllDict)
 import Html exposing (Html, span, button, div)
 import Svg exposing (svg, image, Attribute, Svg)
 import Svg.Attributes exposing (width, height, xlinkHref, x, y, class)
-import Html.Events exposing (on, onDoubleClick)
+import Html.Events exposing (on, onDoubleClick, onClick)
 import Json.Decode as Json exposing ((:=), bool, andThen, object2)
 import Investigators
 import Html.App as App
@@ -46,6 +46,9 @@ locationClick place (shiftKey, ctrlKey) model =
                     x :: [] -> {model | monsters = AllDict.remove place model.monsters}
                     x :: xs -> {model | monsters = AllDict.insert place xs model.monsters}
 
+investigatorClick investigator model =
+    { model | investigators = Investigators.select investigator model.investigators}
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
@@ -81,15 +84,12 @@ wholeBoard model =
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
                                                     , Investigators.checkersView msgForCheckerClick model.investigators
                                                     ])
-         , svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView model.investigators)]
+         , svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView investigatorMsg model.investigators)]
 
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)][]
 
 --Msg generators
-onLocationClick : Place -> Attribute Msg
-onLocationClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForLocationClick p)
-
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
     [onDoubleClick <| DoubleClick <| Locale l, onLocationClick <| Locale l]
@@ -97,6 +97,14 @@ localeMsg l =
 streetMsg : Neighborhood -> List(Attribute Msg)
 streetMsg n =
     [onDoubleClick <| DoubleClick <| Street n, onLocationClick <| Street n]
+
+investigatorMsg : Investigator -> Attribute Msg
+investigatorMsg i =
+    onClick <| Click <| ClickData <| investigatorClick i
+
+--Msg generator helpers
+onLocationClick : Place -> Attribute Msg
+onLocationClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForLocationClick p)
 
 msgForLocationClick : Place -> ( Bool, Bool ) -> Json.Decoder Msg
 msgForLocationClick place (ctrl, shift) =

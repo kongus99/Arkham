@@ -3,15 +3,15 @@ module Graphics.Investigators exposing (start, end, connections, minimalData)
 import BoardData exposing(..)
 import Selection exposing (Selection)
 import Graphics.Common exposing (..)
-import Svg exposing (Svg, path, circle, line, rect, text', text)
+import Svg exposing (Svg, path, circle, line, rect, text', text, Attribute)
 import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, strokeDasharray, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize)
 import String
 
 withMargin m r =
     Rectangle (r.x + m) (r.y + m) (r.width - m * 2) (r.height - m * 2)
 
-minimalData: Int -> Selection (Investigator, Int) -> List (Svg a)
-minimalData index selection =
+minimalData: (Investigator -> Attribute a) -> Int -> Selection (Investigator, Int) -> List (Svg a)
+minimalData msgGenerator index selection =
     let
         (investigator, movesLeft) = Selection.unpack selection
         dashArray = if Selection.isSelected selection then "2 5" else ""
@@ -19,7 +19,7 @@ minimalData index selection =
         middle = rectangleMiddle outline
         investigatorInfo = String.concat [investigator.name, " ", toString movesLeft]
     in
-        rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", strokeDasharray dashArray, fillOpacity "0.0"][]
+        rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
             ::text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "35"][text investigatorInfo]
             ::[]
 
