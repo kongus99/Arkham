@@ -1,4 +1,4 @@
-module DiceChecker exposing (prepareCheck, runCheck, resolveCheck, view, Model, initialChecks, addResolvedCheck, Msg, update, clearPendingChecks, generateNewChecks, hasPendingChecks)
+module DiceChecker exposing (prepareCheck, runCheck, view, Model, initialChecks, addResolvedCheck, Msg, update, clearPendingChecks, generateNewChecks, hasPendingChecks)
 
 import BoardData exposing (..)
 import String
@@ -30,18 +30,18 @@ prepareCheck location checkType throws successThreshold =
     , successThreshold = successThreshold
     }
 
-runCheck : Model -> (Model, Cmd (UnresolvedCheck, List Int))
+runCheck : Model -> (Model, Cmd ResolvedCheck)
 runCheck model =
     case model.currentChecks of
         [] -> (model, Cmd.none)
-        c :: cs -> ({model | currentChecks = cs}, Cmd.map (\res -> (c, res)) <| generateCheck c)
+        c :: cs -> ({model | currentChecks = cs}, generateCheck c)
 
-generateCheck : UnresolvedCheck -> Cmd (List Int)
+generateCheck : UnresolvedCheck -> Cmd ResolvedCheck
 generateCheck check =
     let
         total = List.sum (List.map (\t -> t.dices) check.throws)
     in
-        Random.generate identity <| Random.list total (Random.int 1 6)
+        Random.generate (resolveCheck check) <| Random.list total (Random.int 1 6)
 
 resolveCheck : UnresolvedCheck -> List Int -> ResolvedCheck
 resolveCheck check results =

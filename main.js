@@ -11786,7 +11786,7 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$generateCheck = function (ch
 			check.$throws));
 	return A2(
 		_elm_lang$core$Random$generate,
-		_elm_lang$core$Basics$identity,
+		_elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck(check),
 		A2(
 			_elm_lang$core$Random$list,
 			total,
@@ -11797,18 +11797,12 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck = function (model) 
 	if (_p10.ctor === '[]') {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	} else {
-		var _p11 = _p10._0;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
 				{currentChecks: _p10._1}),
-			_1: A2(
-				_elm_lang$core$Platform_Cmd$map,
-				function (res) {
-					return {ctor: '_Tuple2', _0: _p11, _1: res};
-				},
-				_elm_lang$elm_architecture_tutorial$DiceChecker$generateCheck(_p11))
+			_1: _elm_lang$elm_architecture_tutorial$DiceChecker$generateCheck(_p10._0)
 		};
 	}
 };
@@ -12439,19 +12433,16 @@ var _elm_lang$elm_architecture_tutorial$Investigators$finalizeMovement = F2(
 			performFinalizeMovement(place),
 			model);
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$resolveCheck = F3(
-	function (check, results, model) {
-		var performResolveCheck = F3(
-			function (check, results, state) {
+var _elm_lang$elm_architecture_tutorial$Investigators$resolveCheck = F2(
+	function (check, model) {
+		var performResolveCheck = F2(
+			function (check, state) {
 				var _p5 = check.checkType;
-				return A2(
-					_elm_lang$elm_architecture_tutorial$Movement$evadeCheck,
-					A2(_elm_lang$elm_architecture_tutorial$DiceChecker$resolveCheck, check, results),
-					state.movement);
+				return A2(_elm_lang$elm_architecture_tutorial$Movement$evadeCheck, check, state.movement);
 			});
 		return A2(
 			_elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd,
-			A2(performResolveCheck, check, results),
+			performResolveCheck(check),
 			model);
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$investigatorColors = _elm_lang$core$Native_List.fromArray(
@@ -12695,7 +12686,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$update = F2(
 			default:
 				return A2(
 					_elm_lang$elm_architecture_tutorial$MainModule$resolveInvestigatorUpdate,
-					A2(_elm_lang$elm_architecture_tutorial$Investigators$resolveCheck, _p7._0._0, _p7._0._1),
+					_elm_lang$elm_architecture_tutorial$Investigators$resolveCheck(_p7._0),
 					model);
 		}
 	});

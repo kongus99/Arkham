@@ -28,17 +28,17 @@ initialState = List.map initState <| Lists.zip investigatorColors allInvestigato
 initialModel = Model (List.map Selection.NotSelected initialState)
 
 ---------------------------------------------
-resolveCheck : UnresolvedCheck -> List Int -> Model -> (Model, Cmd (UnresolvedCheck, List Int))
-resolveCheck check results model =
+resolveCheck : ResolvedCheck -> Model -> (Model, Cmd ResolvedCheck)
+resolveCheck check model =
     let
-        performResolveCheck check results state =
+        performResolveCheck check state =
             case check.checkType of
                 Evade ->
-                        Movement.evadeCheck (DiceChecker.resolveCheck check results) state.movement
+                        Movement.evadeCheck check state.movement
     in
-        updateMovementWithCmd (performResolveCheck check results) model
+        updateMovementWithCmd (performResolveCheck check) model
 
-finalizeMovement : Place -> Model -> (Model, Cmd (UnresolvedCheck, List Int))
+finalizeMovement : Place -> Model -> (Model, Cmd ResolvedCheck)
 finalizeMovement place model =
     let
         performFinalizeMovement place state=
