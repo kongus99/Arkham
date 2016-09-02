@@ -10971,8 +10971,14 @@ var _elm_lang$elm_architecture_tutorial$Selection$map = F3(
 var _elm_lang$elm_architecture_tutorial$Selection$selectNew = F2(
 	function (selectCheck, elements) {
 		var selectIfNecessary = function (s) {
-			var e = _elm_lang$elm_architecture_tutorial$Selection$unpack(s);
-			return selectCheck(e) ? _elm_lang$elm_architecture_tutorial$Selection$Selected(e) : _elm_lang$elm_architecture_tutorial$Selection$NotSelected(e);
+			var _p3 = s;
+			if (_p3.ctor === 'Selected') {
+				var _p4 = _p3._0;
+				return selectCheck(_p4) ? _elm_lang$elm_architecture_tutorial$Selection$NotSelected(_p4) : _elm_lang$elm_architecture_tutorial$Selection$NotSelected(_p4);
+			} else {
+				var _p5 = _p3._0;
+				return selectCheck(_p5) ? _elm_lang$elm_architecture_tutorial$Selection$Selected(_p5) : _elm_lang$elm_architecture_tutorial$Selection$NotSelected(_p5);
+			}
 		};
 		return A2(_elm_lang$core$List$map, selectIfNecessary, elements);
 	});

@@ -15,10 +15,9 @@ selectNew : (a -> Bool) -> List (Selection a) -> List (Selection a)
 selectNew selectCheck elements =
     let
         selectIfNecessary s =
-            let
-                e = unpack s
-            in
-                if selectCheck e then Selected e else NotSelected e
+            case s of
+                Selected e -> if selectCheck e then NotSelected e else NotSelected e
+                NotSelected e -> if selectCheck e then Selected e else NotSelected e
     in
         List.map selectIfNecessary elements
 
