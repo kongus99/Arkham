@@ -10925,6 +10925,50 @@ var _elm_lang$elm_architecture_tutorial$MonsterBowl$Bowl = F2(
 		return {monsters: a, index: b};
 	});
 
+var _elm_lang$elm_architecture_tutorial$Selection$isSelected = function (s) {
+	var _p0 = s;
+	if (_p0.ctor === 'Selected') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _elm_lang$elm_architecture_tutorial$Selection$unpack = function (s) {
+	var _p1 = s;
+	if (_p1.ctor === 'Selected') {
+		return _p1._0;
+	} else {
+		return _p1._0;
+	}
+};
+var _elm_lang$elm_architecture_tutorial$Selection$NotSelected = function (a) {
+	return {ctor: 'NotSelected', _0: a};
+};
+var _elm_lang$elm_architecture_tutorial$Selection$Selected = function (a) {
+	return {ctor: 'Selected', _0: a};
+};
+var _elm_lang$elm_architecture_tutorial$Selection$map = F3(
+	function (selected, notSelected, selections) {
+		var innerMap = F3(
+			function (f1, f2, s) {
+				var _p2 = s;
+				if (_p2.ctor === 'Selected') {
+					return _elm_lang$elm_architecture_tutorial$Selection$Selected(
+						f1(_p2._0));
+				} else {
+					return _elm_lang$elm_architecture_tutorial$Selection$NotSelected(
+						f2(_p2._0));
+				}
+			});
+		return A2(
+			_elm_lang$core$List$map,
+			A2(
+				innerMap,
+				selected,
+				A2(_elm_lang$core$Maybe$withDefault, selected, notSelected)),
+			selections);
+	});
+
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$Point = F2(
 	function (a, b) {
 		return {x: a, y: b};
@@ -11195,23 +11239,33 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = fun
 			_elm_lang$core$List$length(_p6)),
 		_p6);
 };
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$withMargin = F2(
+	function (m, r) {
+		return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, r.x + m, r.y + m, r.width - (m * 2), r.height - (m * 2));
+	});
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
-	function (index, _p7) {
-		var _p8 = _p7;
+	function (index, selection) {
+		var outline = A2(
+			_elm_lang$elm_architecture_tutorial$Graphics_Investigators$withMargin,
+			3,
+			A4(
+				_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle,
+				A2(_elm_lang$core$Basics_ops['%'], index * _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.width, _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width),
+				((index / 4) | 0) * _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height,
+				_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.width,
+				_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height));
+		var middle = _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle(outline);
+		var dashArray = _elm_lang$elm_architecture_tutorial$Selection$isSelected(selection) ? '2 5' : '';
+		var _p7 = _elm_lang$elm_architecture_tutorial$Selection$unpack(selection);
+		var investigator = _p7._0;
+		var movesLeft = _p7._1;
 		var investigatorInfo = _elm_lang$core$String$concat(
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_p8._0.name,
+					investigator.name,
 					' ',
-					_elm_lang$core$Basics$toString(_p8._1)
+					_elm_lang$core$Basics$toString(movesLeft)
 				]));
-		var outline = A4(
-			_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle,
-			A2(_elm_lang$core$Basics_ops['%'], index * _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.width, _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width),
-			((index / 4) | 0) * _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height,
-			_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.width,
-			_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height);
-		var middle = _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle(outline);
 		return A2(
 			_elm_lang$core$List_ops['::'],
 			A2(
@@ -11227,6 +11281,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F2(
 						_elm_lang$svg$Svg_Attributes$height(
 						_elm_lang$core$Basics$toString(outline.height)),
 						_elm_lang$svg$Svg_Attributes$stroke('black'),
+						_elm_lang$svg$Svg_Attributes$strokeDasharray(dashArray),
 						_elm_lang$svg$Svg_Attributes$fillOpacity('0.0')
 					]),
 				_elm_lang$core$Native_List.fromArray(
@@ -12209,7 +12264,10 @@ var _elm_lang$elm_architecture_tutorial$Investigators$checkersView = F2(
 			A2(
 				_elm_lang$core$Maybe$map,
 				_elm_lang$elm_architecture_tutorial$Investigators$checkersViewDraw(msgGenerator),
-				model.selected));
+				A2(
+					_elm_lang$core$Maybe$map,
+					_elm_lang$elm_architecture_tutorial$Selection$unpack,
+					A2(_elm_community$list_extra$List_Extra$find, _elm_lang$elm_architecture_tutorial$Selection$isSelected, model.investigatorList))));
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$groupList = function (pairsToGroup) {
 	var mergePairs = F2(
@@ -12255,36 +12313,6 @@ var _elm_lang$elm_architecture_tutorial$Investigators$groupList = function (pair
 		_elm_community$list_extra$List_Extra$foldl1(mergePairs),
 		grouped);
 };
-var _elm_lang$elm_architecture_tutorial$Investigators$allStates = function (model) {
-	return A2(
-		_elm_lang$core$List$append,
-		A2(
-			_elm_lang$core$Maybe$withDefault,
-			_elm_lang$core$Native_List.fromArray(
-				[]),
-			A2(
-				_elm_lang$core$Maybe$map,
-				function (i) {
-					return _elm_lang$core$Native_List.fromArray(
-						[i]);
-				},
-				model.selected)),
-		model.investigatorList);
-};
-var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = function (model) {
-	var investigators = A2(
-		_elm_lang$core$List$map,
-		function (s) {
-			return {
-				ctor: '_Tuple2',
-				_0: s.investigator,
-				_1: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator, s.movement.path)
-			};
-		},
-		_elm_lang$elm_architecture_tutorial$Investigators$allStates(model));
-	return _elm_lang$core$List$concat(
-		A2(_elm_lang$core$List$indexedMap, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData, investigators));
-};
 var _elm_lang$elm_architecture_tutorial$Investigators$investigatorBoardView = function (model) {
 	var linePairs = function (state) {
 		return A2(
@@ -12307,7 +12335,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorBoardView = fu
 	var startPair = function (state) {
 		return {ctor: '_Tuple2', _0: state.movement.start, _1: state.color};
 	};
-	var states = _elm_lang$elm_architecture_tutorial$Investigators$allStates(model);
+	var states = A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Selection$unpack, model.investigatorList);
 	var startPositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
 		A2(_elm_lang$core$List$map, startPair, states));
 	var endPositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
@@ -12324,13 +12352,28 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorBoardView = fu
 					A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections, linePositions)
 				])));
 };
+var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = function (model) {
+	var investigators = A3(
+		_elm_lang$elm_architecture_tutorial$Selection$map,
+		function (s) {
+			return {
+				ctor: '_Tuple2',
+				_0: s.investigator,
+				_1: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator, s.movement.path)
+			};
+		},
+		_elm_lang$core$Maybe$Nothing,
+		model.investigatorList);
+	return _elm_lang$core$List$concat(
+		A2(_elm_lang$core$List$indexedMap, _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData, investigators));
+};
 var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
 	function (stateUpdater, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
-				selected: A2(
-					_elm_lang$core$Maybe$map,
+				investigatorList: A3(
+					_elm_lang$elm_architecture_tutorial$Selection$map,
 					function (s) {
 						return _elm_lang$core$Native_Utils.update(
 							s,
@@ -12338,12 +12381,17 @@ var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
 								movement: stateUpdater(s)
 							});
 					},
-					model.selected)
+					_elm_lang$core$Maybe$Just(_elm_lang$core$Basics$identity),
+					model.investigatorList)
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$updateMovementWithCmd = F2(
 	function (stateUpdater, model) {
-		var pair = A2(_elm_lang$core$Maybe$map, stateUpdater, model.selected);
+		var selected = A2(
+			_elm_lang$core$Maybe$map,
+			_elm_lang$elm_architecture_tutorial$Selection$unpack,
+			A2(_elm_community$list_extra$List_Extra$find, _elm_lang$elm_architecture_tutorial$Selection$isSelected, model.investigatorList));
+		var pair = A2(_elm_lang$core$Maybe$map, stateUpdater, selected);
 		var _p4 = pair;
 		if (_p4.ctor === 'Nothing') {
 			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -12420,18 +12468,11 @@ var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A2(
 	_elm_lang$core$List$map,
 	_elm_lang$elm_architecture_tutorial$Investigators$initState,
 	A2(_elm_community$list_extra$List_Extra$zip, _elm_lang$elm_architecture_tutorial$Investigators$investigatorColors, _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators));
-var _elm_lang$elm_architecture_tutorial$Investigators$Model = F2(
-	function (a, b) {
-		return {investigatorList: a, selected: b};
-	});
-var _elm_lang$elm_architecture_tutorial$Investigators$initialModel = A2(
-	_elm_lang$elm_architecture_tutorial$Investigators$Model,
-	A2(
-		_elm_lang$core$Maybe$withDefault,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$List$tail(_elm_lang$elm_architecture_tutorial$Investigators$initialState)),
-	_elm_lang$core$List$head(_elm_lang$elm_architecture_tutorial$Investigators$initialState));
+var _elm_lang$elm_architecture_tutorial$Investigators$Model = function (a) {
+	return {investigatorList: a};
+};
+var _elm_lang$elm_architecture_tutorial$Investigators$initialModel = _elm_lang$elm_architecture_tutorial$Investigators$Model(
+	A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Selection$NotSelected, _elm_lang$elm_architecture_tutorial$Investigators$initialState));
 
 var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode_ops[':='], 'keyCode', _elm_lang$core$Json_Decode$int);
 var _elm_lang$html$Html_Events$targetChecked = A2(

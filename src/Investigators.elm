@@ -3,6 +3,7 @@ module Investigators exposing (move, Model, initialModel, showCheckDetails, fina
 import BoardData exposing (..)
 import Selection exposing (Selection)
 import Movement
+import Svg exposing (Svg)
 import DiceChecker
 import Array exposing (Array)
 import Graphics
@@ -74,6 +75,7 @@ investigatorSideView model =
     in
         List.concat <| (List.indexedMap Positions.minimalData investigators)
 
+investigatorBoardView :Model -> List (Svg a)
 investigatorBoardView model =
     let
         states = List.map Selection.unpack model.investigatorList
