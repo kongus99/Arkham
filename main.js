@@ -11006,8 +11006,9 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension = F2(
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1606, 2384);
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 225);
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$fullInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 350, 493);
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1200, 1200);
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 300, 200);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 600, 1200);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 100);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$investigatorCardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 525, 750);
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$Circle = F3(
 	function (a, b, c) {
 		return {cx: a, cy: b, radius: c};
@@ -11260,7 +11261,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = fun
 		_p6);
 };
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard = function (inv) {
-	var xCoord = _elm_lang$core$Basics$toString(((_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width - 400) / 2) | 0);
+	var yCoord = _elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height * 2);
+	var xCoord = _elm_lang$core$Basics$toString(((_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width - _elm_lang$elm_architecture_tutorial$Graphics_Common$investigatorCardDim.width) / 2) | 0);
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		_elm_lang$core$Native_List.fromArray(
@@ -11276,9 +11278,11 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard = f
 							[
 								_elm_lang$svg$Svg_Attributes$xlinkHref(i.card),
 								_elm_lang$svg$Svg_Attributes$x(xCoord),
-								_elm_lang$svg$Svg_Attributes$y('400'),
-								_elm_lang$svg$Svg_Attributes$width('350px'),
-								_elm_lang$svg$Svg_Attributes$height('493px')
+								_elm_lang$svg$Svg_Attributes$y(yCoord),
+								_elm_lang$svg$Svg_Attributes$width(
+								_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$investigatorCardDim.width)),
+								_elm_lang$svg$Svg_Attributes$height(
+								_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$investigatorCardDim.height))
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[]))
@@ -11346,7 +11350,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F3(
 							_elm_lang$svg$Svg_Attributes$y(
 							_elm_lang$core$Basics$toString(middle.y)),
 							_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
-							_elm_lang$svg$Svg_Attributes$fontSize('35')
+							_elm_lang$svg$Svg_Attributes$fontSize('17')
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[

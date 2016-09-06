@@ -20,15 +20,16 @@ minimalData msgGenerator index selection =
         investigatorInfo = String.concat [investigator.name, " ", toString movesLeft]
     in
         rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
-            ::text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "35"][text investigatorInfo]
+            ::text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "17"][text investigatorInfo]
             ::[]
 
 characterCard: Maybe Investigator -> List (Svg a)
 characterCard inv =
     let
-        xCoord = toString <| (sideDim.width - 400) // 2
+        xCoord = (sideDim.width - investigatorCardDim.width) // 2 |> toString
+        yCoord = smallInvestigatorDim.height * 2 |> toString
     in
-        Maybe.map (\i -> [image [xlinkHref i.card, x xCoord, y "400", width "350px", height "493px"][]]) inv |> Maybe.withDefault []
+        Maybe.map (\i -> [image [xlinkHref i.card, x xCoord, y yCoord, width <| toString investigatorCardDim.width, height <| toString investigatorCardDim.height][]]) inv |> Maybe.withDefault []
 
 connections : ((Place, Place), List Color) -> List (Svg a)
 connections ((start, end), colors) =
