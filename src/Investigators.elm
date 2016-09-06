@@ -74,9 +74,10 @@ updateMovementWithCmd stateUpdater model =
 investigatorSideView : (Investigator -> Attribute a) -> Model -> List (Svg a)
 investigatorSideView msgGenerator model =
     let
+        selectedInvestigator = Selection.findSelected model.investigatorList |> Maybe.map (\i -> i.investigator)
         investigators = Selection.map (\s -> (s.investigator, Movement.movesLeft s.investigator s.movement.path)) Nothing model.investigatorList
     in
-        List.concat <| (List.indexedMap (Positions.minimalData msgGenerator) investigators)
+        List.append (List.concat <| (List.indexedMap (Positions.minimalData msgGenerator) investigators)) <| Positions.characterCard selectedInvestigator
 
 investigatorBoardView :Model -> List (Svg a)
 investigatorBoardView model =

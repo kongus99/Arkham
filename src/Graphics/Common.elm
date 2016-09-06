@@ -66,5 +66,5 @@ middle place =
 boardDim = Dimension 1606 2384
 checkDim = Dimension 150 225
 fullInvestigatorDim = Dimension 350 493
-sideDim = Dimension 1200 400
+sideDim = Dimension 1200 1200
 smallInvestigatorDim = Dimension 300 200

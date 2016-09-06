@@ -1,5 +1,7 @@
 module Selection exposing (..)
 
+import List.Extra as Lists
+
 type Selection a = Selected a | NotSelected a
 
 map : (a -> b) -> Maybe (a -> b) -> List (Selection a) -> List (Selection b)
@@ -11,6 +13,7 @@ map selected notSelected selections =
                 NotSelected a -> NotSelected <| f2 a
     in
         List.map (innerMap selected <| Maybe.withDefault selected notSelected) selections
+
 selectNew : (a -> Bool) -> List (Selection a) -> List (Selection a)
 selectNew selectCheck elements =
     let
@@ -20,6 +23,10 @@ selectNew selectCheck elements =
                 NotSelected e -> if selectCheck e then Selected e else NotSelected e
     in
         List.map selectIfNecessary elements
+
+findSelected : List (Selection a) -> Maybe a
+findSelected elements =
+    Lists.find isSelected elements |> Maybe.map unpack
 
 unpack s =
     case s of

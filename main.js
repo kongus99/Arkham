@@ -10941,6 +10941,12 @@ var _elm_lang$elm_architecture_tutorial$Selection$unpack = function (s) {
 		return _p1._0;
 	}
 };
+var _elm_lang$elm_architecture_tutorial$Selection$findSelected = function (elements) {
+	return A2(
+		_elm_lang$core$Maybe$map,
+		_elm_lang$elm_architecture_tutorial$Selection$unpack,
+		A2(_elm_community$list_extra$List_Extra$find, _elm_lang$elm_architecture_tutorial$Selection$isSelected, elements));
+};
 var _elm_lang$elm_architecture_tutorial$Selection$NotSelected = function (a) {
 	return {ctor: 'NotSelected', _0: a};
 };
@@ -11000,7 +11006,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension = F2(
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1606, 2384);
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 225);
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$fullInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 350, 493);
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1200, 400);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1200, 1200);
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 300, 200);
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$Circle = F3(
 	function (a, b, c) {
@@ -11252,6 +11258,33 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = fun
 			_elm_lang$elm_architecture_tutorial$Graphics_Common$middle(_p5._0._1),
 			_elm_lang$core$List$length(_p6)),
 		_p6);
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard = function (inv) {
+	var xCoord = _elm_lang$core$Basics$toString(((_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width - 400) / 2) | 0);
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		A2(
+			_elm_lang$core$Maybe$map,
+			function (i) {
+				return _elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$svg$Svg$image,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$svg$Svg_Attributes$xlinkHref(i.card),
+								_elm_lang$svg$Svg_Attributes$x(xCoord),
+								_elm_lang$svg$Svg_Attributes$y('400'),
+								_elm_lang$svg$Svg_Attributes$width('350px'),
+								_elm_lang$svg$Svg_Attributes$height('493px')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[]))
+					]);
+			},
+			inv));
 };
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$withMargin = F2(
 	function (m, r) {
@@ -12376,11 +12409,20 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = F2(
 			},
 			_elm_lang$core$Maybe$Nothing,
 			model.investigatorList);
-		return _elm_lang$core$List$concat(
-			A2(
-				_elm_lang$core$List$indexedMap,
-				_elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData(msgGenerator),
-				investigators));
+		var selectedInvestigator = A2(
+			_elm_lang$core$Maybe$map,
+			function (i) {
+				return i.investigator;
+			},
+			_elm_lang$elm_architecture_tutorial$Selection$findSelected(model.investigatorList));
+		return A2(
+			_elm_lang$core$List$append,
+			_elm_lang$core$List$concat(
+				A2(
+					_elm_lang$core$List$indexedMap,
+					_elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData(msgGenerator),
+					investigators)),
+			_elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard(selectedInvestigator));
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
 	function (stateUpdater, model) {

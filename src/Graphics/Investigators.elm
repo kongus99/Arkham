@@ -1,10 +1,10 @@
-module Graphics.Investigators exposing (start, end, connections, minimalData)
+module Graphics.Investigators exposing (start, end, connections, minimalData, characterCard)
 
 import BoardData exposing(..)
 import Selection exposing (Selection)
 import Graphics.Common exposing (..)
-import Svg exposing (Svg, path, circle, line, rect, text', text, Attribute)
-import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, strokeDasharray, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize)
+import Svg exposing (Svg, path, circle, line, rect, text', text, Attribute, image)
+import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, strokeDasharray, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize, xlinkHref)
 import String
 
 withMargin m r =
@@ -22,6 +22,13 @@ minimalData msgGenerator index selection =
         rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
             ::text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "35"][text investigatorInfo]
             ::[]
+
+characterCard: Maybe Investigator -> List (Svg a)
+characterCard inv =
+    let
+        xCoord = toString <| (sideDim.width - 400) // 2
+    in
+        Maybe.map (\i -> [image [xlinkHref i.card, x xCoord, y "400", width "350px", height "493px"][]]) inv |> Maybe.withDefault []
 
 connections : ((Place, Place), List Color) -> List (Svg a)
 connections ((start, end), colors) =
