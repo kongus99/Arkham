@@ -19,9 +19,9 @@ minimalData msgGenerator index selection =
         middle = rectangleMiddle outline
         investigatorInfo = String.concat [investigator.name, " ", toString movesLeft]
     in
-        rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
-            ::text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "17"][text investigatorInfo]
-            ::[]
+        text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "17"][text investigatorInfo]
+        :: rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
+        ::[]
 
 characterCard: Maybe Investigator -> List (Svg a)
 characterCard inv =

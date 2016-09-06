@@ -11320,42 +11320,42 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F3(
 		return A2(
 			_elm_lang$core$List_ops['::'],
 			A2(
-				_elm_lang$svg$Svg$rect,
+				_elm_lang$svg$Svg$text$,
 				_elm_lang$core$Native_List.fromArray(
 					[
+						_elm_lang$svg$Svg_Attributes$textAnchor('middle'),
 						_elm_lang$svg$Svg_Attributes$x(
-						_elm_lang$core$Basics$toString(outline.x)),
+						_elm_lang$core$Basics$toString(middle.x)),
 						_elm_lang$svg$Svg_Attributes$y(
-						_elm_lang$core$Basics$toString(outline.y)),
-						_elm_lang$svg$Svg_Attributes$width(
-						_elm_lang$core$Basics$toString(outline.width)),
-						_elm_lang$svg$Svg_Attributes$height(
-						_elm_lang$core$Basics$toString(outline.height)),
-						_elm_lang$svg$Svg_Attributes$stroke('black'),
-						_elm_lang$svg$Svg_Attributes$strokeDasharray(dashArray),
-						_elm_lang$svg$Svg_Attributes$fillOpacity('0.0'),
-						msgGenerator(investigator)
+						_elm_lang$core$Basics$toString(middle.y)),
+						_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
+						_elm_lang$svg$Svg_Attributes$fontSize('17')
 					]),
 				_elm_lang$core$Native_List.fromArray(
-					[])),
+					[
+						_elm_lang$svg$Svg$text(investigatorInfo)
+					])),
 			A2(
 				_elm_lang$core$List_ops['::'],
 				A2(
-					_elm_lang$svg$Svg$text$,
+					_elm_lang$svg$Svg$rect,
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$svg$Svg_Attributes$textAnchor('middle'),
 							_elm_lang$svg$Svg_Attributes$x(
-							_elm_lang$core$Basics$toString(middle.x)),
+							_elm_lang$core$Basics$toString(outline.x)),
 							_elm_lang$svg$Svg_Attributes$y(
-							_elm_lang$core$Basics$toString(middle.y)),
-							_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
-							_elm_lang$svg$Svg_Attributes$fontSize('17')
+							_elm_lang$core$Basics$toString(outline.y)),
+							_elm_lang$svg$Svg_Attributes$width(
+							_elm_lang$core$Basics$toString(outline.width)),
+							_elm_lang$svg$Svg_Attributes$height(
+							_elm_lang$core$Basics$toString(outline.height)),
+							_elm_lang$svg$Svg_Attributes$stroke('black'),
+							_elm_lang$svg$Svg_Attributes$strokeDasharray(dashArray),
+							_elm_lang$svg$Svg_Attributes$fillOpacity('0.0'),
+							msgGenerator(investigator)
 						]),
 					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$svg$Svg$text(investigatorInfo)
-						])),
+						[])),
 				_elm_lang$core$Native_List.fromArray(
 					[])));
 	});
