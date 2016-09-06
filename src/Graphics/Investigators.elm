@@ -10,17 +10,17 @@ import String
 withMargin m r =
     Rectangle (r.x + m) (r.y + m) (r.width - m * 2) (r.height - m * 2)
 
-minimalData: (Investigator -> Attribute a) -> Int -> Selection (Investigator, Int) -> List (Svg a)
+minimalData: (Investigator -> Attribute a) -> Int -> Selection (Investigator, Color, Int) -> List (Svg a)
 minimalData msgGenerator index selection =
     let
-        (investigator, movesLeft) = Selection.unpack selection
+        (investigator, color, movesLeft) = Selection.unpack selection
         dashArray = if Selection.isSelected selection then "2 5" else ""
         outline = Rectangle (index * smallInvestigatorDim.width % sideDim.width) ((index // 4) * smallInvestigatorDim.height) smallInvestigatorDim.width smallInvestigatorDim.height |> withMargin 3
         middle = rectangleMiddle outline
         investigatorInfo = String.concat [investigator.name, " ", toString movesLeft]
     in
         text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "17"][text investigatorInfo]
-        :: rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke "black", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
+        :: rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke color, strokeWidth "3", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
         ::[]
 
 characterCard: Maybe Investigator -> List (Svg a)

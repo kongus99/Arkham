@@ -75,7 +75,7 @@ investigatorSideView : (Investigator -> Attribute a) -> Model -> List (Svg a)
 investigatorSideView msgGenerator model =
     let
         selectedInvestigator = Selection.findSelected model.investigatorList |> Maybe.map (\i -> i.investigator)
-        investigators = Selection.map (\s -> (s.investigator, Movement.movesLeft s.investigator s.movement.path)) Nothing model.investigatorList
+        investigators = Selection.map (\s -> (s.investigator, s.color, Movement.movesLeft s.investigator s.movement.path)) Nothing model.investigatorList
     in
         List.append (List.concat <| (List.indexedMap (Positions.minimalData msgGenerator) investigators)) <| Positions.characterCard selectedInvestigator
 

@@ -11309,7 +11309,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F3(
 		var dashArray = _elm_lang$elm_architecture_tutorial$Selection$isSelected(selection) ? '2 5' : '';
 		var _p7 = _elm_lang$elm_architecture_tutorial$Selection$unpack(selection);
 		var investigator = _p7._0;
-		var movesLeft = _p7._1;
+		var color = _p7._1;
+		var movesLeft = _p7._2;
 		var investigatorInfo = _elm_lang$core$String$concat(
 			_elm_lang$core$Native_List.fromArray(
 				[
@@ -11349,7 +11350,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F3(
 							_elm_lang$core$Basics$toString(outline.width)),
 							_elm_lang$svg$Svg_Attributes$height(
 							_elm_lang$core$Basics$toString(outline.height)),
-							_elm_lang$svg$Svg_Attributes$stroke('black'),
+							_elm_lang$svg$Svg_Attributes$stroke(color),
+							_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
 							_elm_lang$svg$Svg_Attributes$strokeDasharray(dashArray),
 							_elm_lang$svg$Svg_Attributes$fillOpacity('0.0'),
 							msgGenerator(investigator)
@@ -12406,9 +12408,10 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = F2(
 			_elm_lang$elm_architecture_tutorial$Selection$map,
 			function (s) {
 				return {
-					ctor: '_Tuple2',
+					ctor: '_Tuple3',
 					_0: s.investigator,
-					_1: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator, s.movement.path)
+					_1: s.color,
+					_2: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator, s.movement.path)
 				};
 			},
 			_elm_lang$core$Maybe$Nothing,
