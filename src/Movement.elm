@@ -87,4 +87,4 @@ pathEnd model =
      Maybe.withDefault model.start <| List.head <| List.reverse model.path
 
 movesLeft investigator path =
-    investigator.movementPoints - List.length path
+    investigator.speed - List.length path

@@ -14,11 +14,17 @@ type alias LocationCheck b a = {a | location : Place, checkType : CheckType, thr
 type alias UnresolvedCheck = LocationCheck Throw {successThreshold : Int}
 type alias ResolvedCheck = LocationCheck ThrowResult {wasSuccess : WasSuccess}
 
-type alias Investigator = { name : String, movementPoints : Int, sneak : Int, card : String}
+type alias Investigator = { name : String, speed : Int, sneak : Int, card : String}
 
-defaultInvestigator = Investigator "Agnes Baker" 4 3 "AgnesBaker.png"
-
-allInvestigators = [defaultInvestigator, Investigator "Akachi Onyele" 5 4 "AkachiOnyele.png"]
+allInvestigators = Investigator "Amanda Sharpe" 1 4 "AmandaSharpe.png"
+                :: Investigator "Ashcan Pete" 0 6 "AshcanPete.png"
+                :: Investigator "Bob Jenkins" 2 3 "BobJenkins.png"
+                :: Investigator "Carolyn Fern" 0 3 "CarolynFern.png"
+                :: Investigator "Darell Simmons" 2 3 "DarrellSimmons.png"
+                :: Investigator "Dexter Drake" 2 4 "DexterDrake.png"
+                :: Investigator "Gloria Goldberg" 1 3 "GloriaGoldberg.png"
+                :: Investigator "Harvey Walters" 0 5 "HarveyWalters.png"
+                :: []
 
 type Neighborhood = Downtown | Easttown | French_Hill |
                     Merchant_District | Miskatonic_University | Northside |

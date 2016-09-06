@@ -10292,14 +10292,34 @@ var _elm_lang$elm_architecture_tutorial$BoardData$ThrowResult = F2(
 	});
 var _elm_lang$elm_architecture_tutorial$BoardData$Investigator = F4(
 	function (a, b, c, d) {
-		return {name: a, movementPoints: b, sneak: c, card: d};
+		return {name: a, speed: b, sneak: c, card: d};
 	});
-var _elm_lang$elm_architecture_tutorial$BoardData$defaultInvestigator = A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Agnes Baker', 4, 3, 'AgnesBaker.png');
-var _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators = _elm_lang$core$Native_List.fromArray(
-	[
-		_elm_lang$elm_architecture_tutorial$BoardData$defaultInvestigator,
-		A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Akachi Onyele', 5, 4, 'AkachiOnyele.png')
-	]);
+var _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators = A2(
+	_elm_lang$core$List_ops['::'],
+	A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Amanda Sharpe', 1, 4, 'AmandaSharpe.png'),
+	A2(
+		_elm_lang$core$List_ops['::'],
+		A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Ashcan Pete', 0, 6, 'AshcanPete.png'),
+		A2(
+			_elm_lang$core$List_ops['::'],
+			A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Bob Jenkins', 2, 3, 'BobJenkins.png'),
+			A2(
+				_elm_lang$core$List_ops['::'],
+				A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Carolyn Fern', 0, 3, 'CarolynFern.png'),
+				A2(
+					_elm_lang$core$List_ops['::'],
+					A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Darell Simmons', 2, 3, 'DarrellSimmons.png'),
+					A2(
+						_elm_lang$core$List_ops['::'],
+						A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Dexter Drake', 2, 4, 'DexterDrake.png'),
+						A2(
+							_elm_lang$core$List_ops['::'],
+							A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Gloria Goldberg', 1, 3, 'GloriaGoldberg.png'),
+							A2(
+								_elm_lang$core$List_ops['::'],
+								A4(_elm_lang$elm_architecture_tutorial$BoardData$Investigator, 'Harvey Walters', 0, 5, 'HarveyWalters.png'),
+								_elm_lang$core$Native_List.fromArray(
+									[])))))))));
 var _elm_lang$elm_architecture_tutorial$BoardData$Evade = {ctor: 'Evade'};
 var _elm_lang$elm_architecture_tutorial$BoardData$Uptown = {ctor: 'Uptown'};
 var _elm_lang$elm_architecture_tutorial$BoardData$Southside = {ctor: 'Southside'};
@@ -11330,7 +11350,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F3(
 						_elm_lang$svg$Svg_Attributes$y(
 						_elm_lang$core$Basics$toString(middle.y)),
 						_elm_lang$svg$Svg_Attributes$fontFamily('Verdana'),
-						_elm_lang$svg$Svg_Attributes$fontSize('17')
+						_elm_lang$svg$Svg_Attributes$fontSize('15')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -12089,7 +12109,7 @@ var _elm_lang$elm_architecture_tutorial$Paths$PathData = F3(
 
 var _elm_lang$elm_architecture_tutorial$Movement$movesLeft = F2(
 	function (investigator, path) {
-		return investigator.movementPoints - _elm_lang$core$List$length(path);
+		return investigator.speed - _elm_lang$core$List$length(path);
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$pathEnd = function (model) {
 	return A2(
