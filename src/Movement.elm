@@ -1,9 +1,9 @@
-module Movement exposing (moveTo, pathEnd, Model, initialModel, finalizeMovement, evadeCheck, update, movesLeft)
+module Movement exposing (moveTo, pathEnd, Model, initialModel, prepareEvades, resolveEvades, update, movesLeft)
 
 import BoardData exposing (..)
 import Paths
 import AllDict exposing (AllDict)
-import List.Extra exposing (break)
+import List.Extra as Lists
 import DiceChecker exposing (..)
 import MonsterBowl exposing (Monster)
 
@@ -35,7 +35,7 @@ moveTo place monsters investigator model =
     let
         currentEnd = pathEnd model
         newPath = if model.start == place then []
-                  else if List.member place model.path then List.append (fst <| break (\x -> x == place) model.path) [place]
+                  else if List.member place model.path then List.append (fst <| Lists.break (\x -> x == place) model.path) [place]
                   else if isAdjacent currentEnd place then
                     List.append model.path [place]
                   else
@@ -57,23 +57,22 @@ endMove : Place -> Model -> Model
 endMove place model =
     {model | path = [], start = place, evadeTests = DiceChecker.clearPendingChecks model.evadeTests}
 
-evadeCheck : ResolvedCheck -> Model -> ( Model, Cmd ResolvedCheck )
-evadeCheck resolved model =
-    let
-        newModel = {model | evadeTests = addResolvedCheck resolved model.evadeTests }
-    in
-        if resolved.wasSuccess then
-            finalizeMovement newModel
-        else
-            (endMove resolved.location newModel, Cmd.none)
+resolveEvades : List ResolvedCheck -> Model -> Model
+resolveEvades checks model =
+     let
+        maybeUnsuccessful = Lists.find (\c -> not c.wasSuccess) checks
+     in
+        case maybeUnsuccessful of
+            Nothing -> endMove (pathEnd model) model
+            Just check -> endMove (check.location) model
 
-finalizeMovement : Model -> (Model, Cmd ResolvedCheck)
-finalizeMovement model =
-    let
-        (tests, cmd) = runCheck model.evadeTests
+prepareEvades : Model -> (Model, Cmd (List ResolvedCheck))
+prepareEvades model =
+     let
+        (tests, cmd) = DiceChecker.runCheck model.evadeTests
         newModel = {model | evadeTests = tests}
-    in
-        if DiceChecker.hasPendingChecks model.evadeTests then
+     in
+        if not <| DiceChecker.hasPendingChecks model.evadeTests then
             (endMove (pathEnd model) newModel, Cmd.none)
         else
             (newModel, cmd)

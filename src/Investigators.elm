@@ -1,4 +1,4 @@
-module Investigators exposing (move, select, Model, initialModel, showCheckDetails, finalizeMovement, resolveCheck, investigatorBoardView, checkersView, investigatorSideView)
+module Investigators exposing (move, select, Model, initialModel, showCheckDetails, prepareChecks, resolveChecks, investigatorBoardView, checkersView, investigatorSideView)
 
 import BoardData exposing (..)
 import Selection exposing (Selection)
@@ -28,26 +28,18 @@ initialState = List.map initState <| Lists.zip investigatorColors allInvestigato
 initialModel = Model (List.map Selection.NotSelected initialState)
 
 ---------------------------------------------
-resolveCheck : ResolvedCheck -> Model -> (Model, Cmd ResolvedCheck)
-resolveCheck check model =
-    let
-        performResolveCheck check state =
-            case check.checkType of
-                Evade ->
-                        Movement.evadeCheck check state.movement
-    in
-        updateMovementWithCmd (performResolveCheck check) model
+resolveChecks : List ResolvedCheck -> Model -> (Model, Cmd a)
+resolveChecks checks model =
+    (updateMovement (\s -> Movement.resolveEvades checks s.movement) model, Cmd.none)
 
-finalizeMovement : Place -> Model -> (Model, Cmd ResolvedCheck)
-finalizeMovement place model =
+prepareChecks : Model -> (Model, Cmd (List ResolvedCheck))
+prepareChecks model =
     let
-        performFinalizeMovement place state=
-            if Movement.pathEnd state.movement == place then
-                Movement.finalizeMovement state.movement
-            else
-                (state.movement, Cmd.none)
+        preparedEvades = Maybe.map (\s -> Movement.prepareEvades s.movement) <| Selection.findSelected model.investigatorList
     in
-        updateMovementWithCmd (performFinalizeMovement place) model
+        case preparedEvades of
+            Nothing -> (model, Cmd.none)
+            Just (movement, cmd) -> (updateMovement (\s -> movement) model, cmd)
 
 move place monsters model =
     updateMovement (\s -> Movement.moveTo place monsters s.investigator s.movement) model
@@ -57,18 +49,9 @@ select investigator model =
 
 showCheckDetails msg model =
     updateMovement (\s -> Movement.update msg s.movement) model
-
+updateMovement : (InvestigatorState -> Movement.Model) -> Model -> Model
 updateMovement stateUpdater model =
     {model | investigatorList = Selection.map (\s -> {s | movement = stateUpdater s}) (Just identity) model.investigatorList}
-
-updateMovementWithCmd stateUpdater model =
-    let
-        selected = Maybe.map Selection.unpack <| Lists.find Selection.isSelected model.investigatorList
-        pair = Maybe.map stateUpdater selected
-    in
-        case pair of
-            Nothing -> (model, Cmd.none)
-            Just (movement, cmd) -> (updateMovement (\s -> movement) model, cmd)
 
 ---------------------------------------------
 investigatorSideView : (Investigator -> Attribute a) -> Model -> List (Svg a)

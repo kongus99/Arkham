@@ -30,18 +30,32 @@ prepareCheck location checkType throws successThreshold =
     , successThreshold = successThreshold
     }
 
-runCheck : Model -> (Model, Cmd ResolvedCheck)
-runCheck model =
-    case model.currentChecks of
-        [] -> (model, Cmd.none)
-        c :: cs -> ({model | currentChecks = cs}, generateCheck c)
+runCheck : Model -> (Model, Cmd (List ResolvedCheck))
+runCheck model = ({model | currentChecks = []}, generateAllChecks model.currentChecks)
 
-generateCheck : UnresolvedCheck -> Cmd ResolvedCheck
+generateAllChecks : List UnresolvedCheck -> Cmd (List ResolvedCheck)
+generateAllChecks checks =
+    let
+        resolvedGenerator = mergeChecks <| List.map generateCheck checks
+    in
+        case resolvedGenerator of
+        Nothing -> Cmd.none
+        Just g -> Random.generate identity g
+
+mergeChecks : List (Random.Generator ResolvedCheck) -> Maybe (Random.Generator (List ResolvedCheck))
+mergeChecks generators =
+    let
+        randomLists = List.map (Random.map (\g -> [g])) generators
+        merger genList1 genList2 = Random.map2 List.append genList1 genList2
+    in
+        Lists.foldl1 merger randomLists
+
+generateCheck : UnresolvedCheck -> Random.Generator ResolvedCheck
 generateCheck check =
     let
         total = List.sum (List.map (\t -> t.dices) check.throws)
     in
-        Random.generate (resolveCheck check) <| Random.list total (Random.int 1 6)
+        Random.map (resolveCheck check) <| Random.list total (Random.int 1 6)
 
 resolveCheck : UnresolvedCheck -> List Int -> ResolvedCheck
 resolveCheck check results =
