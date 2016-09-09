@@ -30,7 +30,7 @@ initialModel = Model (List.map Selection.NotSelected initialState)
 ---------------------------------------------
 resolveChecks : List ResolvedCheck -> Model -> (Model, Cmd a)
 resolveChecks checks model =
-    (updateMovement (\s -> Movement.resolveEvades checks s.movement) model, Cmd.none)
+   (updateMovement (\s -> Movement.resolveEvades checks s.movement) model, Cmd.none)
 
 prepareChecks : Model -> (Model, Cmd (List ResolvedCheck))
 prepareChecks model =

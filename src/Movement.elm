@@ -53,18 +53,18 @@ prepareEvadeTests path monsters investigator model =
     in
         DiceChecker.generateNewChecks (List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path) model
 
-endMove : Place -> Model -> Model
-endMove place model =
-    {model | path = [], start = place, evadeTests = DiceChecker.clearPendingChecks model.evadeTests}
+endMove : Place -> List ResolvedCheck -> Model -> Model
+endMove place resolved model =
+    {model | path = [], start = place, evadeTests = DiceChecker.resolveOldChecks resolved model.evadeTests}
 
 resolveEvades : List ResolvedCheck -> Model -> Model
 resolveEvades checks model =
      let
-        maybeUnsuccessful = Lists.find (\c -> not c.wasSuccess) checks
+        (passed, failed) = Lists.break (\c -> not c.wasSuccess) checks
      in
-        case maybeUnsuccessful of
-            Nothing -> endMove (pathEnd model) model
-            Just check -> endMove (check.location) model
+        case failed of
+            [] -> endMove (pathEnd model) passed model
+            x :: xs -> endMove (x.location) (List.append passed [x]) model
 
 prepareEvades : Model -> (Model, Cmd (List ResolvedCheck))
 prepareEvades model =
@@ -72,8 +72,8 @@ prepareEvades model =
         (tests, cmd) = DiceChecker.runCheck model.evadeTests
         newModel = {model | evadeTests = tests}
      in
-        if not <| DiceChecker.hasPendingChecks model.evadeTests then
-            (endMove (pathEnd model) newModel, Cmd.none)
+        if DiceChecker.hasNoPendingChecks model.evadeTests then
+            (endMove (pathEnd model) [] model, Cmd.none)
         else
             (newModel, cmd)
 

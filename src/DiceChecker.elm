@@ -1,4 +1,4 @@
-module DiceChecker exposing (prepareCheck, runCheck, view, Model, initialChecks, addResolvedCheck, Msg, update, clearPendingChecks, generateNewChecks, hasPendingChecks)
+module DiceChecker exposing (prepareCheck, runCheck, view, Model, initialChecks, resolveOldChecks, Msg, update, generateNewChecks, hasNoPendingChecks)
 
 import BoardData exposing (..)
 import String
@@ -15,13 +15,11 @@ type alias Model = { currentChecks : List UnresolvedCheck, selected : Maybe (IsU
 
 initialChecks = { currentChecks = [], selected = Nothing, previousChecks = []}
 
-addResolvedCheck resolved model = {model | previousChecks = List.reverse (resolved :: (List.reverse model.previousChecks))}
-
-clearPendingChecks model = {model | currentChecks = []}
+resolveOldChecks resolved model = {model | currentChecks = [], previousChecks = List.reverse resolved}
 
 generateNewChecks checks model = {model | currentChecks = checks, previousChecks = []}
 
-hasPendingChecks model = List.isEmpty model.currentChecks
+hasNoPendingChecks model = List.isEmpty model.currentChecks
 
 prepareCheck location checkType throws successThreshold =
     { location = location

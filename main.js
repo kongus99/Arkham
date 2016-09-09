@@ -11907,7 +11907,7 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$prepareCheck = F4(
 	function (location, checkType, $throws, successThreshold) {
 		return {location: location, checkType: checkType, $throws: $throws, successThreshold: successThreshold};
 	});
-var _elm_lang$elm_architecture_tutorial$DiceChecker$hasPendingChecks = function (model) {
+var _elm_lang$elm_architecture_tutorial$DiceChecker$hasNoPendingChecks = function (model) {
 	return _elm_lang$core$List$isEmpty(model.currentChecks);
 };
 var _elm_lang$elm_architecture_tutorial$DiceChecker$generateNewChecks = F2(
@@ -11920,24 +11920,14 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$generateNewChecks = F2(
 					[])
 			});
 	});
-var _elm_lang$elm_architecture_tutorial$DiceChecker$clearPendingChecks = function (model) {
-	return _elm_lang$core$Native_Utils.update(
-		model,
-		{
-			currentChecks: _elm_lang$core$Native_List.fromArray(
-				[])
-		});
-};
-var _elm_lang$elm_architecture_tutorial$DiceChecker$addResolvedCheck = F2(
+var _elm_lang$elm_architecture_tutorial$DiceChecker$resolveOldChecks = F2(
 	function (resolved, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
-				previousChecks: _elm_lang$core$List$reverse(
-					A2(
-						_elm_lang$core$List_ops['::'],
-						resolved,
-						_elm_lang$core$List$reverse(model.previousChecks)))
+				currentChecks: _elm_lang$core$Native_List.fromArray(
+					[]),
+				previousChecks: _elm_lang$core$List$reverse(resolved)
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$DiceChecker$initialChecks = {
@@ -12149,49 +12139,62 @@ var _elm_lang$elm_architecture_tutorial$Movement$toNeighborhood = function (p) {
 		return _elm_lang$core$Maybe$Nothing;
 	}
 };
-var _elm_lang$elm_architecture_tutorial$Movement$endMove = F2(
-	function (place, model) {
+var _elm_lang$elm_architecture_tutorial$Movement$endMove = F3(
+	function (place, resolved, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				path: _elm_lang$core$Native_List.fromArray(
 					[]),
 				start: place,
-				evadeTests: _elm_lang$elm_architecture_tutorial$DiceChecker$clearPendingChecks(model.evadeTests)
+				evadeTests: A2(_elm_lang$elm_architecture_tutorial$DiceChecker$resolveOldChecks, resolved, model.evadeTests)
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$resolveEvades = F2(
 	function (checks, model) {
-		var maybeUnsuccessful = A2(
-			_elm_community$list_extra$List_Extra$find,
+		var _p1 = A2(
+			_elm_community$list_extra$List_Extra$break,
 			function (c) {
 				return _elm_lang$core$Basics$not(c.wasSuccess);
 			},
 			checks);
-		var _p1 = maybeUnsuccessful;
-		if (_p1.ctor === 'Nothing') {
-			return A2(
+		var passed = _p1._0;
+		var failed = _p1._1;
+		var _p2 = failed;
+		if (_p2.ctor === '[]') {
+			return A3(
 				_elm_lang$elm_architecture_tutorial$Movement$endMove,
 				_elm_lang$elm_architecture_tutorial$Movement$pathEnd(model),
+				passed,
 				model);
 		} else {
-			return A2(_elm_lang$elm_architecture_tutorial$Movement$endMove, _p1._0.location, model);
+			var _p3 = _p2._0;
+			return A3(
+				_elm_lang$elm_architecture_tutorial$Movement$endMove,
+				_p3.location,
+				A2(
+					_elm_lang$core$List$append,
+					passed,
+					_elm_lang$core$Native_List.fromArray(
+						[_p3])),
+				model);
 		}
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$prepareEvades = function (model) {
-	var _p2 = _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck(model.evadeTests);
-	var tests = _p2._0;
-	var cmd = _p2._1;
+	var _p4 = _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck(model.evadeTests);
+	var tests = _p4._0;
+	var cmd = _p4._1;
 	var newModel = _elm_lang$core$Native_Utils.update(
 		model,
 		{evadeTests: tests});
-	return _elm_lang$core$Basics$not(
-		_elm_lang$elm_architecture_tutorial$DiceChecker$hasPendingChecks(model.evadeTests)) ? {
+	return _elm_lang$elm_architecture_tutorial$DiceChecker$hasNoPendingChecks(model.evadeTests) ? {
 		ctor: '_Tuple2',
-		_0: A2(
+		_0: A3(
 			_elm_lang$elm_architecture_tutorial$Movement$endMove,
 			_elm_lang$elm_architecture_tutorial$Movement$pathEnd(model),
-			newModel),
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			model),
 		_1: _elm_lang$core$Platform_Cmd$none
 	} : {ctor: '_Tuple2', _0: newModel, _1: cmd};
 };
@@ -12231,11 +12234,11 @@ var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 				[]);
 		} else {
 			var getNeighborhood = function (p) {
-				var _p3 = p;
-				if (_p3.ctor === 'Street') {
-					return _p3._0;
+				var _p5 = p;
+				if (_p5.ctor === 'Street') {
+					return _p5._0;
 				} else {
-					return _elm_lang$elm_architecture_tutorial$BoardData$parent(_p3._0);
+					return _elm_lang$elm_architecture_tutorial$BoardData$parent(_p5._0);
 				}
 			};
 			var start = getNeighborhood(p1);
@@ -12247,9 +12250,9 @@ var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 					_elm_lang$elm_architecture_tutorial$Paths$pathBFS,
 					A3(_elm_lang$elm_architecture_tutorial$Paths$createPathData, end, _elm_lang$elm_architecture_tutorial$BoardData$adjacent, excluded),
 					start));
-			var _p4 = {ctor: '_Tuple2', _0: p1, _1: p2};
-			if (_p4._0.ctor === 'Street') {
-				if (_p4._1.ctor === 'Street') {
+			var _p6 = {ctor: '_Tuple2', _0: p1, _1: p2};
+			if (_p6._0.ctor === 'Street') {
+				if (_p6._1.ctor === 'Street') {
 					return A2(
 						_elm_lang$core$Maybe$withDefault,
 						_elm_lang$core$Native_List.fromArray(
@@ -12271,7 +12274,7 @@ var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 						[]);
 				}
 			} else {
-				if (_p4._1.ctor === 'Street') {
+				if (_p6._1.ctor === 'Street') {
 					return A2(_elm_lang$core$List$member, start, excluded) ? _elm_lang$core$Native_List.fromArray(
 						[]) : path;
 				} else {
