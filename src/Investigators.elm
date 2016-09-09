@@ -39,7 +39,25 @@ prepareChecks model =
     in
         case preparedEvades of
             Nothing -> (model, Cmd.none)
-            Just (movement, cmd) -> (updateMovement (\s -> movement) model, cmd)
+            Just cmd -> (model, cmd)
+
+--            prepareChecks : Model -> (Model, Cmd (List ResolvedCheck))
+--            prepareChecks model =
+--                let
+--                    changeInvestigatorState : InvestigatorState -> (InvestigatorState, Cmd ((InvestigatorState, List ResolvedCheck)))
+--                    changeInvestigatorState state =
+--                        let
+--                            (movement, cmd) =  Movement.prepareEvades state.movement
+--                            newState = {state | movement = movement}
+--                        in
+--                            (newState, Cmd.map (\c -> (newState, c)) cmd)
+--                    preparedEvades : List ( InvestigatorState, Cmd ( InvestigatorState, List ResolvedCheck ) )
+--                    preparedEvades = List.map changeInvestigatorState model.investigatorList
+--                in
+--                    case preparedEvades of
+--                        Nothing -> (model, Cmd.none)
+--                        Just (movement, cmd) -> (updateMovement (\s -> movement) model, cmd)
+
 
 move place monsters model =
     updateMovement (\s -> Movement.moveTo place monsters s.investigator s.movement) model
@@ -49,6 +67,7 @@ select investigator model =
 
 showCheckDetails msg model =
     updateMovement (\s -> Movement.update msg s.movement) model
+
 updateMovement : (InvestigatorState -> Movement.Model) -> Model -> Model
 updateMovement stateUpdater model =
     {model | investigatorList = Selection.map (\s -> {s | movement = stateUpdater s}) (Just identity) model.investigatorList}

@@ -28,8 +28,8 @@ prepareCheck location checkType throws successThreshold =
     , successThreshold = successThreshold
     }
 
-runCheck : Model -> (Model, Cmd (List ResolvedCheck))
-runCheck model = ({model | currentChecks = []}, generateAllChecks model.currentChecks)
+runCheck : Model -> Cmd (List ResolvedCheck)
+runCheck model = generateAllChecks model.currentChecks
 
 generateAllChecks : List UnresolvedCheck -> Cmd (List ResolvedCheck)
 generateAllChecks checks =

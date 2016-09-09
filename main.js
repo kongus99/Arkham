@@ -11892,16 +11892,7 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$generateAllChecks = function
 	}
 };
 var _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck = function (model) {
-	return {
-		ctor: '_Tuple2',
-		_0: _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				currentChecks: _elm_lang$core$Native_List.fromArray(
-					[])
-			}),
-		_1: _elm_lang$elm_architecture_tutorial$DiceChecker$generateAllChecks(model.currentChecks)
-	};
+	return _elm_lang$elm_architecture_tutorial$DiceChecker$generateAllChecks(model.currentChecks);
 };
 var _elm_lang$elm_architecture_tutorial$DiceChecker$prepareCheck = F4(
 	function (location, checkType, $throws, successThreshold) {
@@ -12139,6 +12130,22 @@ var _elm_lang$elm_architecture_tutorial$Movement$toNeighborhood = function (p) {
 		return _elm_lang$core$Maybe$Nothing;
 	}
 };
+var _elm_lang$elm_architecture_tutorial$Movement$prepareEvades = function (model) {
+	var cmd = _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck(model.evadeTests);
+	return _elm_lang$core$Native_Utils.eq(cmd, _elm_lang$core$Platform_Cmd$none) ? A3(
+		_elm_lang$core$Task$perform,
+		function (e) {
+			return _elm_lang$core$Native_List.fromArray(
+				[]);
+		},
+		function (s) {
+			return _elm_lang$core$Native_List.fromArray(
+				[]);
+		},
+		_elm_lang$core$Task$succeed(
+			_elm_lang$core$Native_List.fromArray(
+				[]))) : cmd;
+};
 var _elm_lang$elm_architecture_tutorial$Movement$endMove = F3(
 	function (place, resolved, model) {
 		return _elm_lang$core$Native_Utils.update(
@@ -12180,24 +12187,6 @@ var _elm_lang$elm_architecture_tutorial$Movement$resolveEvades = F2(
 				model);
 		}
 	});
-var _elm_lang$elm_architecture_tutorial$Movement$prepareEvades = function (model) {
-	var _p4 = _elm_lang$elm_architecture_tutorial$DiceChecker$runCheck(model.evadeTests);
-	var tests = _p4._0;
-	var cmd = _p4._1;
-	var newModel = _elm_lang$core$Native_Utils.update(
-		model,
-		{evadeTests: tests});
-	return _elm_lang$elm_architecture_tutorial$DiceChecker$hasNoPendingChecks(model.evadeTests) ? {
-		ctor: '_Tuple2',
-		_0: A3(
-			_elm_lang$elm_architecture_tutorial$Movement$endMove,
-			_elm_lang$elm_architecture_tutorial$Movement$pathEnd(model),
-			_elm_lang$core$Native_List.fromArray(
-				[]),
-			model),
-		_1: _elm_lang$core$Platform_Cmd$none
-	} : {ctor: '_Tuple2', _0: newModel, _1: cmd};
-};
 var _elm_lang$elm_architecture_tutorial$Movement$prepareEvadeTests = F4(
 	function (path, monsters, investigator, model) {
 		var generateCheck = F2(
@@ -12234,11 +12223,11 @@ var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 				[]);
 		} else {
 			var getNeighborhood = function (p) {
-				var _p5 = p;
-				if (_p5.ctor === 'Street') {
-					return _p5._0;
+				var _p4 = p;
+				if (_p4.ctor === 'Street') {
+					return _p4._0;
 				} else {
-					return _elm_lang$elm_architecture_tutorial$BoardData$parent(_p5._0);
+					return _elm_lang$elm_architecture_tutorial$BoardData$parent(_p4._0);
 				}
 			};
 			var start = getNeighborhood(p1);
@@ -12250,9 +12239,9 @@ var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 					_elm_lang$elm_architecture_tutorial$Paths$pathBFS,
 					A3(_elm_lang$elm_architecture_tutorial$Paths$createPathData, end, _elm_lang$elm_architecture_tutorial$BoardData$adjacent, excluded),
 					start));
-			var _p6 = {ctor: '_Tuple2', _0: p1, _1: p2};
-			if (_p6._0.ctor === 'Street') {
-				if (_p6._1.ctor === 'Street') {
+			var _p5 = {ctor: '_Tuple2', _0: p1, _1: p2};
+			if (_p5._0.ctor === 'Street') {
+				if (_p5._1.ctor === 'Street') {
 					return A2(
 						_elm_lang$core$Maybe$withDefault,
 						_elm_lang$core$Native_List.fromArray(
@@ -12274,7 +12263,7 @@ var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 						[]);
 				}
 			} else {
-				if (_p6._1.ctor === 'Street') {
+				if (_p5._1.ctor === 'Street') {
 					return A2(_elm_lang$core$List$member, start, excluded) ? _elm_lang$core$Native_List.fromArray(
 						[]) : path;
 				} else {
@@ -12543,16 +12532,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$prepareChecks = function (
 	if (_p4.ctor === 'Nothing') {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	} else {
-		return {
-			ctor: '_Tuple2',
-			_0: A2(
-				_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
-				function (s) {
-					return _p4._0._0;
-				},
-				model),
-			_1: _p4._0._1
-		};
+		return {ctor: '_Tuple2', _0: model, _1: _p4._0};
 	}
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$resolveChecks = F2(

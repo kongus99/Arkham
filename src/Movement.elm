@@ -2,6 +2,7 @@ module Movement exposing (moveTo, pathEnd, Model, initialModel, prepareEvades, r
 
 import BoardData exposing (..)
 import Paths
+import Task
 import AllDict exposing (AllDict)
 import List.Extra as Lists
 import DiceChecker exposing (..)
@@ -66,16 +67,15 @@ resolveEvades checks model =
             [] -> endMove (pathEnd model) passed model
             x :: xs -> endMove (x.location) (List.append passed [x]) model
 
-prepareEvades : Model -> (Model, Cmd (List ResolvedCheck))
+prepareEvades : Model -> Cmd (List ResolvedCheck)
 prepareEvades model =
      let
-        (tests, cmd) = DiceChecker.runCheck model.evadeTests
-        newModel = {model | evadeTests = tests}
+        cmd = DiceChecker.runCheck model.evadeTests
      in
-        if DiceChecker.hasNoPendingChecks model.evadeTests then
-            (endMove (pathEnd model) [] model, Cmd.none)
+        if cmd == Cmd.none then
+            Task.perform (\e -> []) (\s -> []) <| Task.succeed []
         else
-            (newModel, cmd)
+            cmd
 
 toNeighborhood p =
     case p of
