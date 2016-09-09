@@ -28,14 +28,14 @@ initialState = List.map initState <| Lists.zip investigatorColors allInvestigato
 initialModel = Model (List.map Selection.NotSelected initialState)
 
 ---------------------------------------------
-resolveChecks : List ResolvedCheck -> Model -> Model
-resolveChecks checks model =
+resolveChecks : (Investigator, List ResolvedCheck) -> Model -> Model
+resolveChecks (investigator, checks) model =
    updateMovement (\s -> Movement.resolveEvades checks s.movement) model
 
-prepareChecks : Model -> Cmd (List ResolvedCheck)
+prepareChecks : Model -> Cmd (Investigator, List ResolvedCheck)
 prepareChecks model =
     let
-        preparedEvades = Maybe.map (\s -> Movement.prepareEvades s.movement) <| Selection.findSelected model.investigatorList
+        preparedEvades = Maybe.map (\s -> Cmd.map (\c -> (s.investigator, c)) <| Movement.prepareEvades s.movement) <| Selection.findSelected model.investigatorList
     in
        Maybe.withDefault Cmd.none preparedEvades
 
