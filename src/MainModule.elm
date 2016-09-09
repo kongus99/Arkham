@@ -58,17 +58,11 @@ update msg model =
             in
                 (model, Cmd.none)
         DoubleClick place ->
-            resolveInvestigatorUpdate Investigators.prepareChecks model
+            (model, Cmd.map ResolveDiceCheck (Investigators.prepareChecks model.investigators))
         Click data ->
             (data.clickUpdate model, Cmd.none)
         ResolveDiceCheck checks ->
-            resolveInvestigatorUpdate (Investigators.resolveChecks checks) model
-
-resolveInvestigatorUpdate updater model =
-    let
-        (newInvestigators, cmd) = updater model.investigators
-    in
-        ({model | investigators = newInvestigators}, Cmd.map ResolveDiceCheck cmd)
+            ({model | investigators = Investigators.resolveChecks checks model.investigators }, Cmd.none)
 
 view : Model -> Html Msg
 view model =

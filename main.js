@@ -12528,25 +12528,16 @@ var _elm_lang$elm_architecture_tutorial$Investigators$prepareChecks = function (
 			return _elm_lang$elm_architecture_tutorial$Movement$prepareEvades(s.movement);
 		},
 		_elm_lang$elm_architecture_tutorial$Selection$findSelected(model.investigatorList));
-	var _p4 = preparedEvades;
-	if (_p4.ctor === 'Nothing') {
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-	} else {
-		return {ctor: '_Tuple2', _0: model, _1: _p4._0};
-	}
+	return A2(_elm_lang$core$Maybe$withDefault, _elm_lang$core$Platform_Cmd$none, preparedEvades);
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$resolveChecks = F2(
 	function (checks, model) {
-		return {
-			ctor: '_Tuple2',
-			_0: A2(
-				_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
-				function (s) {
-					return A2(_elm_lang$elm_architecture_tutorial$Movement$resolveEvades, checks, s.movement);
-				},
-				model),
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
+		return A2(
+			_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
+			function (s) {
+				return A2(_elm_lang$elm_architecture_tutorial$Movement$resolveEvades, checks, s.movement);
+			},
+			model);
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$investigatorColors = _elm_lang$core$Native_List.fromArray(
 	['red', 'green', 'blue', 'pink', 'violet', 'yellow', 'black', 'orange']);
@@ -12554,9 +12545,9 @@ var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F3(
 	function (a, b, c) {
 		return {movement: a, color: b, investigator: c};
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$initState = function (_p5) {
-	var _p6 = _p5;
-	return A3(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$Movement$initialModel, _p6._0, _p6._1);
+var _elm_lang$elm_architecture_tutorial$Investigators$initState = function (_p4) {
+	var _p5 = _p4;
+	return A3(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$Movement$initialModel, _p5._0, _p5._1);
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A2(
 	_elm_lang$core$List$map,
@@ -12763,39 +12754,38 @@ var _elm_lang$elm_architecture_tutorial$MainModule$initialModel = A3(
 var _elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck = function (a) {
 	return {ctor: 'ResolveDiceCheck', _0: a};
 };
-var _elm_lang$elm_architecture_tutorial$MainModule$resolveInvestigatorUpdate = F2(
-	function (updater, model) {
-		var _p6 = updater(model.investigators);
-		var newInvestigators = _p6._0;
-		var cmd = _p6._1;
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.update(
-				model,
-				{investigators: newInvestigators}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck, cmd)
-		};
-	});
 var _elm_lang$elm_architecture_tutorial$MainModule$update = F2(
 	function (msg, model) {
-		var _p7 = msg;
-		switch (_p7.ctor) {
+		var _p6 = msg;
+		switch (_p6.ctor) {
 			case 'UnspecifiedClick':
-				var x = A2(_elm_lang$core$Debug$log, 'clicked', _p7._0);
+				var x = A2(_elm_lang$core$Debug$log, 'clicked', _p6._0);
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'DoubleClick':
-				return A2(_elm_lang$elm_architecture_tutorial$MainModule$resolveInvestigatorUpdate, _elm_lang$elm_architecture_tutorial$Investigators$prepareChecks, model);
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: A2(
+						_elm_lang$core$Platform_Cmd$map,
+						_elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck,
+						_elm_lang$elm_architecture_tutorial$Investigators$prepareChecks(model.investigators))
+				};
 			case 'Click':
 				return {
 					ctor: '_Tuple2',
-					_0: _p7._0.clickUpdate(model),
+					_0: _p6._0.clickUpdate(model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
-				return A2(
-					_elm_lang$elm_architecture_tutorial$MainModule$resolveInvestigatorUpdate,
-					_elm_lang$elm_architecture_tutorial$Investigators$resolveChecks(_p7._0),
-					model);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							investigators: A2(_elm_lang$elm_architecture_tutorial$Investigators$resolveChecks, _p6._0, model.investigators)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _elm_lang$elm_architecture_tutorial$MainModule$DoubleClick = function (a) {
@@ -12811,15 +12801,15 @@ var _elm_lang$elm_architecture_tutorial$MainModule$investigatorMsg = function (i
 				_elm_lang$elm_architecture_tutorial$MainModule$investigatorClick(i))));
 };
 var _elm_lang$elm_architecture_tutorial$MainModule$msgForLocationClick = F2(
-	function (place, _p8) {
-		var _p9 = _p8;
+	function (place, _p7) {
+		var _p8 = _p7;
 		return _elm_lang$core$Json_Decode$succeed(
 			_elm_lang$elm_architecture_tutorial$MainModule$Click(
 				_elm_lang$elm_architecture_tutorial$MainModule$ClickData(
 					A2(
 						_elm_lang$elm_architecture_tutorial$MainModule$locationClick,
 						place,
-						{ctor: '_Tuple2', _0: _p9._1, _1: _p9._0}))));
+						{ctor: '_Tuple2', _0: _p8._1, _1: _p8._0}))));
 	});
 var _elm_lang$elm_architecture_tutorial$MainModule$onLocationClick = function (p) {
 	return A2(
@@ -12953,7 +12943,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$main = {
 			init: {ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$MainModule$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
 			view: _elm_lang$elm_architecture_tutorial$MainModule$view,
 			update: _elm_lang$elm_architecture_tutorial$MainModule$update,
-			subscriptions: function (_p10) {
+			subscriptions: function (_p9) {
 				return _elm_lang$core$Platform_Sub$none;
 			}
 		})
