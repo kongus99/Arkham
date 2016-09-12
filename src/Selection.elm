@@ -28,6 +28,16 @@ findSelected : List (Selection a) -> Maybe a
 findSelected elements =
     Lists.find isSelected elements |> Maybe.map unpack
 
+update : (a -> Bool) -> (a -> a) -> List (Selection a) -> List (Selection a)
+update condition updater elements =
+    let
+        mapSelection updater s =
+            case s of
+                Selected s -> Selected <| updater s
+                NotSelected s -> NotSelected <| updater s
+    in
+        List.map (\s -> if unpack s |> condition then mapSelection updater s else s) elements
+
 unpack s =
     case s of
         Selected a -> a

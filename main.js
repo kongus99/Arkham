@@ -11008,6 +11008,27 @@ var _elm_lang$elm_architecture_tutorial$Selection$selectNew = F2(
 		};
 		return A2(_elm_lang$core$List$map, selectIfNecessary, elements);
 	});
+var _elm_lang$elm_architecture_tutorial$Selection$update = F3(
+	function (condition, updater, elements) {
+		var mapSelection = F2(
+			function (updater, s) {
+				var _p6 = s;
+				if (_p6.ctor === 'Selected') {
+					return _elm_lang$elm_architecture_tutorial$Selection$Selected(
+						updater(_p6._0));
+				} else {
+					return _elm_lang$elm_architecture_tutorial$Selection$NotSelected(
+						updater(_p6._0));
+				}
+			});
+		return A2(
+			_elm_lang$core$List$map,
+			function (s) {
+				return condition(
+					_elm_lang$elm_architecture_tutorial$Selection$unpack(s)) ? A2(mapSelection, updater, s) : s;
+			},
+			elements);
+	});
 
 var _elm_lang$elm_architecture_tutorial$Graphics_Common$Point = F2(
 	function (a, b) {
@@ -12472,7 +12493,27 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = F2(
 					investigators)),
 			_elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard(selectedInvestigator));
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
+var _elm_lang$elm_architecture_tutorial$Investigators$updateInvestigatorMovement = F3(
+	function (investigator, stateUpdater, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				investigatorList: A3(
+					_elm_lang$elm_architecture_tutorial$Selection$update,
+					function (s) {
+						return _elm_lang$core$Native_Utils.eq(s.investigator, investigator);
+					},
+					function (s) {
+						return _elm_lang$core$Native_Utils.update(
+							s,
+							{
+								movement: stateUpdater(s)
+							});
+					},
+					model.investigatorList)
+			});
+	});
+var _elm_lang$elm_architecture_tutorial$Investigators$updateSelectedMovement = F2(
 	function (stateUpdater, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
@@ -12493,7 +12534,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$updateMovement = F2(
 var _elm_lang$elm_architecture_tutorial$Investigators$showCheckDetails = F2(
 	function (msg, model) {
 		return A2(
-			_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
+			_elm_lang$elm_architecture_tutorial$Investigators$updateSelectedMovement,
 			function (s) {
 				return A2(_elm_lang$elm_architecture_tutorial$Movement$update, msg, s.movement);
 			},
@@ -12515,27 +12556,33 @@ var _elm_lang$elm_architecture_tutorial$Investigators$select = F2(
 var _elm_lang$elm_architecture_tutorial$Investigators$move = F3(
 	function (place, monsters, model) {
 		return A2(
-			_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
+			_elm_lang$elm_architecture_tutorial$Investigators$updateSelectedMovement,
 			function (s) {
 				return A4(_elm_lang$elm_architecture_tutorial$Movement$moveTo, place, monsters, s.investigator, s.movement);
 			},
 			model);
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$prepareChecks = function (model) {
-	var preparedEvades = A2(
-		_elm_lang$core$Maybe$map,
-		function (s) {
-			return _elm_lang$elm_architecture_tutorial$Movement$prepareEvades(s.movement);
-		},
-		_elm_lang$elm_architecture_tutorial$Selection$findSelected(model.investigatorList));
-	return A2(_elm_lang$core$Maybe$withDefault, _elm_lang$core$Platform_Cmd$none, preparedEvades);
+	var cmdGenerator = function (selectedState) {
+		var state = _elm_lang$elm_architecture_tutorial$Selection$unpack(selectedState);
+		return A2(
+			_elm_lang$core$Platform_Cmd$map,
+			function (c) {
+				return {ctor: '_Tuple2', _0: state.investigator, _1: c};
+			},
+			_elm_lang$elm_architecture_tutorial$Movement$prepareEvades(state.movement));
+	};
+	return _elm_lang$core$Platform_Cmd$batch(
+		A2(_elm_lang$core$List$map, cmdGenerator, model.investigatorList));
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$resolveChecks = F2(
-	function (checks, model) {
-		return A2(
-			_elm_lang$elm_architecture_tutorial$Investigators$updateMovement,
+	function (_p4, model) {
+		var _p5 = _p4;
+		return A3(
+			_elm_lang$elm_architecture_tutorial$Investigators$updateInvestigatorMovement,
+			_p5._0,
 			function (s) {
-				return A2(_elm_lang$elm_architecture_tutorial$Movement$resolveEvades, checks, s.movement);
+				return A2(_elm_lang$elm_architecture_tutorial$Movement$resolveEvades, _p5._1, s.movement);
 			},
 			model);
 	});
@@ -12545,9 +12592,9 @@ var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F3(
 	function (a, b, c) {
 		return {movement: a, color: b, investigator: c};
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$initState = function (_p4) {
-	var _p5 = _p4;
-	return A3(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$Movement$initialModel, _p5._0, _p5._1);
+var _elm_lang$elm_architecture_tutorial$Investigators$initState = function (_p6) {
+	var _p7 = _p6;
+	return A3(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$Movement$initialModel, _p7._0, _p7._1);
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A2(
 	_elm_lang$core$List$map,

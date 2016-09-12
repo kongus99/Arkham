@@ -30,45 +30,37 @@ initialModel = Model (List.map Selection.NotSelected initialState)
 ---------------------------------------------
 resolveChecks : (Investigator, List ResolvedCheck) -> Model -> Model
 resolveChecks (investigator, checks) model =
-   updateMovement (\s -> Movement.resolveEvades checks s.movement) model
+   updateInvestigatorMovement investigator (\s -> Movement.resolveEvades checks s.movement) model
 
 prepareChecks : Model -> Cmd (Investigator, List ResolvedCheck)
 prepareChecks model =
+    -- generate batch of commands for each investigator
     let
-        preparedEvades = Maybe.map (\s -> Cmd.map (\c -> (s.investigator, c)) <| Movement.prepareEvades s.movement) <| Selection.findSelected model.investigatorList
+        cmdGenerator selectedState =
+            let
+                state = Selection.unpack selectedState
+            in
+                Cmd.map (\c -> (state.investigator, c)) <| Movement.prepareEvades state.movement
+
     in
-       Maybe.withDefault Cmd.none preparedEvades
-
---            prepareChecks : Model -> (Model, Cmd (List ResolvedCheck))
---            prepareChecks model =
---                let
---                    changeInvestigatorState : InvestigatorState -> (InvestigatorState, Cmd ((InvestigatorState, List ResolvedCheck)))
---                    changeInvestigatorState state =
---                        let
---                            (movement, cmd) =  Movement.prepareEvades state.movement
---                            newState = {state | movement = movement}
---                        in
---                            (newState, Cmd.map (\c -> (newState, c)) cmd)
---                    preparedEvades : List ( InvestigatorState, Cmd ( InvestigatorState, List ResolvedCheck ) )
---                    preparedEvades = List.map changeInvestigatorState model.investigatorList
---                in
---                    case preparedEvades of
---                        Nothing -> (model, Cmd.none)
---                        Just (movement, cmd) -> (updateMovement (\s -> movement) model, cmd)
-
+        Cmd.batch <| List.map cmdGenerator model.investigatorList
 
 move place monsters model =
-    updateMovement (\s -> Movement.moveTo place monsters s.investigator s.movement) model
+    updateSelectedMovement (\s -> Movement.moveTo place monsters s.investigator s.movement) model
 
 select investigator model =
     {model | investigatorList = Selection.selectNew (\s -> s.investigator == investigator) model.investigatorList }
 
 showCheckDetails msg model =
-    updateMovement (\s -> Movement.update msg s.movement) model
+    updateSelectedMovement (\s -> Movement.update msg s.movement) model
 
-updateMovement : (InvestigatorState -> Movement.Model) -> Model -> Model
-updateMovement stateUpdater model =
+updateSelectedMovement : (InvestigatorState -> Movement.Model) -> Model -> Model
+updateSelectedMovement stateUpdater model =
     {model | investigatorList = Selection.map (\s -> {s | movement = stateUpdater s}) (Just identity) model.investigatorList}
+
+updateInvestigatorMovement : Investigator -> (InvestigatorState -> Movement.Model) -> Model -> Model
+updateInvestigatorMovement investigator stateUpdater model =
+    {model | investigatorList = Selection.update (\s -> s.investigator == investigator) (\s -> {s | movement = stateUpdater s}) model.investigatorList}
 
 ---------------------------------------------
 investigatorSideView : (Investigator -> Attribute a) -> Model -> List (Svg a)
