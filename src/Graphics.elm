@@ -86,8 +86,8 @@ drawDiceCheck generator check = icon check "sneak.png" generator
 drawResolvedDiceCheck : (ResolvedCheck -> Attribute a) -> ResolvedCheck -> Svg a
 drawResolvedDiceCheck generator check = if check.wasSuccess then icon check "ok.jpg" generator else icon check "notOk.png" generator
 
-drawSelectedCheck : (LocationCheck b a -> Attribute c) -> List (b -> List (Svg c)) -> LocationCheck b a -> List (Svg c)
-drawSelectedCheck msgGenerator textGenerators check =
+drawSelectedCheck : Color -> (LocationCheck b a -> Attribute c) -> List (b -> List (Svg c)) -> LocationCheck b a -> List (Svg c)
+drawSelectedCheck color msgGenerator textGenerators check =
     let
         rectangles = calculateCheckerPositions <| List.length check.throws
         throwRectangles = Lists.zip check.throws rectangles
@@ -96,18 +96,18 @@ drawSelectedCheck msgGenerator textGenerators check =
         texts = List.concat <| List.indexedMap generateText textGenerators
     in
         List.concat [
-            [drawBoardOverlay check msgGenerator]
-            , List.map (checkRectangle check "1.0" msgGenerator) rectangles
+            [drawBoardOverlay color check msgGenerator]
+            , List.map (checkRectangle color check "1.0" msgGenerator) rectangles
             , List.map (info 1 maxTextRows [text <| testName check.checkType]) rectangles
             , List.map (info 2 maxTextRows [text <| String.append "Location: " (toString check.location)]) rectangles
             , texts
             ]
 
-drawBoardOverlay check generator =
-    checkRectangle check "0.2" generator {x = 0, y = 0 , width = boardDim.width, height = boardDim.height}
+drawBoardOverlay color check generator =
+    checkRectangle color check "0.2" generator {x = 0, y = 0 , width = boardDim.width, height = boardDim.height}
 
-checkRectangle check op generator r =
-        rect [x <| toString r.x, y <| toString r.y, width <| toString r.width, height <| toString r.height, fill "white", stroke "black", opacity op, generator check][]
+checkRectangle color check op generator r =
+        rect [x <| toString r.x, y <| toString r.y, width <| toString r.width, height <| toString r.height, fill "white", stroke color, strokeWidth "3", opacity op, generator check][]
 
 info rowNumber maxRows content rectangle =
     let

@@ -1,6 +1,7 @@
 module DiceChecker exposing (prepareCheck, runCheck, view, Model, initialChecks, resolveOldChecks, Msg, update, generateNewChecks, hasNoPendingChecks)
 
 import BoardData exposing (..)
+import Graphics.Common exposing (Color)
 import String
 import Random
 import List.Extra as Lists
@@ -115,13 +116,13 @@ singleDice (faceValue, wasSuccess) =
     in
         tspan  [fill (diceStyle wasSuccess), fontWeight "bold"] [ text (toString faceValue) ]
 
-view : Model -> List (Svg Msg)
-view model =
+view : Color -> Model -> List (Svg Msg)
+view color model =
     let
         checksToPerform = List.map (Graphics.drawDiceCheck (\check -> onClick <| UnresolvedDetails check)) model.currentChecks
         checksPerformed = List.map (Graphics.drawResolvedDiceCheck (\check -> onClick <| ResolvedDetails check)) model.previousChecks
-        selectedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedCheck (\c -> onClick <| HideDetails) [dicesAvailable, successesRequired]) (getSelectedUnresolved model)
-        selectedResolvedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedCheck (\c -> onClick <| HideDetails) [throwResults]) (getSelectedResolved model)
+        selectedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedCheck color (\c -> onClick <| HideDetails) [dicesAvailable, successesRequired]) (getSelectedUnresolved model)
+        selectedResolvedDiceCheck = Maybe.withDefault [] <| Maybe.map (Graphics.drawSelectedCheck color (\c -> onClick <| HideDetails) [throwResults]) (getSelectedResolved model)
     in
         List.concat [checksToPerform, checksPerformed, selectedDiceCheck, selectedResolvedDiceCheck]
 

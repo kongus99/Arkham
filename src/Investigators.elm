@@ -34,7 +34,6 @@ resolveChecks (investigator, checks) model =
 
 prepareChecks : Model -> Cmd (Investigator, List ResolvedCheck)
 prepareChecks model =
-    -- generate batch of commands for each investigator
     let
         cmdGenerator selectedState =
             let
@@ -102,4 +101,4 @@ checkersView msgGenerator model =
     Maybe.withDefault [] <| Maybe.map (\s -> checkersViewDraw msgGenerator <| Selection.unpack s) <| Lists.find Selection.isSelected model.investigatorList
 
 checkersViewDraw msgGenerator state =
-    List.map (App.map msgGenerator) (DiceChecker.view state.movement.evadeTests)
+    List.map (App.map msgGenerator) (DiceChecker.view state.color state.movement.evadeTests)

@@ -10515,6 +10515,127 @@ var _elm_lang$elm_architecture_tutorial$BoardData$Street = function (a) {
 	return {ctor: 'Street', _0: a};
 };
 
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$Point = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle = function (r) {
+	return A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, r.x + ((r.width / 2) | 0), r.y + ((r.height / 2) | 0));
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$circleMiddle = function (c) {
+	return A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, c.cx, c.cy);
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension = F2(
+	function (a, b) {
+		return {width: a, height: b};
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1606, 2384);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 225);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$fullInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 350, 493);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 600, 1200);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 100);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$investigatorCardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 525, 750);
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$Circle = F3(
+	function (a, b, c) {
+		return {cx: a, cy: b, radius: c};
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle = function (location) {
+	var _p0 = location;
+	switch (_p0.ctor) {
+		case 'Train_Station':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 264, 112, 64);
+		case 'Independence_Square':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 924, 112, 64);
+		case 'Bank_of_Arkham':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 487, 112, 64);
+		case 'Arkham_Asylum':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 706, 112, 64);
+		case 'Newspaper':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 126, 286, 64);
+		case 'Hibb\'s_Roadhouse':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 927, 356, 64);
+		case 'Velma\'s_Diner':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1148, 351, 64);
+		case 'Curiositie_Shoppe':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 125, 473, 64);
+		case 'Unvisited_Isle':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 124, 759, 64);
+		case 'Police_Station':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1148, 551, 64);
+		case 'Graveyard':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1148, 845, 64);
+		case 'River_Docks':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 122, 938, 64);
+		case 'The_Unnamable':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 342, 1025, 64);
+		case 'General_Store':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 898, 1017, 64);
+		case 'Black_Cave':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1150, 1030, 64);
+		case 'Science_Building':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 122, 1195, 64);
+		case 'The_Witch_House':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1150, 1312, 64);
+		case 'Silver_Twilight_Lodge':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 936, 1383, 64);
+		case 'Library':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 447, 1382, 64);
+		case 'Administration_Building':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 243, 1450, 64);
+		case 'St_Mary\'s_Hospital':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 122, 1701, 64);
+		case 'Ma\'s_Boarding_House':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1149, 1640, 64);
+		case 'South_Church':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1058, 1901, 64);
+		case 'Historical_Society':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 816, 1976, 64);
+		case 'Woods':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 562, 1976, 64);
+		case 'Ye_Olde_Magick_Shoppe':
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 282, 1947, 64);
+		default:
+			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 0, 0, 0);
+	}
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle = F4(
+	function (a, b, c, d) {
+		return {x: a, y: b, width: c, height: d};
+	});
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle = function (n) {
+	var _p1 = n;
+	switch (_p1.ctor) {
+		case 'Northside':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 296, 396, 180, 80);
+		case 'Downtown':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 591, 393, 192, 82);
+		case 'Easttown':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 731, 621, 208, 82);
+		case 'Merchant_District':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 363, 808, 264, 80);
+		case 'Rivertown':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 720, 808, 182, 78);
+		case 'Miskatonic_University':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 379, 1177, 236, 84);
+		case 'French_Hill':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 721, 1219, 195, 84);
+		case 'Uptown':
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 469, 1669, 152, 84);
+		default:
+			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 753, 1673, 180, 82);
+	}
+};
+var _elm_lang$elm_architecture_tutorial$Graphics_Common$middle = function (place) {
+	var _p2 = place;
+	if (_p2.ctor === 'Street') {
+		return _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle(
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle(_p2._0));
+	} else {
+		return _elm_lang$elm_architecture_tutorial$Graphics_Common$circleMiddle(
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle(_p2._0));
+	}
+};
+
 var _elm_lang$svg$Svg$text = _elm_lang$virtual_dom$VirtualDom$text;
 var _elm_lang$svg$Svg$svgNamespace = A2(
 	_elm_lang$virtual_dom$VirtualDom$property,
@@ -11030,127 +11151,6 @@ var _elm_lang$elm_architecture_tutorial$Selection$update = F3(
 			elements);
 	});
 
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$Point = F2(
-	function (a, b) {
-		return {x: a, y: b};
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle = function (r) {
-	return A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, r.x + ((r.width / 2) | 0), r.y + ((r.height / 2) | 0));
-};
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$circleMiddle = function (c) {
-	return A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Point, c.cx, c.cy);
-};
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension = F2(
-	function (a, b) {
-		return {width: a, height: b};
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$boardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 1606, 2384);
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 225);
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$fullInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 350, 493);
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 600, 1200);
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 150, 100);
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$investigatorCardDim = A2(_elm_lang$elm_architecture_tutorial$Graphics_Common$Dimension, 525, 750);
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$Circle = F3(
-	function (a, b, c) {
-		return {cx: a, cy: b, radius: c};
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle = function (location) {
-	var _p0 = location;
-	switch (_p0.ctor) {
-		case 'Train_Station':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 264, 112, 64);
-		case 'Independence_Square':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 924, 112, 64);
-		case 'Bank_of_Arkham':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 487, 112, 64);
-		case 'Arkham_Asylum':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 706, 112, 64);
-		case 'Newspaper':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 126, 286, 64);
-		case 'Hibb\'s_Roadhouse':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 927, 356, 64);
-		case 'Velma\'s_Diner':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1148, 351, 64);
-		case 'Curiositie_Shoppe':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 125, 473, 64);
-		case 'Unvisited_Isle':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 124, 759, 64);
-		case 'Police_Station':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1148, 551, 64);
-		case 'Graveyard':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1148, 845, 64);
-		case 'River_Docks':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 122, 938, 64);
-		case 'The_Unnamable':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 342, 1025, 64);
-		case 'General_Store':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 898, 1017, 64);
-		case 'Black_Cave':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1150, 1030, 64);
-		case 'Science_Building':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 122, 1195, 64);
-		case 'The_Witch_House':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1150, 1312, 64);
-		case 'Silver_Twilight_Lodge':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 936, 1383, 64);
-		case 'Library':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 447, 1382, 64);
-		case 'Administration_Building':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 243, 1450, 64);
-		case 'St_Mary\'s_Hospital':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 122, 1701, 64);
-		case 'Ma\'s_Boarding_House':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1149, 1640, 64);
-		case 'South_Church':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 1058, 1901, 64);
-		case 'Historical_Society':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 816, 1976, 64);
-		case 'Woods':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 562, 1976, 64);
-		case 'Ye_Olde_Magick_Shoppe':
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 282, 1947, 64);
-		default:
-			return A3(_elm_lang$elm_architecture_tutorial$Graphics_Common$Circle, 0, 0, 0);
-	}
-};
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle = F4(
-	function (a, b, c, d) {
-		return {x: a, y: b, width: c, height: d};
-	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle = function (n) {
-	var _p1 = n;
-	switch (_p1.ctor) {
-		case 'Northside':
-			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 296, 396, 180, 80);
-		case 'Downtown':
-			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 591, 393, 192, 82);
-		case 'Easttown':
-			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 731, 621, 208, 82);
-		case 'Merchant_District':
-			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 363, 808, 264, 80);
-		case 'Rivertown':
-			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 720, 808, 182, 78);
-		case 'Miskatonic_University':
-			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 379, 1177, 236, 84);
-		case 'French_Hill':
-			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 721, 1219, 195, 84);
-		case 'Uptown':
-			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 469, 1669, 152, 84);
-		default:
-			return A4(_elm_lang$elm_architecture_tutorial$Graphics_Common$Rectangle, 753, 1673, 180, 82);
-	}
-};
-var _elm_lang$elm_architecture_tutorial$Graphics_Common$middle = function (place) {
-	var _p2 = place;
-	if (_p2.ctor === 'Street') {
-		return _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle(
-			_elm_lang$elm_architecture_tutorial$Graphics_Common$neighborhoodRectangle(_p2._0));
-	} else {
-		return _elm_lang$elm_architecture_tutorial$Graphics_Common$circleMiddle(
-			_elm_lang$elm_architecture_tutorial$Graphics_Common$locationCircle(_p2._0));
-	}
-};
-
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$calculatePie = F5(
 	function (middle, radius, total, index, color) {
 		var angle2 = ((_elm_lang$core$Basics$toFloat(index + 1) * 2) * _elm_lang$core$Basics$pi) / _elm_lang$core$Basics$toFloat(total);
@@ -11453,8 +11453,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics$info = F4(
 				]),
 			content);
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F4(
-	function (check, op, generator, r) {
+var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F5(
+	function (color, check, op, generator, r) {
 		return A2(
 			_elm_lang$svg$Svg$rect,
 			_elm_lang$core$Native_List.fromArray(
@@ -11468,17 +11468,19 @@ var _elm_lang$elm_architecture_tutorial$Graphics$checkRectangle = F4(
 					_elm_lang$svg$Svg_Attributes$height(
 					_elm_lang$core$Basics$toString(r.height)),
 					_elm_lang$svg$Svg_Attributes$fill('white'),
-					_elm_lang$svg$Svg_Attributes$stroke('black'),
+					_elm_lang$svg$Svg_Attributes$stroke(color),
+					_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
 					_elm_lang$svg$Svg_Attributes$opacity(op),
 					generator(check)
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay = F2(
-	function (check, generator) {
-		return A4(
+var _elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay = F3(
+	function (color, check, generator) {
+		return A5(
 			_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle,
+			color,
 			check,
 			'0.2',
 			generator,
@@ -11561,8 +11563,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions = fun
 		A4(_elm_lang$elm_architecture_tutorial$Graphics$createRectangle, _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.width, _elm_lang$elm_architecture_tutorial$Graphics_Common$checkDim.height, leftMargin, topMargin),
 		topLeftPoints);
 };
-var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck = F3(
-	function (msgGenerator, textGenerators, check) {
+var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck = F4(
+	function (color, msgGenerator, textGenerators, check) {
 		var maxTextRows = 2 + _elm_lang$core$List$length(textGenerators);
 		var rectangles = _elm_lang$elm_architecture_tutorial$Graphics$calculateCheckerPositions(
 			_elm_lang$core$List$length(check.$throws));
@@ -11589,11 +11591,11 @@ var _elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck = F3(
 				[
 					_elm_lang$core$Native_List.fromArray(
 					[
-						A2(_elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay, check, msgGenerator)
+						A3(_elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay, color, check, msgGenerator)
 					]),
 					A2(
 					_elm_lang$core$List$map,
-					A3(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, check, '1.0', msgGenerator),
+					A4(_elm_lang$elm_architecture_tutorial$Graphics$checkRectangle, color, check, '1.0', msgGenerator),
 					rectangles),
 					A2(
 					_elm_lang$core$List$map,
@@ -11960,55 +11962,58 @@ var _elm_lang$elm_architecture_tutorial$DiceChecker$ResolvedDetails = function (
 var _elm_lang$elm_architecture_tutorial$DiceChecker$UnresolvedDetails = function (a) {
 	return {ctor: 'UnresolvedDetails', _0: a};
 };
-var _elm_lang$elm_architecture_tutorial$DiceChecker$view = function (model) {
-	var selectedResolvedDiceCheck = A2(
-		_elm_lang$core$Maybe$withDefault,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		A2(
-			_elm_lang$core$Maybe$map,
+var _elm_lang$elm_architecture_tutorial$DiceChecker$view = F2(
+	function (color, model) {
+		var selectedResolvedDiceCheck = A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
 			A2(
-				_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck,
-				function (c) {
-					return _elm_lang$svg$Svg_Events$onClick(_elm_lang$elm_architecture_tutorial$DiceChecker$HideDetails);
-				},
-				_elm_lang$core$Native_List.fromArray(
-					[_elm_lang$elm_architecture_tutorial$DiceChecker$throwResults])),
-			_elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedResolved(model)));
-	var selectedDiceCheck = A2(
-		_elm_lang$core$Maybe$withDefault,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		A2(
-			_elm_lang$core$Maybe$map,
+				_elm_lang$core$Maybe$map,
+				A3(
+					_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck,
+					color,
+					function (c) {
+						return _elm_lang$svg$Svg_Events$onClick(_elm_lang$elm_architecture_tutorial$DiceChecker$HideDetails);
+					},
+					_elm_lang$core$Native_List.fromArray(
+						[_elm_lang$elm_architecture_tutorial$DiceChecker$throwResults])),
+				_elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedResolved(model)));
+		var selectedDiceCheck = A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
 			A2(
-				_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck,
-				function (c) {
-					return _elm_lang$svg$Svg_Events$onClick(_elm_lang$elm_architecture_tutorial$DiceChecker$HideDetails);
-				},
-				_elm_lang$core$Native_List.fromArray(
-					[_elm_lang$elm_architecture_tutorial$DiceChecker$dicesAvailable, _elm_lang$elm_architecture_tutorial$DiceChecker$successesRequired])),
-			_elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedUnresolved(model)));
-	var checksPerformed = A2(
-		_elm_lang$core$List$map,
-		_elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck(
-			function (check) {
-				return _elm_lang$svg$Svg_Events$onClick(
-					_elm_lang$elm_architecture_tutorial$DiceChecker$ResolvedDetails(check));
-			}),
-		model.previousChecks);
-	var checksToPerform = A2(
-		_elm_lang$core$List$map,
-		_elm_lang$elm_architecture_tutorial$Graphics$drawDiceCheck(
-			function (check) {
-				return _elm_lang$svg$Svg_Events$onClick(
-					_elm_lang$elm_architecture_tutorial$DiceChecker$UnresolvedDetails(check));
-			}),
-		model.currentChecks);
-	return _elm_lang$core$List$concat(
-		_elm_lang$core$Native_List.fromArray(
-			[checksToPerform, checksPerformed, selectedDiceCheck, selectedResolvedDiceCheck]));
-};
+				_elm_lang$core$Maybe$map,
+				A3(
+					_elm_lang$elm_architecture_tutorial$Graphics$drawSelectedCheck,
+					color,
+					function (c) {
+						return _elm_lang$svg$Svg_Events$onClick(_elm_lang$elm_architecture_tutorial$DiceChecker$HideDetails);
+					},
+					_elm_lang$core$Native_List.fromArray(
+						[_elm_lang$elm_architecture_tutorial$DiceChecker$dicesAvailable, _elm_lang$elm_architecture_tutorial$DiceChecker$successesRequired])),
+				_elm_lang$elm_architecture_tutorial$DiceChecker$getSelectedUnresolved(model)));
+		var checksPerformed = A2(
+			_elm_lang$core$List$map,
+			_elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck(
+				function (check) {
+					return _elm_lang$svg$Svg_Events$onClick(
+						_elm_lang$elm_architecture_tutorial$DiceChecker$ResolvedDetails(check));
+				}),
+			model.previousChecks);
+		var checksToPerform = A2(
+			_elm_lang$core$List$map,
+			_elm_lang$elm_architecture_tutorial$Graphics$drawDiceCheck(
+				function (check) {
+					return _elm_lang$svg$Svg_Events$onClick(
+						_elm_lang$elm_architecture_tutorial$DiceChecker$UnresolvedDetails(check));
+				}),
+			model.currentChecks);
+		return _elm_lang$core$List$concat(
+			_elm_lang$core$Native_List.fromArray(
+				[checksToPerform, checksPerformed, selectedDiceCheck, selectedResolvedDiceCheck]));
+	});
 
 var _elm_lang$elm_architecture_tutorial$Paths$pathCollapse = F2(
 	function (currentData, pathToCollapse) {
@@ -12363,7 +12368,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$checkersViewDraw = F2(
 		return A2(
 			_elm_lang$core$List$map,
 			_elm_lang$html$Html_App$map(msgGenerator),
-			_elm_lang$elm_architecture_tutorial$DiceChecker$view(state.movement.evadeTests));
+			A2(_elm_lang$elm_architecture_tutorial$DiceChecker$view, state.color, state.movement.evadeTests));
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$checkersView = F2(
 	function (msgGenerator, model) {
