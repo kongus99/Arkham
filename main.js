@@ -10321,6 +10321,16 @@ var _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators = A2(
 								_elm_lang$core$Native_List.fromArray(
 									[])))))))));
 var _elm_lang$elm_architecture_tutorial$BoardData$Evade = {ctor: 'Evade'};
+var _elm_lang$elm_architecture_tutorial$BoardData$Movement = {ctor: 'Movement'};
+var _elm_lang$elm_architecture_tutorial$BoardData$Upkeep = {ctor: 'Upkeep'};
+var _elm_lang$elm_architecture_tutorial$BoardData$nextPhase = function (phase) {
+	var _p0 = phase;
+	if (_p0.ctor === 'Upkeep') {
+		return _elm_lang$elm_architecture_tutorial$BoardData$Movement;
+	} else {
+		return _elm_lang$elm_architecture_tutorial$BoardData$Upkeep;
+	}
+};
 var _elm_lang$elm_architecture_tutorial$BoardData$Uptown = {ctor: 'Uptown'};
 var _elm_lang$elm_architecture_tutorial$BoardData$Southside = {ctor: 'Southside'};
 var _elm_lang$elm_architecture_tutorial$BoardData$Rivertown = {ctor: 'Rivertown'};
@@ -10333,8 +10343,8 @@ var _elm_lang$elm_architecture_tutorial$BoardData$Downtown = {ctor: 'Downtown'};
 var _elm_lang$elm_architecture_tutorial$BoardData$allNeighborhood = _elm_lang$core$Native_List.fromArray(
 	[_elm_lang$elm_architecture_tutorial$BoardData$Downtown, _elm_lang$elm_architecture_tutorial$BoardData$Easttown, _elm_lang$elm_architecture_tutorial$BoardData$French_Hill, _elm_lang$elm_architecture_tutorial$BoardData$Merchant_District, _elm_lang$elm_architecture_tutorial$BoardData$Miskatonic_University, _elm_lang$elm_architecture_tutorial$BoardData$Northside, _elm_lang$elm_architecture_tutorial$BoardData$Rivertown, _elm_lang$elm_architecture_tutorial$BoardData$Southside, _elm_lang$elm_architecture_tutorial$BoardData$Uptown]);
 var _elm_lang$elm_architecture_tutorial$BoardData$adjacent = function (n) {
-	var _p0 = n;
-	switch (_p0.ctor) {
+	var _p1 = n;
+	switch (_p1.ctor) {
 		case 'Downtown':
 			return _elm_lang$core$Native_List.fromArray(
 				[_elm_lang$elm_architecture_tutorial$BoardData$Easttown, _elm_lang$elm_architecture_tutorial$BoardData$Merchant_District, _elm_lang$elm_architecture_tutorial$BoardData$Northside]);
@@ -10365,8 +10375,8 @@ var _elm_lang$elm_architecture_tutorial$BoardData$adjacent = function (n) {
 	}
 };
 var _elm_lang$elm_architecture_tutorial$BoardData$parent = function (l) {
-	var _p1 = l;
-	switch (_p1.ctor) {
+	var _p2 = l;
+	switch (_p2.ctor) {
 		case 'Arkham_Asylum':
 			return _elm_lang$elm_architecture_tutorial$BoardData$Downtown;
 		case 'Bank_of_Arkham':
@@ -10425,23 +10435,23 @@ var _elm_lang$elm_architecture_tutorial$BoardData$parent = function (l) {
 };
 var _elm_lang$elm_architecture_tutorial$BoardData$isAdjacent = F2(
 	function (p1, p2) {
-		var _p2 = {ctor: '_Tuple2', _0: p1, _1: p2};
-		if (_p2._0.ctor === 'Street') {
-			if (_p2._1.ctor === 'Street') {
+		var _p3 = {ctor: '_Tuple2', _0: p1, _1: p2};
+		if (_p3._0.ctor === 'Street') {
+			if (_p3._1.ctor === 'Street') {
 				return A2(
 					_elm_lang$core$List$member,
-					_p2._1._0,
-					_elm_lang$elm_architecture_tutorial$BoardData$adjacent(_p2._0._0));
+					_p3._1._0,
+					_elm_lang$elm_architecture_tutorial$BoardData$adjacent(_p3._0._0));
 			} else {
 				return _elm_lang$core$Native_Utils.eq(
-					_p2._0._0,
-					_elm_lang$elm_architecture_tutorial$BoardData$parent(_p2._1._0));
+					_p3._0._0,
+					_elm_lang$elm_architecture_tutorial$BoardData$parent(_p3._1._0));
 			}
 		} else {
-			if (_p2._1.ctor === 'Street') {
+			if (_p3._1.ctor === 'Street') {
 				return _elm_lang$core$Native_Utils.eq(
-					_p2._1._0,
-					_elm_lang$elm_architecture_tutorial$BoardData$parent(_p2._0._0));
+					_p3._1._0,
+					_elm_lang$elm_architecture_tutorial$BoardData$parent(_p3._0._0));
 			} else {
 				return false;
 			}
@@ -10477,8 +10487,8 @@ var _elm_lang$elm_architecture_tutorial$BoardData$Arkham_Asylum = {ctor: 'Arkham
 var _elm_lang$elm_architecture_tutorial$BoardData$allLocation = _elm_lang$core$Native_List.fromArray(
 	[_elm_lang$elm_architecture_tutorial$BoardData$Arkham_Asylum, _elm_lang$elm_architecture_tutorial$BoardData$Bank_of_Arkham, _elm_lang$elm_architecture_tutorial$BoardData$Independence_Square, _elm_lang$elm_architecture_tutorial$BoardData$Hibb$s_Roadhouse, _elm_lang$elm_architecture_tutorial$BoardData$Police_Station, _elm_lang$elm_architecture_tutorial$BoardData$Velma$s_Diner, _elm_lang$elm_architecture_tutorial$BoardData$Inner_Sanctum, _elm_lang$elm_architecture_tutorial$BoardData$Silver_Twilight_Lodge, _elm_lang$elm_architecture_tutorial$BoardData$The_Witch_House, _elm_lang$elm_architecture_tutorial$BoardData$River_Docks, _elm_lang$elm_architecture_tutorial$BoardData$The_Unnamable, _elm_lang$elm_architecture_tutorial$BoardData$Unvisited_Isle, _elm_lang$elm_architecture_tutorial$BoardData$Administration_Building, _elm_lang$elm_architecture_tutorial$BoardData$Library, _elm_lang$elm_architecture_tutorial$BoardData$Science_Building, _elm_lang$elm_architecture_tutorial$BoardData$Curiositie_Shoppe, _elm_lang$elm_architecture_tutorial$BoardData$Newspaper, _elm_lang$elm_architecture_tutorial$BoardData$Train_Station, _elm_lang$elm_architecture_tutorial$BoardData$Black_Cave, _elm_lang$elm_architecture_tutorial$BoardData$General_Store, _elm_lang$elm_architecture_tutorial$BoardData$Graveyard, _elm_lang$elm_architecture_tutorial$BoardData$Historical_Society, _elm_lang$elm_architecture_tutorial$BoardData$Ma$s_Boarding_House, _elm_lang$elm_architecture_tutorial$BoardData$South_Church, _elm_lang$elm_architecture_tutorial$BoardData$St_Mary$s_Hospital, _elm_lang$elm_architecture_tutorial$BoardData$Woods, _elm_lang$elm_architecture_tutorial$BoardData$Ye_Olde_Magick_Shoppe]);
 var _elm_lang$elm_architecture_tutorial$BoardData$consistsOf = function (n) {
-	var _p3 = n;
-	switch (_p3.ctor) {
+	var _p4 = n;
+	switch (_p4.ctor) {
 		case 'Downtown':
 			return _elm_lang$core$Native_List.fromArray(
 				[_elm_lang$elm_architecture_tutorial$BoardData$Arkham_Asylum, _elm_lang$elm_architecture_tutorial$BoardData$Bank_of_Arkham, _elm_lang$elm_architecture_tutorial$BoardData$Independence_Square]);
@@ -12794,12 +12804,13 @@ var _elm_lang$elm_architecture_tutorial$MainModule$locationClick = F3(
 var _elm_lang$elm_architecture_tutorial$MainModule$ClickData = function (a) {
 	return {clickUpdate: a};
 };
-var _elm_lang$elm_architecture_tutorial$MainModule$Model = F3(
-	function (a, b, c) {
-		return {investigators: a, monsters: b, monsterBowl: c};
+var _elm_lang$elm_architecture_tutorial$MainModule$Model = F4(
+	function (a, b, c, d) {
+		return {phase: a, investigators: b, monsters: c, monsterBowl: d};
 	});
-var _elm_lang$elm_architecture_tutorial$MainModule$initialModel = A3(
+var _elm_lang$elm_architecture_tutorial$MainModule$initialModel = A4(
 	_elm_lang$elm_architecture_tutorial$MainModule$Model,
+	_elm_lang$elm_architecture_tutorial$BoardData$Movement,
 	_elm_lang$elm_architecture_tutorial$Investigators$initialModel,
 	_eeue56$elm_all_dict$AllDict$empty(_elm_lang$elm_architecture_tutorial$BoardData$placeOrder),
 	_elm_lang$core$Maybe$Nothing);
@@ -12816,7 +12827,11 @@ var _elm_lang$elm_architecture_tutorial$MainModule$update = F2(
 			case 'EndTurn':
 				return {
 					ctor: '_Tuple2',
-					_0: model,
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							phase: _elm_lang$elm_architecture_tutorial$BoardData$nextPhase(model.phase)
+						}),
 					_1: A2(
 						_elm_lang$core$Platform_Cmd$map,
 						_elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck,
@@ -12983,6 +12998,15 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 								_elm_lang$core$Native_List.fromArray(
 									[
 										_elm_lang$svg$Svg$text('End Turn')
+									])),
+								A2(
+								_elm_lang$html$Html$span,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$svg$Svg$text(
+										_elm_lang$core$Basics$toString(model.phase))
 									]))
 							])),
 						A2(

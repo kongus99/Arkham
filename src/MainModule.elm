@@ -16,8 +16,8 @@ import DiceChecker
 
 type alias ClickData = {clickUpdate : Model -> Model}
 
-type alias Model = { investigators : Investigators.Model, monsters : AllDict Place (List Monster) String, monsterBowl : Maybe MonsterBowl.Bowl }
-initialModel = Model Investigators.initialModel (AllDict.empty placeOrder) Nothing
+type alias Model = { phase : Phase, investigators : Investigators.Model, monsters : AllDict Place (List Monster) String, monsterBowl : Maybe MonsterBowl.Bowl }
+initialModel = Model Movement Investigators.initialModel (AllDict.empty placeOrder) Nothing
 
 type Msg = UnspecifiedClick Point |
            Click ClickData|
@@ -58,11 +58,11 @@ update msg model =
             in
                 (model, Cmd.none)
         EndTurn ->
-            (model, Cmd.map ResolveDiceCheck (Investigators.prepareChecks model.investigators))
+            ({model | phase = nextPhase model.phase}, Cmd.map ResolveDiceCheck (Investigators.prepareChecks model.investigators))
         Click data ->
             (data.clickUpdate model, Cmd.none)
         ResolveDiceCheck result ->
-            ({model | investigators = Investigators.resolveChecks result model.investigators }, Cmd.none)
+            ({model | investigators = Investigators.resolveChecks result model.investigators}, Cmd.none)
 
 view : Model -> Html Msg
 view model =
@@ -78,7 +78,9 @@ wholeBoard model =
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
                                                     , Investigators.checkersView msgForCheckerClick model.investigators
                                                     ])
-         , div[][div[][button[type' "button", onClick EndTurn][text "End Turn"]], svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView investigatorMsg model.investigators)]]
+         , div[][
+            div[][button[type' "button", onClick EndTurn][text "End Turn"], span[][text <| toString model.phase]]
+           ,svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView investigatorMsg model.investigators)]]
 
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)][]

@@ -5,6 +5,12 @@ import String exposing (split, slice, join)
 
 type CheckType = Evade
 
+type Phase = Upkeep | Movement
+
+nextPhase phase = case phase of
+                    Upkeep -> Movement
+                    Movement -> Upkeep
+
 type alias WasSuccess = Bool
 
 type alias Throw = {dices : Int, numOfSuccesses : Int}
@@ -40,6 +46,7 @@ type Location =  Arkham_Asylum | Bank_of_Arkham | Independence_Square |
                  Black_Cave | General_Store | Graveyard |
                  Historical_Society | Ma's_Boarding_House | South_Church |
                  St_Mary's_Hospital | Woods | Ye_Olde_Magick_Shoppe
+
 allLocation = [Arkham_Asylum, Bank_of_Arkham, Independence_Square,
                Hibb's_Roadhouse, Police_Station, Velma's_Diner,
                Inner_Sanctum, Silver_Twilight_Lodge, The_Witch_House,
