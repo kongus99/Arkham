@@ -21,7 +21,7 @@ initialModel = Model Investigators.initialModel (AllDict.empty placeOrder) Nothi
 
 type Msg = UnspecifiedClick Point |
            Click ClickData|
-           DoubleClick Place |
+           EndTurn |
            ResolveDiceCheck (Investigator, List ResolvedCheck)
 
 locationClick : Place -> ( Bool, Bool ) -> Model -> Model
@@ -57,7 +57,7 @@ update msg model =
                 x = Debug.log "clicked" p
             in
                 (model, Cmd.none)
-        DoubleClick place ->
+        EndTurn ->
             (model, Cmd.map ResolveDiceCheck (Investigators.prepareChecks model.investigators))
         Click data ->
             (data.clickUpdate model, Cmd.none)
@@ -78,7 +78,7 @@ wholeBoard model =
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
                                                     , Investigators.checkersView msgForCheckerClick model.investigators
                                                     ])
-         , div[][div[][button[type' "button"][text "End Turn"]], svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView investigatorMsg model.investigators)]]
+         , div[][div[][button[type' "button", onClick EndTurn][text "End Turn"]], svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView investigatorMsg model.investigators)]]
 
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)][]
@@ -86,11 +86,11 @@ boardImage =
 --Msg generators
 localeMsg : Location -> List(Attribute Msg)
 localeMsg l =
-    [onDoubleClick <| DoubleClick <| Locale l, onLocationClick <| Locale l]
+    [onLocationClick <| Locale l]
 
 streetMsg : Neighborhood -> List(Attribute Msg)
 streetMsg n =
-    [onDoubleClick <| DoubleClick <| Street n, onLocationClick <| Street n]
+    [onLocationClick <| Street n]
 
 investigatorMsg : Investigator -> Attribute Msg
 investigatorMsg i =

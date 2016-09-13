@@ -12813,7 +12813,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$update = F2(
 			case 'UnspecifiedClick':
 				var x = A2(_elm_lang$core$Debug$log, 'clicked', _p6._0);
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'DoubleClick':
+			case 'EndTurn':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
@@ -12840,9 +12840,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$update = F2(
 				};
 		}
 	});
-var _elm_lang$elm_architecture_tutorial$MainModule$DoubleClick = function (a) {
-	return {ctor: 'DoubleClick', _0: a};
-};
+var _elm_lang$elm_architecture_tutorial$MainModule$EndTurn = {ctor: 'EndTurn'};
 var _elm_lang$elm_architecture_tutorial$MainModule$Click = function (a) {
 	return {ctor: 'Click', _0: a};
 };
@@ -12882,9 +12880,6 @@ var _elm_lang$elm_architecture_tutorial$MainModule$onLocationClick = function (p
 var _elm_lang$elm_architecture_tutorial$MainModule$localeMsg = function (l) {
 	return _elm_lang$core$Native_List.fromArray(
 		[
-			_elm_lang$html$Html_Events$onDoubleClick(
-			_elm_lang$elm_architecture_tutorial$MainModule$DoubleClick(
-				_elm_lang$elm_architecture_tutorial$BoardData$Locale(l))),
 			_elm_lang$elm_architecture_tutorial$MainModule$onLocationClick(
 			_elm_lang$elm_architecture_tutorial$BoardData$Locale(l))
 		]);
@@ -12892,9 +12887,6 @@ var _elm_lang$elm_architecture_tutorial$MainModule$localeMsg = function (l) {
 var _elm_lang$elm_architecture_tutorial$MainModule$streetMsg = function (n) {
 	return _elm_lang$core$Native_List.fromArray(
 		[
-			_elm_lang$html$Html_Events$onDoubleClick(
-			_elm_lang$elm_architecture_tutorial$MainModule$DoubleClick(
-				_elm_lang$elm_architecture_tutorial$BoardData$Street(n))),
 			_elm_lang$elm_architecture_tutorial$MainModule$onLocationClick(
 			_elm_lang$elm_architecture_tutorial$BoardData$Street(n))
 		]);
@@ -12985,7 +12977,8 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 								_elm_lang$html$Html$button,
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$svg$Svg_Attributes$type$('button')
+										_elm_lang$svg$Svg_Attributes$type$('button'),
+										_elm_lang$html$Html_Events$onClick(_elm_lang$elm_architecture_tutorial$MainModule$EndTurn)
 									]),
 								_elm_lang$core$Native_List.fromArray(
 									[
