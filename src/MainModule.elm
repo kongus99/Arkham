@@ -6,8 +6,8 @@ import Graphics.Common exposing (Point, boardDim, sideDim)
 import MonsterBowl exposing (Monster)
 import AllDict exposing (AllDict)
 import Html exposing (Html, span, button, div)
-import Svg exposing (svg, image, Attribute, Svg)
-import Svg.Attributes exposing (width, height, xlinkHref, x, y, class)
+import Svg exposing (svg, image, Attribute, Svg, text)
+import Svg.Attributes exposing (width, height, xlinkHref, x, y, class, type')
 import Html.Events exposing (on, onDoubleClick, onClick)
 import Json.Decode as Json exposing ((:=), bool, andThen, object2)
 import Investigators
@@ -70,7 +70,7 @@ view model =
 
 wholeBoard : Model -> Html Msg
 wholeBoard model =
-    div[][ svg [ width <| toString boardDim.width , height <| toString boardDim.height] (List.concat
+    div[class "parent"][ svg [ width <| toString boardDim.width , height <| toString boardDim.height] (List.concat
                                                     [ [boardImage]
                                                     , Investigators.investigatorBoardView model.investigators
                                                     , List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters)
@@ -78,7 +78,7 @@ wholeBoard model =
                                                     , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
                                                     , Investigators.checkersView msgForCheckerClick model.investigators
                                                     ])
-         , svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView investigatorMsg model.investigators)]
+         , div[][div[][button[type' "button"][text "End Turn"]], svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView investigatorMsg model.investigators)]]
 
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)][]

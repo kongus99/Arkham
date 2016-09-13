@@ -12935,7 +12935,9 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[]),
+			[
+				_elm_lang$svg$Svg_Attributes$class('parent')
+			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
@@ -12968,15 +12970,39 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 							A2(_elm_lang$elm_architecture_tutorial$Investigators$checkersView, _elm_lang$elm_architecture_tutorial$MainModule$msgForCheckerClick, model.investigators)
 						]))),
 				A2(
-				_elm_lang$svg$Svg$svg,
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$svg$Svg_Attributes$width(
-						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width)),
-						_elm_lang$svg$Svg_Attributes$height(
-						_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.height))
-					]),
-				A2(_elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView, _elm_lang$elm_architecture_tutorial$MainModule$investigatorMsg, model.investigators))
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$button,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$svg$Svg_Attributes$type$('button')
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$svg$Svg$text('End Turn')
+									]))
+							])),
+						A2(
+						_elm_lang$svg$Svg$svg,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$svg$Svg_Attributes$width(
+								_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width)),
+								_elm_lang$svg$Svg_Attributes$height(
+								_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.height))
+							]),
+						A2(_elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView, _elm_lang$elm_architecture_tutorial$MainModule$investigatorMsg, model.investigators))
+					]))
 			]));
 };
 var _elm_lang$elm_architecture_tutorial$MainModule$view = function (model) {

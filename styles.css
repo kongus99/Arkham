@@ -1,3 +1,11 @@
-svg + svg {
-    position: absolute;
+.parent {
+    position: relative ;
 }
+.parent > svg {
+    position: absolute ;
+}
+.parent > div {
+    position: relative ;
+    margin-left: 1606px;
+}
+
