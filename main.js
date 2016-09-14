@@ -12892,20 +12892,24 @@ var _elm_lang$elm_architecture_tutorial$MainModule$onLocationClick = function (p
 				A2(_elm_lang$core$Json_Decode_ops[':='], 'shiftKey', _elm_lang$core$Json_Decode$bool)),
 			_elm_lang$elm_architecture_tutorial$MainModule$msgForLocationClick(p)));
 };
-var _elm_lang$elm_architecture_tutorial$MainModule$localeMsg = function (l) {
-	return _elm_lang$core$Native_List.fromArray(
-		[
-			_elm_lang$elm_architecture_tutorial$MainModule$onLocationClick(
-			_elm_lang$elm_architecture_tutorial$BoardData$Locale(l))
-		]);
-};
-var _elm_lang$elm_architecture_tutorial$MainModule$streetMsg = function (n) {
-	return _elm_lang$core$Native_List.fromArray(
-		[
-			_elm_lang$elm_architecture_tutorial$MainModule$onLocationClick(
-			_elm_lang$elm_architecture_tutorial$BoardData$Street(n))
-		]);
-};
+var _elm_lang$elm_architecture_tutorial$MainModule$localeMsg = F2(
+	function (phase, l) {
+		return _elm_lang$core$Native_Utils.eq(phase, _elm_lang$elm_architecture_tutorial$BoardData$Movement) ? _elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$elm_architecture_tutorial$MainModule$onLocationClick(
+				_elm_lang$elm_architecture_tutorial$BoardData$Locale(l))
+			]) : _elm_lang$core$Native_List.fromArray(
+			[]);
+	});
+var _elm_lang$elm_architecture_tutorial$MainModule$streetMsg = F2(
+	function (phase, n) {
+		return _elm_lang$core$Native_Utils.eq(phase, _elm_lang$elm_architecture_tutorial$BoardData$Movement) ? _elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$elm_architecture_tutorial$MainModule$onLocationClick(
+				_elm_lang$elm_architecture_tutorial$BoardData$Street(n))
+			]) : _elm_lang$core$Native_List.fromArray(
+			[]);
+	});
 var _elm_lang$elm_architecture_tutorial$MainModule$msgForCheckerClick = function (msg) {
 	return _elm_lang$elm_architecture_tutorial$MainModule$Click(
 		_elm_lang$elm_architecture_tutorial$MainModule$ClickData(
@@ -12968,11 +12972,13 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 							_eeue56$elm_all_dict$AllDict$toList(model.monsters)),
 							A2(
 							_elm_lang$core$List$map,
-							_elm_lang$elm_architecture_tutorial$Graphics$localeCircle(_elm_lang$elm_architecture_tutorial$MainModule$localeMsg),
+							_elm_lang$elm_architecture_tutorial$Graphics$localeCircle(
+								_elm_lang$elm_architecture_tutorial$MainModule$localeMsg(model.phase)),
 							_elm_lang$elm_architecture_tutorial$BoardData$allLocation),
 							A2(
 							_elm_lang$core$List$map,
-							_elm_lang$elm_architecture_tutorial$Graphics$streetRectangle(_elm_lang$elm_architecture_tutorial$MainModule$streetMsg),
+							_elm_lang$elm_architecture_tutorial$Graphics$streetRectangle(
+								_elm_lang$elm_architecture_tutorial$MainModule$streetMsg(model.phase)),
 							_elm_lang$elm_architecture_tutorial$BoardData$allNeighborhood),
 							A2(_elm_lang$elm_architecture_tutorial$Investigators$checkersView, _elm_lang$elm_architecture_tutorial$MainModule$msgForCheckerClick, model.investigators)
 						]))),

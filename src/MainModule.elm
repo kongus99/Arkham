@@ -74,8 +74,8 @@ wholeBoard model =
                                                     [ [boardImage]
                                                     , Investigators.investigatorBoardView model.investigators
                                                     , List.concatMap Graphics.monsterSquare (AllDict.toList model.monsters)
-                                                    , List.map (Graphics.localeCircle localeMsg) allLocation
-                                                    , List.map (Graphics.streetRectangle streetMsg) allNeighborhood
+                                                    , List.map (Graphics.localeCircle <| localeMsg model.phase) allLocation
+                                                    , List.map (Graphics.streetRectangle <| streetMsg model.phase) allNeighborhood
                                                     , Investigators.checkersView msgForCheckerClick model.investigators
                                                     ])
          , div[][
@@ -86,13 +86,13 @@ boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)][]
 
 --Msg generators
-localeMsg : Location -> List(Attribute Msg)
-localeMsg l =
-    [onLocationClick <| Locale l]
+localeMsg : Phase -> Location -> List(Attribute Msg)
+localeMsg phase l =
+    if phase == Movement then [onLocationClick <| Locale l] else []
 
-streetMsg : Neighborhood -> List(Attribute Msg)
-streetMsg n =
-    [onLocationClick <| Street n]
+streetMsg : Phase -> Neighborhood -> List(Attribute Msg)
+streetMsg phase n =
+    if phase == Movement then [onLocationClick <| Street n] else []
 
 investigatorMsg : Investigator -> Attribute Msg
 investigatorMsg i =
