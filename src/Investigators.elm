@@ -14,6 +14,7 @@ import List.Extra exposing (zip)
 import Html.App as App
 import List.Extra as Lists
 import AllDict
+import Sliders
 
 investigatorColors = ["red", "green", "blue", "pink", "violet", "yellow", "black", "orange"]
 
@@ -45,7 +46,7 @@ prepareChecks model =
         Cmd.batch <| List.map cmdGenerator model.investigatorList
 
 move place monsters model =
-    updateSelectedMovement (\s -> Movement.moveTo place monsters s.investigator s.movement) model
+    updateSelectedMovement (\s -> Movement.moveTo place monsters s.investigator.sliders s.movement) model
 
 select investigator model =
     {model | investigatorList = Selection.selectNew (\s -> s.investigator == investigator) model.investigatorList }
@@ -66,7 +67,7 @@ investigatorSideView : (Investigator -> Attribute a) -> Model -> List (Svg a)
 investigatorSideView msgGenerator model =
     let
         selectedInvestigator = Selection.findSelected model.investigatorList |> Maybe.map (\i -> i.investigator)
-        investigators = Selection.map (\s -> (s.investigator, s.color, Movement.movesLeft s.investigator s.movement.path)) Nothing model.investigatorList
+        investigators = Selection.map (\s -> (s.investigator, s.color, Movement.movesLeft s.investigator.sliders s.movement.path)) Nothing model.investigatorList
     in
         List.append (List.concat <| (List.indexedMap (Positions.minimalData msgGenerator) investigators)) <| Positions.characterCard selectedInvestigator
 

@@ -2,7 +2,7 @@ module BoardData exposing (..)
 
 import List exposing (member, map)
 import String exposing (split, slice, join)
-
+import Sliders exposing (Sliders, createSliders)
 type CheckType = Evade
 
 type Phase = Upkeep | Movement
@@ -20,16 +20,16 @@ type alias LocationCheck b a = {a | location : Place, checkType : CheckType, thr
 type alias UnresolvedCheck = LocationCheck Throw {successThreshold : Int}
 type alias ResolvedCheck = LocationCheck ThrowResult {wasSuccess : WasSuccess}
 
-type alias Investigator = { name : String, speed : Int, sneak : Int, card : String}
+type alias Investigator = { name : String, sliders : Sliders, card : String}
 
-allInvestigators = Investigator "Amanda Sharpe" 1 4 "AmandaSharpe.png"
-                :: Investigator "Ashcan Pete" 0 6 "AshcanPete.png"
-                :: Investigator "Bob Jenkins" 2 3 "BobJenkins.png"
-                :: Investigator "Carolyn Fern" 0 3 "CarolynFern.png"
-                :: Investigator "Darell Simmons" 2 3 "DarrellSimmons.png"
-                :: Investigator "Dexter Drake" 2 4 "DexterDrake.png"
-                :: Investigator "Gloria Goldberg" 1 3 "GloriaGoldberg.png"
-                :: Investigator "Harvey Walters" 0 5 "HarveyWalters.png"
+allInvestigators = Investigator "Amanda Sharpe"  (createSliders 1 4 1 4 1 4 3) "AmandaSharpe.png"
+                :: Investigator "Ashcan Pete"    (createSliders 0 6 2 5 0 3 1) "AshcanPete.png"
+                :: Investigator "Bob Jenkins"    (createSliders 2 3 1 6 0 4 1) "BobJenkins.png"
+                :: Investigator "Carolyn Fern"   (createSliders 0 3 1 4 2 5 2) "CarolynFern.png"
+                :: Investigator "Darell Simmons" (createSliders 2 3 2 4 0 4 2) "DarrellSimmons.png"
+                :: Investigator "Dexter Drake"   (createSliders 2 4 1 3 2 3 2) "DexterDrake.png"
+                :: Investigator "Gloria Goldberg"(createSliders 1 3 0 5 1 5 2) "GloriaGoldberg.png"
+                :: Investigator "Harvey Walters" (createSliders 0 5 0 3 3 4 2) "HarveyWalters.png"
                 :: []
 
 type Neighborhood = Downtown | Easttown | French_Hill |
