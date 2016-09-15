@@ -1,5 +1,6 @@
-module Sliders exposing (createSliders, allAdjustments, SkillSet(..), Sliders, getSkillValue, Skill(..))
+module Sliders exposing (createSliders, getSelectedAdjustments, getUnselectedAdjustments, SkillSet(..), Sliders, getSkillValue, Skill(..))
 
+import List.Extra as Lists
 
 type Skill = Speed | Sneak | Fight | Will | Lore | Luck
 
@@ -15,9 +16,15 @@ type alias Sliders = { speed :Int, sneak :Int
 
 createSliders sp sn fi wi lo lu fo = Sliders sp sn fi wi lo lu 0 0 0 fo
 
-allAdjustments = List.concat <| (allSkillSetAdjustments SpeedSneak) :: (allSkillSetAdjustments FightWill) ::  (allSkillSetAdjustments LoreLuck) :: []
+getSelectedAdjustments sliders =
+    (SpeedSneak, sliders.speedSneak) :: (FightWill, sliders.fightWill) :: (LoreLuck, sliders.loreLuck) :: []
 
-allSkillSetAdjustments set = (set, 0) :: (set, 1) :: (set, 2) :: (set, 3) :: []
+getUnselectedAdjustments sliders =
+    let
+        generateUnselected set number =
+            List.filter (\n -> n /= number) [0,1,2,3] |> List.map (\n -> (set, n))
+    in
+        List.concat [generateUnselected SpeedSneak sliders.speedSneak, generateUnselected FightWill sliders.fightWill, generateUnselected LoreLuck sliders.loreLuck]
 
 getSkillValue skill sliders =
     case skill of

@@ -34,10 +34,11 @@ characterCard inv =
 
 drawInvestigatorCard  xCoord yCoord inv =
     let
-        ellipses = List.map sliderEllipse Sliders.allAdjustments
-        svgEllipse e =
-            ellipse [xCoord + e.x |> toString |> cx, yCoord + e.y |> toString |> cy, e.xRadius |> toString |> rx, e.yRadius |> toString |> ry, fill "none", strokeWidth "3", stroke "black"][]
-        svgEllipses = List.map svgEllipse ellipses
+        selectedEllipses = List.map sliderEllipse <| Sliders.getSelectedAdjustments inv.sliders
+        unselectedEllipses = List.map sliderEllipse <| Sliders.getUnselectedAdjustments inv.sliders
+        svgEllipse s e =
+            ellipse [xCoord + e.x |> toString |> cx, yCoord + e.y |> toString |> cy, e.xRadius |> toString |> rx, e.yRadius |> toString |> ry, fill "none", strokeWidth "3", stroke s][]
+        svgEllipses = List.concat [List.map (svgEllipse "black") selectedEllipses, List.map (svgEllipse "none") unselectedEllipses]
     in
         List.append [image [xlinkHref inv.card, x <| toString xCoord, y <| toString yCoord, width <| toString investigatorCardDim.width, height <| toString investigatorCardDim.height][]] svgEllipses
 

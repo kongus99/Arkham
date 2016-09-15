@@ -10359,6 +10359,43 @@ var _elm_lang$elm_architecture_tutorial$Sliders$allAdjustments = _elm_lang$core$
 				_elm_lang$elm_architecture_tutorial$Sliders$allSkillSetAdjustments(_elm_lang$elm_architecture_tutorial$Sliders$LoreLuck),
 				_elm_lang$core$Native_List.fromArray(
 					[])))));
+var _elm_lang$elm_architecture_tutorial$Sliders$getSelectedAdjustments = function (sliders) {
+	return A2(
+		_elm_lang$core$List_ops['::'],
+		{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Sliders$SpeedSneak, _1: sliders.speedSneak},
+		A2(
+			_elm_lang$core$List_ops['::'],
+			{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Sliders$FightWill, _1: sliders.fightWill},
+			A2(
+				_elm_lang$core$List_ops['::'],
+				{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Sliders$LoreLuck, _1: sliders.loreLuck},
+				_elm_lang$core$Native_List.fromArray(
+					[]))));
+};
+var _elm_lang$elm_architecture_tutorial$Sliders$getUnselectedAdjustments = function (sliders) {
+	var generateUnselected = F2(
+		function (set, number) {
+			return A2(
+				_elm_lang$core$List$map,
+				function (n) {
+					return {ctor: '_Tuple2', _0: set, _1: n};
+				},
+				A2(
+					_elm_lang$core$List$filter,
+					function (n) {
+						return !_elm_lang$core$Native_Utils.eq(n, number);
+					},
+					_elm_lang$core$Native_List.fromArray(
+						[0, 1, 2, 3])));
+		});
+	return _elm_lang$core$List$concat(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(generateUnselected, _elm_lang$elm_architecture_tutorial$Sliders$SpeedSneak, sliders.speedSneak),
+				A2(generateUnselected, _elm_lang$elm_architecture_tutorial$Sliders$FightWill, sliders.fightWill),
+				A2(generateUnselected, _elm_lang$elm_architecture_tutorial$Sliders$LoreLuck, sliders.loreLuck)
+			]));
+};
 
 var _elm_lang$elm_architecture_tutorial$BoardData$placeOrder = function (p) {
 	return _elm_lang$core$Basics$toString(p);
@@ -11483,28 +11520,47 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = fun
 };
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawInvestigatorCard = F3(
 	function (xCoord, yCoord, inv) {
-		var svgEllipse = function (e) {
-			return A2(
-				_elm_lang$svg$Svg$ellipse,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$svg$Svg_Attributes$cx(
-						_elm_lang$core$Basics$toString(xCoord + e.x)),
-						_elm_lang$svg$Svg_Attributes$cy(
-						_elm_lang$core$Basics$toString(yCoord + e.y)),
-						_elm_lang$svg$Svg_Attributes$rx(
-						_elm_lang$core$Basics$toString(e.xRadius)),
-						_elm_lang$svg$Svg_Attributes$ry(
-						_elm_lang$core$Basics$toString(e.yRadius)),
-						_elm_lang$svg$Svg_Attributes$fill('none'),
-						_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
-						_elm_lang$svg$Svg_Attributes$stroke('black')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[]));
-		};
-		var ellipses = A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Graphics_Common$sliderEllipse, _elm_lang$elm_architecture_tutorial$Sliders$allAdjustments);
-		var svgEllipses = A2(_elm_lang$core$List$map, svgEllipse, ellipses);
+		var svgEllipse = F2(
+			function (s, e) {
+				return A2(
+					_elm_lang$svg$Svg$ellipse,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg_Attributes$cx(
+							_elm_lang$core$Basics$toString(xCoord + e.x)),
+							_elm_lang$svg$Svg_Attributes$cy(
+							_elm_lang$core$Basics$toString(yCoord + e.y)),
+							_elm_lang$svg$Svg_Attributes$rx(
+							_elm_lang$core$Basics$toString(e.xRadius)),
+							_elm_lang$svg$Svg_Attributes$ry(
+							_elm_lang$core$Basics$toString(e.yRadius)),
+							_elm_lang$svg$Svg_Attributes$fill('none'),
+							_elm_lang$svg$Svg_Attributes$strokeWidth('3'),
+							_elm_lang$svg$Svg_Attributes$stroke(s)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			});
+		var unselectedEllipses = A2(
+			_elm_lang$core$List$map,
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$sliderEllipse,
+			_elm_lang$elm_architecture_tutorial$Sliders$getUnselectedAdjustments(inv.sliders));
+		var selectedEllipses = A2(
+			_elm_lang$core$List$map,
+			_elm_lang$elm_architecture_tutorial$Graphics_Common$sliderEllipse,
+			_elm_lang$elm_architecture_tutorial$Sliders$getSelectedAdjustments(inv.sliders));
+		var svgEllipses = _elm_lang$core$List$concat(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$core$List$map,
+					svgEllipse('black'),
+					selectedEllipses),
+					A2(
+					_elm_lang$core$List$map,
+					svgEllipse('none'),
+					unselectedEllipses)
+				]));
 		return A2(
 			_elm_lang$core$List$append,
 			_elm_lang$core$Native_List.fromArray(

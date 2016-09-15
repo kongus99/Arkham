@@ -1,7 +1,7 @@
 module Graphics.Common exposing (..)
 
 import BoardData exposing(..)
-import Sliders exposing(allAdjustments, SkillSet(..))
+import Sliders exposing(SkillSet(..))
 
 type alias Point = {x : Int, y : Int}
 type alias Dimension = {width : Int, height : Int}
