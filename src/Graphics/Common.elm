@@ -1,11 +1,13 @@
 module Graphics.Common exposing (..)
 
 import BoardData exposing(..)
+import Sliders exposing(allAdjustments, SkillSet(..))
 
 type alias Point = {x : Int, y : Int}
 type alias Dimension = {width : Int, height : Int}
 type alias Circle = {cx : Int, cy : Int, radius : Int}
 type alias Rectangle = {x : Int, y : Int, width : Int, height : Int}
+type alias Ellipse = {x : Int, y : Int, xRadius : Int, yRadius : Int}
 type alias Color = String
 
 rectangleMiddle r =
@@ -57,6 +59,23 @@ locationCircle location =
          Woods ->                  Circle  562 1976 64
          Ye_Olde_Magick_Shoppe ->  Circle  282 1947 64
          _ ->                      Circle    0    0  0
+
+sliderEllipse: (SkillSet, Int) -> Ellipse
+sliderEllipse (set, adjustment) =
+    case (set, adjustment) of
+        (SpeedSneak, 0) -> Ellipse 128 545 15 25
+        (SpeedSneak, 1) -> Ellipse 231 545 15 25
+        (SpeedSneak, 2) -> Ellipse 339 545 15 25
+        (SpeedSneak, 3) -> Ellipse 443 545 15 25
+        (FightWill , 0) -> Ellipse 179 618 15 25
+        (FightWill , 1) -> Ellipse 285 618 15 25
+        (FightWill , 2) -> Ellipse 391 618 15 25
+        (FightWill , 3) -> Ellipse 496 618 15 25
+        (LoreLuck  , 0) -> Ellipse 128 693 15 25
+        (LoreLuck  , 1) -> Ellipse 231 693 15 25
+        (LoreLuck  , 2) -> Ellipse 339 693 15 25
+        (LoreLuck  , 3) -> Ellipse 443 693 15 25
+        _               -> Ellipse   0   0  0  0
 
 middle place =
     case place of

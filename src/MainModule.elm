@@ -80,10 +80,10 @@ wholeBoard model =
                                                     ])
          , div[][
             div[][button[type' "button", onClick EndTurn][text "End Turn"], span[][text <| toString model.phase]]
-           ,svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView investigatorMsg model.investigators)]]
+           ,svg [ width <| toString sideDim.width , height <| toString sideDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)] (Investigators.investigatorSideView investigatorMsg model.investigators)]]
 
 boardImage =
-  image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)][]
+  image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height][]
 
 --Msg generators
 localeMsg : Phase -> Location -> List(Attribute Msg)

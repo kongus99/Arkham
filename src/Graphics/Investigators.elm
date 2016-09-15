@@ -3,9 +3,10 @@ module Graphics.Investigators exposing (start, end, connections, minimalData, ch
 import BoardData exposing(..)
 import Selection exposing (Selection)
 import Graphics.Common exposing (..)
-import Svg exposing (Svg, path, circle, line, rect, text', text, Attribute, image)
-import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, strokeDasharray, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize, xlinkHref)
+import Svg exposing (Svg, path, circle, line, rect, text', text, Attribute, image, ellipse)
+import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, strokeDasharray, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize, xlinkHref, rx, ry)
 import String
+import Sliders
 
 withMargin m r =
     Rectangle (r.x + m) (r.y + m) (r.width - m * 2) (r.height - m * 2)
@@ -26,10 +27,19 @@ minimalData msgGenerator index selection =
 characterCard: Maybe Investigator -> List (Svg a)
 characterCard inv =
     let
-        xCoord = (sideDim.width - investigatorCardDim.width) // 2 |> toString
-        yCoord = smallInvestigatorDim.height * 2 |> toString
+        xCoord = (sideDim.width - investigatorCardDim.width) // 2
+        yCoord = smallInvestigatorDim.height * 2
     in
-        Maybe.map (\i -> [image [xlinkHref i.card, x xCoord, y yCoord, width <| toString investigatorCardDim.width, height <| toString investigatorCardDim.height][]]) inv |> Maybe.withDefault []
+         Maybe.map (drawInvestigatorCard xCoord yCoord) inv |> Maybe.withDefault []
+
+drawInvestigatorCard  xCoord yCoord inv =
+    let
+        ellipses = List.map sliderEllipse Sliders.allAdjustments
+        svgEllipse e =
+            ellipse [xCoord + e.x |> toString |> cx, yCoord + e.y |> toString |> cy, e.xRadius |> toString |> rx, e.yRadius |> toString |> ry, fill "none", strokeWidth "3", stroke "black"][]
+        svgEllipses = List.map svgEllipse ellipses
+    in
+        List.append [image [xlinkHref inv.card, x <| toString xCoord, y <| toString yCoord, width <| toString investigatorCardDim.width, height <| toString investigatorCardDim.height][]] svgEllipses
 
 connections : ((Place, Place), List Color) -> List (Svg a)
 connections ((start, end), colors) =
