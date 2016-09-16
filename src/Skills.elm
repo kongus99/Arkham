@@ -1,7 +1,6 @@
-module Skills exposing (initSkills, getCurrentAdjustments, getPossibleAdjustments, SkillSet(..), Skills, getSkillValue, Skill(..), SkillAdjustments, initialAdjustments)
+module Skills exposing (initSkills, getCurrentAdjustments, getPossibleAdjustments, SkillSet(..), Skills, getSkillValue, Skill(..), SkillAdjustments, initialAdjustments, adjustSkill)
 
 import List.Extra as Lists
-import AllDict exposing (AllDict)
 
 type Skill = Speed | Sneak | Fight | Will | Lore | Luck
 
@@ -27,6 +26,17 @@ getPossibleAdjustments adjustments =
             List.filter (\n -> n /= number) [0,1,2,3] |> List.map (\n -> (set, n))
     in
         List.concat <| List.map generateUnselected <| getCurrentAdjustments adjustments
+
+adjustSkill (set, value) (inv, adj) =
+    let
+        updateAdjustment oldVal =
+            if abs (oldVal - value) > inv.skills.focus then oldVal else value
+    in
+        case set of
+            SpeedSneak -> {adj | speedSneak = updateAdjustment adj.speedSneak }
+            FightWill  -> {adj | fightWill = updateAdjustment adj.fightWill }
+            LoreLuck   -> {adj | loreLuck = updateAdjustment adj.loreLuck }
+
 
 getSkillValue skill (skills, adjustments) =
     case skill of

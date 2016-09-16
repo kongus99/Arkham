@@ -1,4 +1,4 @@
-module Investigators exposing (move, select, Model, initialModel, showCheckDetails, prepareChecks, resolveChecks, investigatorBoardView, checkersView, investigatorSideView)
+module Investigators exposing (move, select, Model, initialModel, showCheckDetails, prepareChecks, resolveChecks, investigatorBoardView, checkersView, investigatorSideView, adjustSkills)
 
 import BoardData exposing (..)
 import Selection exposing (Selection)
@@ -51,6 +51,9 @@ move place monsters model =
 select investigator model =
     {model | investigatorList = Selection.selectNew (\s -> s.investigator == investigator) model.investigatorList }
 
+adjustSkills skillData model =
+     {model | investigatorList = Selection.map (\s -> {s | adjustments = Skills.adjustSkill skillData (s.investigator, s.adjustments)}) (Just identity) model.investigatorList }
+
 showCheckDetails msg model =
     updateSelectedMovement (\s -> Movement.update msg s.movement) model
 
@@ -63,13 +66,13 @@ updateInvestigatorMovement investigator stateUpdater model =
     {model | investigatorList = Selection.update (\s -> s.investigator == investigator) (\s -> {s | movement = stateUpdater s}) model.investigatorList}
 
 ---------------------------------------------
-investigatorSideView : (Investigator -> Attribute a) -> Model -> List (Svg a)
-investigatorSideView msgGenerator model =
+investigatorSideView : ((Skills.SkillSet, Int) -> Attribute a) -> (Investigator -> Attribute a) -> Model -> List (Svg a)
+investigatorSideView skillSetSelection invSelection model =
     let
         selectedInvestigator = Selection.findSelected model.investigatorList |> Maybe.map (\i -> (i.investigator, i.adjustments))
         investigators = Selection.map (\s -> (s.investigator, s.color, Movement.movesLeft (s.investigator.skills, s.adjustments) s.movement.path)) Nothing model.investigatorList
     in
-        List.append (List.concat <| (List.indexedMap (Positions.minimalData msgGenerator) investigators)) <| Positions.characterCard selectedInvestigator
+        List.append (List.concat <| (List.indexedMap (Positions.minimalData invSelection) investigators)) <| Positions.characterCard skillSetSelection selectedInvestigator
 
 investigatorBoardView :Model -> List (Svg a)
 investigatorBoardView model =

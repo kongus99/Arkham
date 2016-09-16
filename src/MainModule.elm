@@ -13,6 +13,7 @@ import Json.Decode as Json exposing ((:=), bool, andThen, object2)
 import Investigators
 import Html.App as App
 import DiceChecker
+import Skills
 
 type alias ClickData = {clickUpdate : Model -> Model}
 
@@ -49,6 +50,9 @@ locationClick place (shiftKey, ctrlKey) model =
 investigatorClick investigator model =
     { model | investigators = Investigators.select investigator model.investigators}
 
+skillClick skillData model =
+    { model | investigators = Investigators.adjustSkills skillData model.investigators}
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
@@ -80,8 +84,8 @@ wholeBoard model =
                                                     ])
          , div[][
             div[][button[type' "button", onClick EndTurn][text "End Turn"], span[][text <| toString model.phase]]
-           ,svg [ width <| toString sideDim.width , height <| toString sideDim.height, on "click" (Json.map UnspecifiedClick offsetPosition)] (Investigators.investigatorSideView investigatorMsg model.investigators)]]
-
+           ,svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView skillMsg investigatorMsg model.investigators)]]
+--, on "click" (Json.map UnspecifiedClick offsetPosition)
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height][]
 
@@ -97,6 +101,10 @@ streetMsg phase n =
 investigatorMsg : Investigator -> Attribute Msg
 investigatorMsg i =
     onClick <| Click <| ClickData <| investigatorClick i
+
+skillMsg : (Skills.SkillSet, Int) -> Attribute Msg
+skillMsg skillData =
+    onClick <| Click <| ClickData <| skillClick skillData
 
 --Msg generator helpers
 onLocationClick : Place -> Attribute Msg
