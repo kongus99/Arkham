@@ -33,9 +33,9 @@ adjustSkill (set, value) (inv, adj) =
             if abs (oldVal - value) > inv.skills.focus then oldVal else value
     in
         case set of
-            SpeedSneak -> {adj | speedSneak = updateAdjustment adj.speedSneak }
-            FightWill  -> {adj | fightWill = updateAdjustment adj.fightWill }
-            LoreLuck   -> {adj | loreLuck = updateAdjustment adj.loreLuck }
+            SpeedSneak-> {adj | speedSneak = updateAdjustment adj.speedSneak }
+            FightWill -> {adj | fightWill = updateAdjustment adj.fightWill }
+            LoreLuck  -> {adj | loreLuck = updateAdjustment adj.loreLuck }
 
 
 getSkillValue skill (skills, adjustments) =
