@@ -66,7 +66,7 @@ updateInvestigatorMovement investigator stateUpdater model =
     {model | investigatorList = Selection.update (\s -> s.investigator == investigator) (\s -> {s | movement = stateUpdater s}) model.investigatorList}
 
 ---------------------------------------------
-investigatorSideView : ((Skills.SkillSet, Int) -> Attribute a) -> (Investigator -> Attribute a) -> Model -> List (Svg a)
+investigatorSideView : ((Skills.SkillSet, Int) -> List (Attribute a)) -> (Investigator -> Attribute a) -> Model -> List (Svg a)
 investigatorSideView skillSetSelection invSelection model =
     let
         selectedInvestigator = Selection.findSelected model.investigatorList |> Maybe.map (\i -> (i.investigator, i.adjustments))

@@ -84,7 +84,7 @@ wholeBoard model =
                                                     ])
          , div[][
             div[][button[type' "button", onClick EndTurn][text "End Turn"], span[][text <| toString model.phase]]
-           ,svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView skillMsg investigatorMsg model.investigators)]]
+           ,svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView (skillMsg model.phase) investigatorMsg model.investigators)]]
 --, on "click" (Json.map UnspecifiedClick offsetPosition)
 boardImage =
   image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height][]
@@ -102,9 +102,9 @@ investigatorMsg : Investigator -> Attribute Msg
 investigatorMsg i =
     onClick <| Click <| ClickData <| investigatorClick i
 
-skillMsg : (Skills.SkillSet, Int) -> Attribute Msg
-skillMsg skillData =
-    onClick <| Click <| ClickData <| skillClick skillData
+skillMsg :  Phase -> (Skills.SkillSet, Int) -> List (Attribute Msg)
+skillMsg phase skillData =
+    if phase == Upkeep then [onClick <| Click <| ClickData <| skillClick skillData] else []
 
 --Msg generator helpers
 onLocationClick : Place -> Attribute Msg

@@ -11552,11 +11552,8 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawInvestigatorC
 					ctor: '_Tuple2',
 					_0: _elm_lang$elm_architecture_tutorial$Graphics_Common$sliderEllipse(
 						{ctor: '_Tuple2', _0: _p14, _1: _p15}),
-					_1: _elm_lang$core$Native_List.fromArray(
-						[
-							msgGenerator(
-							{ctor: '_Tuple2', _0: _p14, _1: _p15})
-						])
+					_1: msgGenerator(
+						{ctor: '_Tuple2', _0: _p14, _1: _p15})
 				};
 			},
 			_elm_lang$elm_architecture_tutorial$Skills$getPossibleAdjustments(_p18));
@@ -13199,12 +13196,17 @@ var _elm_lang$elm_architecture_tutorial$MainModule$investigatorMsg = function (i
 			_elm_lang$elm_architecture_tutorial$MainModule$ClickData(
 				_elm_lang$elm_architecture_tutorial$MainModule$investigatorClick(i))));
 };
-var _elm_lang$elm_architecture_tutorial$MainModule$skillMsg = function (skillData) {
-	return _elm_lang$html$Html_Events$onClick(
-		_elm_lang$elm_architecture_tutorial$MainModule$Click(
-			_elm_lang$elm_architecture_tutorial$MainModule$ClickData(
-				_elm_lang$elm_architecture_tutorial$MainModule$skillClick(skillData))));
-};
+var _elm_lang$elm_architecture_tutorial$MainModule$skillMsg = F2(
+	function (phase, skillData) {
+		return _elm_lang$core$Native_Utils.eq(phase, _elm_lang$elm_architecture_tutorial$BoardData$Upkeep) ? _elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Events$onClick(
+				_elm_lang$elm_architecture_tutorial$MainModule$Click(
+					_elm_lang$elm_architecture_tutorial$MainModule$ClickData(
+						_elm_lang$elm_architecture_tutorial$MainModule$skillClick(skillData))))
+			]) : _elm_lang$core$Native_List.fromArray(
+			[]);
+	});
 var _elm_lang$elm_architecture_tutorial$MainModule$msgForLocationClick = F2(
 	function (place, _p7) {
 		var _p8 = _p7;
@@ -13343,7 +13345,11 @@ var _elm_lang$elm_architecture_tutorial$MainModule$wholeBoard = function (model)
 								_elm_lang$svg$Svg_Attributes$height(
 								_elm_lang$core$Basics$toString(_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.height))
 							]),
-						A3(_elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView, _elm_lang$elm_architecture_tutorial$MainModule$skillMsg, _elm_lang$elm_architecture_tutorial$MainModule$investigatorMsg, model.investigators))
+						A3(
+							_elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView,
+							_elm_lang$elm_architecture_tutorial$MainModule$skillMsg(model.phase),
+							_elm_lang$elm_architecture_tutorial$MainModule$investigatorMsg,
+							model.investigators))
 					]))
 			]));
 };

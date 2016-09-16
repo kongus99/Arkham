@@ -24,7 +24,7 @@ minimalData msgGenerator index selection =
         :: rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke color, strokeWidth "3", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
         ::[]
 
-characterCard: ((Skills.SkillSet, Int) -> Attribute a) -> Maybe (Investigator, Skills.SkillAdjustments) -> List (Svg a)
+characterCard: ((Skills.SkillSet, Int) -> List (Attribute a)) -> Maybe (Investigator, Skills.SkillAdjustments) -> List (Svg a)
 characterCard msgGenerator investigatorData =
     let
         xCoord = (sideDim.width - investigatorCardDim.width) // 2
@@ -35,7 +35,7 @@ characterCard msgGenerator investigatorData =
 drawInvestigatorCard msgGenerator xCoord yCoord (inv, adjustments) =
     let
         currentEllipses = List.map (\(ss, v) -> (sliderEllipse (ss, v), []))  <| Skills.getCurrentAdjustments adjustments
-        possibleEllipses = List.map (\(ss, v) -> (sliderEllipse (ss, v), [msgGenerator (ss, v)])) <| Skills.getPossibleAdjustments adjustments
+        possibleEllipses = List.map (\(ss, v) -> (sliderEllipse (ss, v), msgGenerator (ss, v))) <| Skills.getPossibleAdjustments adjustments
         svgEllipse s (e, msg) =
             ellipse (List.append [xCoord + e.x |> toString |> cx, yCoord + e.y |> toString |> cy, e.xRadius |> toString |> rx, e.yRadius |> toString |> ry, fillOpacity "0.0", strokeWidth "3", stroke s]  msg)[]
         svgEllipses = List.concat [List.map (svgEllipse "black") currentEllipses, List.map (svgEllipse "none") possibleEllipses]
