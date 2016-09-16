@@ -10300,13 +10300,13 @@ var _elm_lang$elm_architecture_tutorial$Sliders$getSkillValue = F2(
 				return _p4.luck - _p3.loreLuck;
 		}
 	});
-var _elm_lang$elm_architecture_tutorial$Sliders$Sliders = F7(
+var _elm_lang$elm_architecture_tutorial$Sliders$Skills = F7(
 	function (a, b, c, d, e, f, g) {
 		return {speed: a, sneak: b, fight: c, will: d, lore: e, luck: f, focus: g};
 	});
-var _elm_lang$elm_architecture_tutorial$Sliders$createSliders = F7(
+var _elm_lang$elm_architecture_tutorial$Sliders$initSkills = F7(
 	function (sp, sn, fi, wi, lo, lu, fo) {
-		return A7(_elm_lang$elm_architecture_tutorial$Sliders$Sliders, sp, sn, fi, wi, lo, lu, fo);
+		return A7(_elm_lang$elm_architecture_tutorial$Sliders$Skills, sp, sn, fi, wi, lo, lu, fo);
 	});
 var _elm_lang$elm_architecture_tutorial$Sliders$SkillAdjustments = F3(
 	function (a, b, c) {
@@ -10371,63 +10371,63 @@ var _elm_lang$elm_architecture_tutorial$BoardData$ThrowResult = F2(
 	});
 var _elm_lang$elm_architecture_tutorial$BoardData$Investigator = F3(
 	function (a, b, c) {
-		return {name: a, sliders: b, card: c};
+		return {name: a, skills: b, card: c};
 	});
 var _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators = A2(
 	_elm_lang$core$List_ops['::'],
 	A3(
 		_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 		'Amanda Sharpe',
-		A7(_elm_lang$elm_architecture_tutorial$Sliders$createSliders, 1, 4, 1, 4, 1, 4, 3),
+		A7(_elm_lang$elm_architecture_tutorial$Sliders$initSkills, 1, 4, 1, 4, 1, 4, 3),
 		'AmandaSharpe.png'),
 	A2(
 		_elm_lang$core$List_ops['::'],
 		A3(
 			_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 			'Ashcan Pete',
-			A7(_elm_lang$elm_architecture_tutorial$Sliders$createSliders, 0, 6, 2, 5, 0, 3, 1),
+			A7(_elm_lang$elm_architecture_tutorial$Sliders$initSkills, 0, 6, 2, 5, 0, 3, 1),
 			'AshcanPete.png'),
 		A2(
 			_elm_lang$core$List_ops['::'],
 			A3(
 				_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 				'Bob Jenkins',
-				A7(_elm_lang$elm_architecture_tutorial$Sliders$createSliders, 2, 3, 1, 6, 0, 4, 1),
+				A7(_elm_lang$elm_architecture_tutorial$Sliders$initSkills, 2, 3, 1, 6, 0, 4, 1),
 				'BobJenkins.png'),
 			A2(
 				_elm_lang$core$List_ops['::'],
 				A3(
 					_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 					'Carolyn Fern',
-					A7(_elm_lang$elm_architecture_tutorial$Sliders$createSliders, 0, 3, 1, 4, 2, 5, 2),
+					A7(_elm_lang$elm_architecture_tutorial$Sliders$initSkills, 0, 3, 1, 4, 2, 5, 2),
 					'CarolynFern.png'),
 				A2(
 					_elm_lang$core$List_ops['::'],
 					A3(
 						_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 						'Darell Simmons',
-						A7(_elm_lang$elm_architecture_tutorial$Sliders$createSliders, 2, 3, 2, 4, 0, 4, 2),
+						A7(_elm_lang$elm_architecture_tutorial$Sliders$initSkills, 2, 3, 2, 4, 0, 4, 2),
 						'DarrellSimmons.png'),
 					A2(
 						_elm_lang$core$List_ops['::'],
 						A3(
 							_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 							'Dexter Drake',
-							A7(_elm_lang$elm_architecture_tutorial$Sliders$createSliders, 2, 4, 1, 3, 2, 3, 2),
+							A7(_elm_lang$elm_architecture_tutorial$Sliders$initSkills, 2, 4, 1, 3, 2, 3, 2),
 							'DexterDrake.png'),
 						A2(
 							_elm_lang$core$List_ops['::'],
 							A3(
 								_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 								'Gloria Goldberg',
-								A7(_elm_lang$elm_architecture_tutorial$Sliders$createSliders, 1, 3, 0, 5, 1, 5, 2),
+								A7(_elm_lang$elm_architecture_tutorial$Sliders$initSkills, 1, 3, 0, 5, 1, 5, 2),
 								'GloriaGoldberg.png'),
 							A2(
 								_elm_lang$core$List_ops['::'],
 								A3(
 									_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 									'Harvey Walters',
-									A7(_elm_lang$elm_architecture_tutorial$Sliders$createSliders, 0, 5, 0, 3, 3, 4, 2),
+									A7(_elm_lang$elm_architecture_tutorial$Sliders$initSkills, 0, 5, 0, 3, 3, 4, 2),
 									'HarveyWalters.png'),
 								_elm_lang$core$Native_List.fromArray(
 									[])))))))));
@@ -11547,7 +11547,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawInvestigatorC
 				]),
 			svgEllipses);
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard = function (pair) {
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard = function (investigatorData) {
 	var yCoord = _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height * 2;
 	var xCoord = ((_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width - _elm_lang$elm_architecture_tutorial$Graphics_Common$investigatorCardDim.width) / 2) | 0;
 	return A2(
@@ -11557,7 +11557,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard = f
 		A2(
 			_elm_lang$core$Maybe$map,
 			A2(_elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawInvestigatorCard, xCoord, yCoord),
-			pair));
+			investigatorData));
 };
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$withMargin = F2(
 	function (m, r) {
@@ -12711,7 +12711,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = F2(
 					_1: s.color,
 					_2: A2(
 						_elm_lang$elm_architecture_tutorial$Movement$movesLeft,
-						{ctor: '_Tuple2', _0: s.investigator.sliders, _1: s.adjustments},
+						{ctor: '_Tuple2', _0: s.investigator.skills, _1: s.adjustments},
 						s.movement.path)
 				};
 			},
@@ -12801,7 +12801,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$move = F3(
 					_elm_lang$elm_architecture_tutorial$Movement$moveTo,
 					place,
 					monsters,
-					{ctor: '_Tuple2', _0: s.investigator.sliders, _1: s.adjustments},
+					{ctor: '_Tuple2', _0: s.investigator.skills, _1: s.adjustments},
 					s.movement);
 			},
 			model);

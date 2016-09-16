@@ -1,4 +1,4 @@
-module Sliders exposing (createSliders, getCurrentAdjustments, getPossibleAdjustments, SkillSet(..), Sliders, getSkillValue, Skill(..), SkillAdjustments, initialAdjustments)
+module Sliders exposing (initSkills, getCurrentAdjustments, getPossibleAdjustments, SkillSet(..), Skills, getSkillValue, Skill(..), SkillAdjustments, initialAdjustments)
 
 import List.Extra as Lists
 import AllDict exposing (AllDict)
@@ -7,7 +7,7 @@ type Skill = Speed | Sneak | Fight | Will | Lore | Luck
 
 type SkillSet = SpeedSneak | FightWill | LoreLuck
 
-type alias Sliders = { speed :Int, sneak :Int
+type alias Skills = { speed :Int, sneak :Int
                      , fight :Int, will :Int
                      , lore :Int, luck :Int
                      , focus : Int}
@@ -16,7 +16,7 @@ type alias SkillAdjustments = { speedSneak :Int, fightWill :Int, loreLuck : Int 
 
 initialAdjustments = SkillAdjustments 0 0 0
 
-createSliders sp sn fi wi lo lu fo = Sliders sp sn fi wi lo lu fo
+initSkills sp sn fi wi lo lu fo = Skills sp sn fi wi lo lu fo
 
 getCurrentAdjustments adjustments =
     (SpeedSneak, adjustments.speedSneak) :: (FightWill, adjustments.fightWill) :: (LoreLuck, adjustments.loreLuck) :: []
@@ -28,11 +28,11 @@ getPossibleAdjustments adjustments =
     in
         List.concat <| List.map generateUnselected <| getCurrentAdjustments adjustments
 
-getSkillValue skill (sliders, adjustments) =
+getSkillValue skill (skills, adjustments) =
     case skill of
-        Speed -> sliders.speed + adjustments.speedSneak
-        Sneak -> sliders.sneak - adjustments.speedSneak
-        Fight -> sliders.fight + adjustments.fightWill
-        Will  -> sliders.will  - adjustments.fightWill
-        Lore  -> sliders.lore  + adjustments.loreLuck
-        Luck  -> sliders.luck  - adjustments.loreLuck
+        Speed -> skills.speed + adjustments.speedSneak
+        Sneak -> skills.sneak - adjustments.speedSneak
+        Fight -> skills.fight + adjustments.fightWill
+        Will  -> skills.will  - adjustments.fightWill
+        Lore  -> skills.lore  + adjustments.loreLuck
+        Luck  -> skills.luck  - adjustments.loreLuck

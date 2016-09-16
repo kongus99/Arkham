@@ -46,7 +46,7 @@ prepareChecks model =
         Cmd.batch <| List.map cmdGenerator model.investigatorList
 
 move place monsters model =
-    updateSelectedMovement (\s -> Movement.moveTo place monsters (s.investigator.sliders, s.adjustments) s.movement) model
+    updateSelectedMovement (\s -> Movement.moveTo place monsters (s.investigator.skills, s.adjustments) s.movement) model
 
 select investigator model =
     {model | investigatorList = Selection.selectNew (\s -> s.investigator == investigator) model.investigatorList }
@@ -67,7 +67,7 @@ investigatorSideView : (Investigator -> Attribute a) -> Model -> List (Svg a)
 investigatorSideView msgGenerator model =
     let
         selectedInvestigator = Selection.findSelected model.investigatorList |> Maybe.map (\i -> (i.investigator, i.adjustments))
-        investigators = Selection.map (\s -> (s.investigator, s.color, Movement.movesLeft (s.investigator.sliders, s.adjustments) s.movement.path)) Nothing model.investigatorList
+        investigators = Selection.map (\s -> (s.investigator, s.color, Movement.movesLeft (s.investigator.skills, s.adjustments) s.movement.path)) Nothing model.investigatorList
     in
         List.append (List.concat <| (List.indexedMap (Positions.minimalData msgGenerator) investigators)) <| Positions.characterCard selectedInvestigator
 

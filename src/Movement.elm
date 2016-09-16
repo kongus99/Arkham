@@ -3,7 +3,7 @@ module Movement exposing (moveTo, pathEnd, Model, initialModel, prepareEvades, r
 import BoardData exposing (..)
 import Paths
 import Task
-import Sliders exposing (Skill(..), Sliders, SkillAdjustments)
+import Sliders exposing (Skill(..), Skills, SkillAdjustments)
 import AllDict exposing (AllDict)
 import List.Extra as Lists
 import DiceChecker exposing (..)
@@ -32,7 +32,7 @@ path p1 p2 excluded =
             (Locale l, Street n) -> if List.member start excluded then [] else path
             (Locale l1, Locale l2) -> if path /= [] then List.append path [p2] else []
 
-moveTo: Place -> AllDict Place (List Monster) String -> (Sliders, SkillAdjustments) -> Model -> Model
+moveTo: Place -> AllDict Place (List Monster) String -> (Skills, SkillAdjustments) -> Model -> Model
 moveTo place monsters skillData model =
     let
         currentEnd = pathEnd model
@@ -48,7 +48,7 @@ moveTo place monsters skillData model =
             {model | path = newPath, evadeTests = newEvadeTests}
         else model
 
-prepareEvadeTests : List Place -> AllDict Place (List Monster) String -> (Sliders, SkillAdjustments) -> DiceChecker.Model ->  DiceChecker.Model
+prepareEvadeTests : List Place -> AllDict Place (List Monster) String -> (Skills, SkillAdjustments) -> DiceChecker.Model ->  DiceChecker.Model
 prepareEvadeTests path monsters skillData model =
     let
         generateCheck place ms = DiceChecker.prepareCheck place Evade (List.map (\m -> Throw ((Sliders.getSkillValue Sneak skillData) - m.awareness) 1) ms) 5
