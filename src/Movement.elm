@@ -3,7 +3,7 @@ module Movement exposing (moveTo, pathEnd, Model, initialModel, prepareEvades, r
 import BoardData exposing (..)
 import Paths
 import Task
-import Sliders exposing (Skill(..), Sliders)
+import Sliders exposing (Skill(..), Sliders, SkillAdjustments)
 import AllDict exposing (AllDict)
 import List.Extra as Lists
 import DiceChecker exposing (..)
@@ -32,8 +32,8 @@ path p1 p2 excluded =
             (Locale l, Street n) -> if List.member start excluded then [] else path
             (Locale l1, Locale l2) -> if path /= [] then List.append path [p2] else []
 
-moveTo: Place -> AllDict Place (List Monster) String -> Sliders -> Model -> Model
-moveTo place monsters sliders model =
+moveTo: Place -> AllDict Place (List Monster) String -> (Sliders, SkillAdjustments) -> Model -> Model
+moveTo place monsters skillData model =
     let
         currentEnd = pathEnd model
         newPath = if model.start == place then []
@@ -42,16 +42,16 @@ moveTo place monsters sliders model =
                     List.append model.path [place]
                   else
                     path model.start place <| List.filterMap toNeighborhood (AllDict.keys monsters)
-        newEvadeTests = prepareEvadeTests (model.start :: newPath) monsters sliders model.evadeTests
+        newEvadeTests = prepareEvadeTests (model.start :: newPath) monsters skillData model.evadeTests
     in
-        if movesLeft sliders newPath >= 0 then
+        if movesLeft skillData newPath >= 0 then
             {model | path = newPath, evadeTests = newEvadeTests}
         else model
 
-prepareEvadeTests : List Place -> AllDict Place (List Monster) String -> Sliders -> DiceChecker.Model ->  DiceChecker.Model
-prepareEvadeTests path monsters sliders model =
+prepareEvadeTests : List Place -> AllDict Place (List Monster) String -> (Sliders, SkillAdjustments) -> DiceChecker.Model ->  DiceChecker.Model
+prepareEvadeTests path monsters skillData model =
     let
-        generateCheck place ms = DiceChecker.prepareCheck place Evade (List.map (\m -> Throw ((Sliders.getSkillValue Sneak sliders) - m.awareness) 1) ms) 5
+        generateCheck place ms = DiceChecker.prepareCheck place Evade (List.map (\m -> Throw ((Sliders.getSkillValue Sneak skillData) - m.awareness) 1) ms) 5
     in
         DiceChecker.generateNewChecks (List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path) model
 
@@ -86,5 +86,5 @@ toNeighborhood p =
 pathEnd model =
      Maybe.withDefault model.start <| List.head <| List.reverse model.path
 
-movesLeft sliders path =
-    (Sliders.getSkillValue Speed sliders) - List.length path
+movesLeft skillData path =
+    (Sliders.getSkillValue Speed skillData) - List.length path

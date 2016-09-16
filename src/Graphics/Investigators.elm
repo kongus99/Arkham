@@ -24,21 +24,21 @@ minimalData msgGenerator index selection =
         :: rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke color, strokeWidth "3", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
         ::[]
 
-characterCard: Maybe Investigator -> List (Svg a)
-characterCard inv =
+characterCard: Maybe (Investigator, Sliders.SkillAdjustments) -> List (Svg a)
+characterCard investigatorData =
     let
         xCoord = (sideDim.width - investigatorCardDim.width) // 2
         yCoord = smallInvestigatorDim.height * 2
     in
-         Maybe.map (drawInvestigatorCard xCoord yCoord) inv |> Maybe.withDefault []
+         Maybe.map (drawInvestigatorCard xCoord yCoord) investigatorData |> Maybe.withDefault []
 
-drawInvestigatorCard  xCoord yCoord inv =
+drawInvestigatorCard  xCoord yCoord (inv, adjustments) =
     let
-        selectedEllipses = List.map sliderEllipse <| Sliders.getSelectedAdjustments inv.sliders
-        unselectedEllipses = List.map sliderEllipse <| Sliders.getUnselectedAdjustments inv.sliders
+        currentEllipses = List.map sliderEllipse <| Sliders.getCurrentAdjustments adjustments
+        possibleEllipses = List.map sliderEllipse <| Sliders.getPossibleAdjustments adjustments
         svgEllipse s e =
             ellipse [xCoord + e.x |> toString |> cx, yCoord + e.y |> toString |> cy, e.xRadius |> toString |> rx, e.yRadius |> toString |> ry, fill "none", strokeWidth "3", stroke s][]
-        svgEllipses = List.concat [List.map (svgEllipse "black") selectedEllipses, List.map (svgEllipse "none") unselectedEllipses]
+        svgEllipses = List.concat [List.map (svgEllipse "black") currentEllipses, List.map (svgEllipse "none") possibleEllipses]
     in
         List.append [image [xlinkHref inv.card, x <| toString xCoord, y <| toString yCoord, width <| toString investigatorCardDim.width, height <| toString investigatorCardDim.height][]] svgEllipses
 

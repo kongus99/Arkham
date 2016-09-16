@@ -10280,64 +10280,39 @@ var _elm_lang$core$Random$cmdMap = F2(
 _elm_lang$core$Native_Platform.effectManagers['Random'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Random$init, onEffects: _elm_lang$core$Random$onEffects, onSelfMsg: _elm_lang$core$Random$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Random$cmdMap};
 
 var _elm_lang$elm_architecture_tutorial$Sliders$getSkillValue = F2(
-	function (skill, sliders) {
-		var _p0 = skill;
-		switch (_p0.ctor) {
+	function (skill, _p0) {
+		var _p1 = _p0;
+		var _p4 = _p1._0;
+		var _p3 = _p1._1;
+		var _p2 = skill;
+		switch (_p2.ctor) {
 			case 'Speed':
-				return sliders.speed + sliders.speedSneak;
+				return _p4.speed + _p3.speedSneak;
 			case 'Sneak':
-				return sliders.sneak - sliders.speedSneak;
+				return _p4.sneak - _p3.speedSneak;
 			case 'Fight':
-				return sliders.fight + sliders.fightWill;
+				return _p4.fight + _p3.fightWill;
 			case 'Will':
-				return sliders.will - sliders.fightWill;
+				return _p4.will - _p3.fightWill;
 			case 'Lore':
-				return sliders.lore + sliders.loreLuck;
+				return _p4.lore + _p3.loreLuck;
 			default:
-				return sliders.luck - sliders.loreLuck;
+				return _p4.luck - _p3.loreLuck;
 		}
 	});
-var _elm_lang$elm_architecture_tutorial$Sliders$allSkillSetAdjustments = function (set) {
-	return A2(
-		_elm_lang$core$List_ops['::'],
-		{ctor: '_Tuple2', _0: set, _1: 0},
-		A2(
-			_elm_lang$core$List_ops['::'],
-			{ctor: '_Tuple2', _0: set, _1: 1},
-			A2(
-				_elm_lang$core$List_ops['::'],
-				{ctor: '_Tuple2', _0: set, _1: 2},
-				A2(
-					_elm_lang$core$List_ops['::'],
-					{ctor: '_Tuple2', _0: set, _1: 3},
-					_elm_lang$core$Native_List.fromArray(
-						[])))));
-};
-var _elm_lang$elm_architecture_tutorial$Sliders$Sliders = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return {speed: a, sneak: b, fight: c, will: d, lore: e, luck: f, speedSneak: g, fightWill: h, loreLuck: i, focus: j};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
+var _elm_lang$elm_architecture_tutorial$Sliders$Sliders = F7(
+	function (a, b, c, d, e, f, g) {
+		return {speed: a, sneak: b, fight: c, will: d, lore: e, luck: f, focus: g};
+	});
 var _elm_lang$elm_architecture_tutorial$Sliders$createSliders = F7(
 	function (sp, sn, fi, wi, lo, lu, fo) {
-		return _elm_lang$elm_architecture_tutorial$Sliders$Sliders(sp)(sn)(fi)(wi)(lo)(lu)(0)(0)(0)(fo);
+		return A7(_elm_lang$elm_architecture_tutorial$Sliders$Sliders, sp, sn, fi, wi, lo, lu, fo);
 	});
+var _elm_lang$elm_architecture_tutorial$Sliders$SkillAdjustments = F3(
+	function (a, b, c) {
+		return {speedSneak: a, fightWill: b, loreLuck: c};
+	});
+var _elm_lang$elm_architecture_tutorial$Sliders$initialAdjustments = A3(_elm_lang$elm_architecture_tutorial$Sliders$SkillAdjustments, 0, 0, 0);
 var _elm_lang$elm_architecture_tutorial$Sliders$Luck = {ctor: 'Luck'};
 var _elm_lang$elm_architecture_tutorial$Sliders$Lore = {ctor: 'Lore'};
 var _elm_lang$elm_architecture_tutorial$Sliders$Will = {ctor: 'Will'};
@@ -10347,54 +10322,40 @@ var _elm_lang$elm_architecture_tutorial$Sliders$Speed = {ctor: 'Speed'};
 var _elm_lang$elm_architecture_tutorial$Sliders$LoreLuck = {ctor: 'LoreLuck'};
 var _elm_lang$elm_architecture_tutorial$Sliders$FightWill = {ctor: 'FightWill'};
 var _elm_lang$elm_architecture_tutorial$Sliders$SpeedSneak = {ctor: 'SpeedSneak'};
-var _elm_lang$elm_architecture_tutorial$Sliders$allAdjustments = _elm_lang$core$List$concat(
-	A2(
-		_elm_lang$core$List_ops['::'],
-		_elm_lang$elm_architecture_tutorial$Sliders$allSkillSetAdjustments(_elm_lang$elm_architecture_tutorial$Sliders$SpeedSneak),
-		A2(
-			_elm_lang$core$List_ops['::'],
-			_elm_lang$elm_architecture_tutorial$Sliders$allSkillSetAdjustments(_elm_lang$elm_architecture_tutorial$Sliders$FightWill),
-			A2(
-				_elm_lang$core$List_ops['::'],
-				_elm_lang$elm_architecture_tutorial$Sliders$allSkillSetAdjustments(_elm_lang$elm_architecture_tutorial$Sliders$LoreLuck),
-				_elm_lang$core$Native_List.fromArray(
-					[])))));
-var _elm_lang$elm_architecture_tutorial$Sliders$getSelectedAdjustments = function (sliders) {
+var _elm_lang$elm_architecture_tutorial$Sliders$getCurrentAdjustments = function (adjustments) {
 	return A2(
 		_elm_lang$core$List_ops['::'],
-		{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Sliders$SpeedSneak, _1: sliders.speedSneak},
+		{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Sliders$SpeedSneak, _1: adjustments.speedSneak},
 		A2(
 			_elm_lang$core$List_ops['::'],
-			{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Sliders$FightWill, _1: sliders.fightWill},
+			{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Sliders$FightWill, _1: adjustments.fightWill},
 			A2(
 				_elm_lang$core$List_ops['::'],
-				{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Sliders$LoreLuck, _1: sliders.loreLuck},
+				{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Sliders$LoreLuck, _1: adjustments.loreLuck},
 				_elm_lang$core$Native_List.fromArray(
 					[]))));
 };
-var _elm_lang$elm_architecture_tutorial$Sliders$getUnselectedAdjustments = function (sliders) {
-	var generateUnselected = F2(
-		function (set, number) {
-			return A2(
-				_elm_lang$core$List$map,
+var _elm_lang$elm_architecture_tutorial$Sliders$getPossibleAdjustments = function (adjustments) {
+	var generateUnselected = function (_p5) {
+		var _p6 = _p5;
+		return A2(
+			_elm_lang$core$List$map,
+			function (n) {
+				return {ctor: '_Tuple2', _0: _p6._0, _1: n};
+			},
+			A2(
+				_elm_lang$core$List$filter,
 				function (n) {
-					return {ctor: '_Tuple2', _0: set, _1: n};
+					return !_elm_lang$core$Native_Utils.eq(n, _p6._1);
 				},
-				A2(
-					_elm_lang$core$List$filter,
-					function (n) {
-						return !_elm_lang$core$Native_Utils.eq(n, number);
-					},
-					_elm_lang$core$Native_List.fromArray(
-						[0, 1, 2, 3])));
-		});
+				_elm_lang$core$Native_List.fromArray(
+					[0, 1, 2, 3])));
+	};
 	return _elm_lang$core$List$concat(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(generateUnselected, _elm_lang$elm_architecture_tutorial$Sliders$SpeedSneak, sliders.speedSneak),
-				A2(generateUnselected, _elm_lang$elm_architecture_tutorial$Sliders$FightWill, sliders.fightWill),
-				A2(generateUnselected, _elm_lang$elm_architecture_tutorial$Sliders$LoreLuck, sliders.loreLuck)
-			]));
+		A2(
+			_elm_lang$core$List$map,
+			generateUnselected,
+			_elm_lang$elm_architecture_tutorial$Sliders$getCurrentAdjustments(adjustments)));
 };
 
 var _elm_lang$elm_architecture_tutorial$BoardData$placeOrder = function (p) {
@@ -11519,7 +11480,9 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$connections = fun
 		_p6);
 };
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawInvestigatorCard = F3(
-	function (xCoord, yCoord, inv) {
+	function (xCoord, yCoord, _p7) {
+		var _p8 = _p7;
+		var _p9 = _p8._1;
 		var svgEllipse = F2(
 			function (s, e) {
 				return A2(
@@ -11541,25 +11504,25 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawInvestigatorC
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			});
-		var unselectedEllipses = A2(
+		var possibleEllipses = A2(
 			_elm_lang$core$List$map,
 			_elm_lang$elm_architecture_tutorial$Graphics_Common$sliderEllipse,
-			_elm_lang$elm_architecture_tutorial$Sliders$getUnselectedAdjustments(inv.sliders));
-		var selectedEllipses = A2(
+			_elm_lang$elm_architecture_tutorial$Sliders$getPossibleAdjustments(_p9));
+		var currentEllipses = A2(
 			_elm_lang$core$List$map,
 			_elm_lang$elm_architecture_tutorial$Graphics_Common$sliderEllipse,
-			_elm_lang$elm_architecture_tutorial$Sliders$getSelectedAdjustments(inv.sliders));
+			_elm_lang$elm_architecture_tutorial$Sliders$getCurrentAdjustments(_p9));
 		var svgEllipses = _elm_lang$core$List$concat(
 			_elm_lang$core$Native_List.fromArray(
 				[
 					A2(
 					_elm_lang$core$List$map,
 					svgEllipse('black'),
-					selectedEllipses),
+					currentEllipses),
 					A2(
 					_elm_lang$core$List$map,
 					svgEllipse('none'),
-					unselectedEllipses)
+					possibleEllipses)
 				]));
 		return A2(
 			_elm_lang$core$List$append,
@@ -11569,7 +11532,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawInvestigatorC
 					_elm_lang$svg$Svg$image,
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$svg$Svg_Attributes$xlinkHref(inv.card),
+							_elm_lang$svg$Svg_Attributes$xlinkHref(_p8._0.card),
 							_elm_lang$svg$Svg_Attributes$x(
 							_elm_lang$core$Basics$toString(xCoord)),
 							_elm_lang$svg$Svg_Attributes$y(
@@ -11584,7 +11547,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawInvestigatorC
 				]),
 			svgEllipses);
 	});
-var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard = function (inv) {
+var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard = function (pair) {
 	var yCoord = _elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height * 2;
 	var xCoord = ((_elm_lang$elm_architecture_tutorial$Graphics_Common$sideDim.width - _elm_lang$elm_architecture_tutorial$Graphics_Common$investigatorCardDim.width) / 2) | 0;
 	return A2(
@@ -11594,7 +11557,7 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard = f
 		A2(
 			_elm_lang$core$Maybe$map,
 			A2(_elm_lang$elm_architecture_tutorial$Graphics_Investigators$drawInvestigatorCard, xCoord, yCoord),
-			inv));
+			pair));
 };
 var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$withMargin = F2(
 	function (m, r) {
@@ -11613,10 +11576,10 @@ var _elm_lang$elm_architecture_tutorial$Graphics_Investigators$minimalData = F3(
 				_elm_lang$elm_architecture_tutorial$Graphics_Common$smallInvestigatorDim.height));
 		var middle = _elm_lang$elm_architecture_tutorial$Graphics_Common$rectangleMiddle(outline);
 		var dashArray = _elm_lang$elm_architecture_tutorial$Selection$isSelected(selection) ? '2 5' : '';
-		var _p7 = _elm_lang$elm_architecture_tutorial$Selection$unpack(selection);
-		var investigator = _p7._0;
-		var color = _p7._1;
-		var movesLeft = _p7._2;
+		var _p10 = _elm_lang$elm_architecture_tutorial$Selection$unpack(selection);
+		var investigator = _p10._0;
+		var color = _p10._1;
+		var movesLeft = _p10._2;
 		var investigatorInfo = _elm_lang$core$String$concat(
 			_elm_lang$core$Native_List.fromArray(
 				[
@@ -12403,8 +12366,8 @@ var _elm_lang$elm_architecture_tutorial$Paths$PathData = F3(
 	});
 
 var _elm_lang$elm_architecture_tutorial$Movement$movesLeft = F2(
-	function (sliders, path) {
-		return A2(_elm_lang$elm_architecture_tutorial$Sliders$getSkillValue, _elm_lang$elm_architecture_tutorial$Sliders$Speed, sliders) - _elm_lang$core$List$length(path);
+	function (skillData, path) {
+		return A2(_elm_lang$elm_architecture_tutorial$Sliders$getSkillValue, _elm_lang$elm_architecture_tutorial$Sliders$Speed, skillData) - _elm_lang$core$List$length(path);
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$pathEnd = function (model) {
 	return A2(
@@ -12479,7 +12442,7 @@ var _elm_lang$elm_architecture_tutorial$Movement$resolveEvades = F2(
 		}
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$prepareEvadeTests = F4(
-	function (path, monsters, sliders, model) {
+	function (path, monsters, skillData, model) {
 		var generateCheck = F2(
 			function (place, ms) {
 				return A4(
@@ -12491,7 +12454,7 @@ var _elm_lang$elm_architecture_tutorial$Movement$prepareEvadeTests = F4(
 						function (m) {
 							return A2(
 								_elm_lang$elm_architecture_tutorial$BoardData$Throw,
-								A2(_elm_lang$elm_architecture_tutorial$Sliders$getSkillValue, _elm_lang$elm_architecture_tutorial$Sliders$Sneak, sliders) - m.awareness,
+								A2(_elm_lang$elm_architecture_tutorial$Sliders$getSkillValue, _elm_lang$elm_architecture_tutorial$Sliders$Sneak, skillData) - m.awareness,
 								1);
 						},
 						ms),
@@ -12575,7 +12538,7 @@ var _elm_lang$elm_architecture_tutorial$Movement$path = F3(
 		}
 	});
 var _elm_lang$elm_architecture_tutorial$Movement$moveTo = F4(
-	function (place, monsters, sliders, model) {
+	function (place, monsters, skillData, model) {
 		var currentEnd = _elm_lang$elm_architecture_tutorial$Movement$pathEnd(model);
 		var newPath = _elm_lang$core$Native_Utils.eq(model.start, place) ? _elm_lang$core$Native_List.fromArray(
 			[]) : (A2(_elm_lang$core$List$member, place, model.path) ? A2(
@@ -12604,10 +12567,10 @@ var _elm_lang$elm_architecture_tutorial$Movement$moveTo = F4(
 			_elm_lang$elm_architecture_tutorial$Movement$prepareEvadeTests,
 			A2(_elm_lang$core$List_ops['::'], model.start, newPath),
 			monsters,
-			sliders,
+			skillData,
 			model.evadeTests);
 		return (_elm_lang$core$Native_Utils.cmp(
-			A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, sliders, newPath),
+			A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, skillData, newPath),
 			0) > -1) ? _elm_lang$core$Native_Utils.update(
 			model,
 			{path: newPath, evadeTests: newEvadeTests}) : model;
@@ -12746,7 +12709,10 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = F2(
 					ctor: '_Tuple3',
 					_0: s.investigator,
 					_1: s.color,
-					_2: A2(_elm_lang$elm_architecture_tutorial$Movement$movesLeft, s.investigator.sliders, s.movement.path)
+					_2: A2(
+						_elm_lang$elm_architecture_tutorial$Movement$movesLeft,
+						{ctor: '_Tuple2', _0: s.investigator.sliders, _1: s.adjustments},
+						s.movement.path)
 				};
 			},
 			_elm_lang$core$Maybe$Nothing,
@@ -12754,7 +12720,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = F2(
 		var selectedInvestigator = A2(
 			_elm_lang$core$Maybe$map,
 			function (i) {
-				return i.investigator;
+				return {ctor: '_Tuple2', _0: i.investigator, _1: i.adjustments};
 			},
 			_elm_lang$elm_architecture_tutorial$Selection$findSelected(model.investigatorList));
 		return A2(
@@ -12831,7 +12797,12 @@ var _elm_lang$elm_architecture_tutorial$Investigators$move = F3(
 		return A2(
 			_elm_lang$elm_architecture_tutorial$Investigators$updateSelectedMovement,
 			function (s) {
-				return A4(_elm_lang$elm_architecture_tutorial$Movement$moveTo, place, monsters, s.investigator.sliders, s.movement);
+				return A4(
+					_elm_lang$elm_architecture_tutorial$Movement$moveTo,
+					place,
+					monsters,
+					{ctor: '_Tuple2', _0: s.investigator.sliders, _1: s.adjustments},
+					s.movement);
 			},
 			model);
 	});
@@ -12861,13 +12832,13 @@ var _elm_lang$elm_architecture_tutorial$Investigators$resolveChecks = F2(
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$investigatorColors = _elm_lang$core$Native_List.fromArray(
 	['red', 'green', 'blue', 'pink', 'violet', 'yellow', 'black', 'orange']);
-var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F3(
-	function (a, b, c) {
-		return {movement: a, color: b, investigator: c};
+var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F4(
+	function (a, b, c, d) {
+		return {movement: a, color: b, adjustments: c, investigator: d};
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$initState = function (_p6) {
 	var _p7 = _p6;
-	return A3(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$Movement$initialModel, _p7._0, _p7._1);
+	return A4(_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState, _elm_lang$elm_architecture_tutorial$Movement$initialModel, _p7._0, _elm_lang$elm_architecture_tutorial$Sliders$initialAdjustments, _p7._1);
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A2(
 	_elm_lang$core$List$map,

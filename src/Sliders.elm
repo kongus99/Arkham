@@ -1,6 +1,7 @@
-module Sliders exposing (createSliders, getSelectedAdjustments, getUnselectedAdjustments, SkillSet(..), Sliders, getSkillValue, Skill(..))
+module Sliders exposing (createSliders, getCurrentAdjustments, getPossibleAdjustments, SkillSet(..), Sliders, getSkillValue, Skill(..), SkillAdjustments, initialAdjustments)
 
 import List.Extra as Lists
+import AllDict exposing (AllDict)
 
 type Skill = Speed | Sneak | Fight | Will | Lore | Luck
 
@@ -9,28 +10,29 @@ type SkillSet = SpeedSneak | FightWill | LoreLuck
 type alias Sliders = { speed :Int, sneak :Int
                      , fight :Int, will :Int
                      , lore :Int, luck :Int
-                     , speedSneak :Int
-                     , fightWill :Int
-                     , loreLuck : Int
                      , focus : Int}
 
-createSliders sp sn fi wi lo lu fo = Sliders sp sn fi wi lo lu 0 0 0 fo
+type alias SkillAdjustments = { speedSneak :Int, fightWill :Int, loreLuck : Int }
 
-getSelectedAdjustments sliders =
-    (SpeedSneak, sliders.speedSneak) :: (FightWill, sliders.fightWill) :: (LoreLuck, sliders.loreLuck) :: []
+initialAdjustments = SkillAdjustments 0 0 0
 
-getUnselectedAdjustments sliders =
+createSliders sp sn fi wi lo lu fo = Sliders sp sn fi wi lo lu fo
+
+getCurrentAdjustments adjustments =
+    (SpeedSneak, adjustments.speedSneak) :: (FightWill, adjustments.fightWill) :: (LoreLuck, adjustments.loreLuck) :: []
+
+getPossibleAdjustments adjustments =
     let
-        generateUnselected set number =
+        generateUnselected (set, number) =
             List.filter (\n -> n /= number) [0,1,2,3] |> List.map (\n -> (set, n))
     in
-        List.concat [generateUnselected SpeedSneak sliders.speedSneak, generateUnselected FightWill sliders.fightWill, generateUnselected LoreLuck sliders.loreLuck]
+        List.concat <| List.map generateUnselected <| getCurrentAdjustments adjustments
 
-getSkillValue skill sliders =
+getSkillValue skill (sliders, adjustments) =
     case skill of
-        Speed -> sliders.speed + sliders.speedSneak
-        Sneak -> sliders.sneak - sliders.speedSneak
-        Fight -> sliders.fight + sliders.fightWill
-        Will  -> sliders.will  - sliders.fightWill
-        Lore  -> sliders.lore  + sliders.loreLuck
-        Luck  -> sliders.luck  - sliders.loreLuck
+        Speed -> sliders.speed + adjustments.speedSneak
+        Sneak -> sliders.sneak - adjustments.speedSneak
+        Fight -> sliders.fight + adjustments.fightWill
+        Will  -> sliders.will  - adjustments.fightWill
+        Lore  -> sliders.lore  + adjustments.loreLuck
+        Luck  -> sliders.luck  - adjustments.loreLuck

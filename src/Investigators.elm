@@ -18,11 +18,11 @@ import Sliders
 
 investigatorColors = ["red", "green", "blue", "pink", "violet", "yellow", "black", "orange"]
 
-type alias InvestigatorState = { movement : Movement.Model,  color : Color, investigator : Investigator}
+type alias InvestigatorState = { movement : Movement.Model,  color : Color, adjustments : Sliders.SkillAdjustments, investigator : Investigator}
 
 type alias Model = { investigatorList : List (Selection InvestigatorState) }
 
-initState (c, i) = InvestigatorState Movement.initialModel c i
+initState (c, i) = InvestigatorState Movement.initialModel c Sliders.initialAdjustments i
 
 initialState = List.map initState <| Lists.zip investigatorColors allInvestigators
 
@@ -46,7 +46,7 @@ prepareChecks model =
         Cmd.batch <| List.map cmdGenerator model.investigatorList
 
 move place monsters model =
-    updateSelectedMovement (\s -> Movement.moveTo place monsters s.investigator.sliders s.movement) model
+    updateSelectedMovement (\s -> Movement.moveTo place monsters (s.investigator.sliders, s.adjustments) s.movement) model
 
 select investigator model =
     {model | investigatorList = Selection.selectNew (\s -> s.investigator == investigator) model.investigatorList }
@@ -66,8 +66,8 @@ updateInvestigatorMovement investigator stateUpdater model =
 investigatorSideView : (Investigator -> Attribute a) -> Model -> List (Svg a)
 investigatorSideView msgGenerator model =
     let
-        selectedInvestigator = Selection.findSelected model.investigatorList |> Maybe.map (\i -> i.investigator)
-        investigators = Selection.map (\s -> (s.investigator, s.color, Movement.movesLeft s.investigator.sliders s.movement.path)) Nothing model.investigatorList
+        selectedInvestigator = Selection.findSelected model.investigatorList |> Maybe.map (\i -> (i.investigator, i.adjustments))
+        investigators = Selection.map (\s -> (s.investigator, s.color, Movement.movesLeft (s.investigator.sliders, s.adjustments) s.movement.path)) Nothing model.investigatorList
     in
         List.append (List.concat <| (List.indexedMap (Positions.minimalData msgGenerator) investigators)) <| Positions.characterCard selectedInvestigator
 
