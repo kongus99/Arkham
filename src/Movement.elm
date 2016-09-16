@@ -3,7 +3,7 @@ module Movement exposing (moveTo, pathEnd, Model, initialModel, prepareEvades, r
 import BoardData exposing (..)
 import Paths
 import Task
-import Sliders exposing (Skill(..), Skills, SkillAdjustments)
+import Skills exposing (Skill(..), Skills, SkillAdjustments)
 import AllDict exposing (AllDict)
 import List.Extra as Lists
 import DiceChecker exposing (..)
@@ -51,7 +51,7 @@ moveTo place monsters skillData model =
 prepareEvadeTests : List Place -> AllDict Place (List Monster) String -> (Skills, SkillAdjustments) -> DiceChecker.Model ->  DiceChecker.Model
 prepareEvadeTests path monsters skillData model =
     let
-        generateCheck place ms = DiceChecker.prepareCheck place Evade (List.map (\m -> Throw ((Sliders.getSkillValue Sneak skillData) - m.awareness) 1) ms) 5
+        generateCheck place ms = DiceChecker.prepareCheck place Evade (List.map (\m -> Throw ((Skills.getSkillValue Sneak skillData) - m.awareness) 1) ms) 5
     in
         DiceChecker.generateNewChecks (List.filterMap (\p -> Maybe.map (generateCheck p) (AllDict.get p monsters)) path) model
 
@@ -87,4 +87,4 @@ pathEnd model =
      Maybe.withDefault model.start <| List.head <| List.reverse model.path
 
 movesLeft skillData path =
-    (Sliders.getSkillValue Speed skillData) - List.length path
+    (Skills.getSkillValue Speed skillData) - List.length path

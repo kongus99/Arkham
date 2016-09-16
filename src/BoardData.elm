@@ -2,7 +2,7 @@ module BoardData exposing (..)
 
 import List exposing (member, map)
 import String exposing (split, slice, join)
-import Sliders exposing (Skills, initSkills)
+import Skills exposing (Skills, initSkills)
 type CheckType = Evade
 
 type Phase = Upkeep | Movement

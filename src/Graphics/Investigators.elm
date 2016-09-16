@@ -6,7 +6,7 @@ import Graphics.Common exposing (..)
 import Svg exposing (Svg, path, circle, line, rect, text', text, Attribute, image, ellipse)
 import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, strokeDasharray, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize, xlinkHref, rx, ry)
 import String
-import Sliders
+import Skills
 
 withMargin m r =
     Rectangle (r.x + m) (r.y + m) (r.width - m * 2) (r.height - m * 2)
@@ -24,7 +24,7 @@ minimalData msgGenerator index selection =
         :: rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke color, strokeWidth "3", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
         ::[]
 
-characterCard: Maybe (Investigator, Sliders.SkillAdjustments) -> List (Svg a)
+characterCard: Maybe (Investigator, Skills.SkillAdjustments) -> List (Svg a)
 characterCard investigatorData =
     let
         xCoord = (sideDim.width - investigatorCardDim.width) // 2
@@ -34,8 +34,8 @@ characterCard investigatorData =
 
 drawInvestigatorCard  xCoord yCoord (inv, adjustments) =
     let
-        currentEllipses = List.map sliderEllipse <| Sliders.getCurrentAdjustments adjustments
-        possibleEllipses = List.map sliderEllipse <| Sliders.getPossibleAdjustments adjustments
+        currentEllipses = List.map sliderEllipse <| Skills.getCurrentAdjustments adjustments
+        possibleEllipses = List.map sliderEllipse <| Skills.getPossibleAdjustments adjustments
         svgEllipse s e =
             ellipse [xCoord + e.x |> toString |> cx, yCoord + e.y |> toString |> cy, e.xRadius |> toString |> rx, e.yRadius |> toString |> ry, fill "none", strokeWidth "3", stroke s][]
         svgEllipses = List.concat [List.map (svgEllipse "black") currentEllipses, List.map (svgEllipse "none") possibleEllipses]

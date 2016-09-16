@@ -14,15 +14,15 @@ import List.Extra exposing (zip)
 import Html.App as App
 import List.Extra as Lists
 import AllDict
-import Sliders
+import Skills
 
 investigatorColors = ["red", "green", "blue", "pink", "violet", "yellow", "black", "orange"]
 
-type alias InvestigatorState = { movement : Movement.Model,  color : Color, adjustments : Sliders.SkillAdjustments, investigator : Investigator}
+type alias InvestigatorState = { movement : Movement.Model,  color : Color, adjustments : Skills.SkillAdjustments, investigator : Investigator}
 
 type alias Model = { investigatorList : List (Selection InvestigatorState) }
 
-initState (c, i) = InvestigatorState Movement.initialModel c Sliders.initialAdjustments i
+initState (c, i) = InvestigatorState Movement.initialModel c Skills.initialAdjustments i
 
 initialState = List.map initState <| Lists.zip investigatorColors allInvestigators
 
