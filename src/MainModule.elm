@@ -62,7 +62,11 @@ update msg model =
             in
                 (model, Cmd.none)
         EndTurn ->
-            ({model | phase = nextPhase model.phase}, Cmd.map ResolveDiceCheck (Investigators.prepareChecks model.investigators))
+            case model.phase of
+                Upkeep ->
+                   ({model | investigators = Investigators.approveSkillAdjustments model.investigators, phase = nextPhase model.phase}, Cmd.none)
+                Movement ->
+                    ({model | phase = nextPhase model.phase}, Cmd.map ResolveDiceCheck (Investigators.prepareChecks model.investigators))
         Click data ->
             (data.clickUpdate model, Cmd.none)
         ResolveDiceCheck result ->

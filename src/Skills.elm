@@ -1,6 +1,7 @@
-module Skills exposing (initSkills, getCurrentAdjustments, getPossibleAdjustments, SkillSet(..), Skills, getSkillValue, Skill(..), SkillAdjustments, initialAdjustments, adjustSkill)
+module Skills exposing (initSkills, getCurrentAdjustments, getPossibleAdjustments, SkillSet(..), Skills, getSkillValue, Skill(..), SkillAdjustments, initialAdjustments, adjustSkill, approveSkills)
 
 import List.Extra as Lists
+import AllDict exposing (AllDict)
 
 type Skill = Speed | Sneak | Fight | Will | Lore | Luck
 
@@ -11,14 +12,23 @@ type alias Skills = { speed :Int, sneak :Int
                      , lore :Int, luck :Int
                      , focus : Int}
 
-type alias SkillAdjustments = { speedSneak :Int, fightWill :Int, loreLuck : Int }
+type alias SkillAdjustments = { currentAdjustments : AllDict SkillSet Int String, futureAdjustments : AllDict SkillSet Int String }
 
-initialAdjustments = SkillAdjustments 0 0 0
+initialAdjustments = SkillAdjustments (AllDict.fromList toString ((SpeedSneak, 0) ::(FightWill, 0) :: (LoreLuck, 0) :: [])) (AllDict.empty toString)
 
 initSkills sp sn fi wi lo lu fo = Skills sp sn fi wi lo lu fo
 
-getCurrentAdjustments adjustments =
-    (SpeedSneak, adjustments.speedSneak) :: (FightWill, adjustments.fightWill) :: (LoreLuck, adjustments.loreLuck) :: []
+getCurrentAdjustment : SkillSet -> SkillAdjustments -> Int
+getCurrentAdjustment skillSet adjustments =
+    let
+        current = Maybe.withDefault 0 <| AllDict.get skillSet adjustments.currentAdjustments
+    in
+        Maybe.withDefault current <| AllDict.get skillSet adjustments.futureAdjustments
+
+getCurrentAdjustments adjustments = (SpeedSneak, getCurrentAdjustment SpeedSneak adjustments)
+                                  ::(FightWill, getCurrentAdjustment SpeedSneak adjustments)
+                                  ::(LoreLuck, getCurrentAdjustment SpeedSneak adjustments)
+                                  ::[]
 
 getPossibleAdjustments adjustments =
     let
@@ -29,20 +39,31 @@ getPossibleAdjustments adjustments =
 
 adjustSkill (set, value) (inv, adj) =
     let
-        updateAdjustment oldVal =
-            if abs (oldVal - value) > inv.skills.focus then oldVal else value
+        newFutureAdjustments = AllDict.insert set value adj.futureAdjustments
+        usedFocus = getUsedFocus newFutureAdjustments adj.currentAdjustments
     in
-        case set of
-            SpeedSneak-> {adj | speedSneak = updateAdjustment adj.speedSneak }
-            FightWill -> {adj | fightWill = updateAdjustment adj.fightWill }
-            LoreLuck  -> {adj | loreLuck = updateAdjustment adj.loreLuck }
+        if usedFocus > inv.skills.focus then {adj | futureAdjustments = newFutureAdjustments} else adj
 
+getUsedFocus future current =
+    let
+        futureKeys = AllDict.keys future
+        getDiff key =
+            let
+                fValue = Maybe.withDefault 0 <| AllDict.get key future
+                cValue = Maybe.withDefault 0 <| AllDict.get key current
+            in
+               abs (fValue - cValue)
+    in
+        List.foldl (+) 0 (List.map getDiff futureKeys)
+
+approveSkills adjustments =
+    {adjustments | futureAdjustments = AllDict.empty toString, currentAdjustments = AllDict.union adjustments.futureAdjustments adjustments.currentAdjustments }
 
 getSkillValue skill (skills, adjustments) =
     case skill of
-        Speed -> skills.speed + adjustments.speedSneak
-        Sneak -> skills.sneak - adjustments.speedSneak
-        Fight -> skills.fight + adjustments.fightWill
-        Will  -> skills.will  - adjustments.fightWill
-        Lore  -> skills.lore  + adjustments.loreLuck
-        Luck  -> skills.luck  - adjustments.loreLuck
+        Speed -> skills.speed + getCurrentAdjustment SpeedSneak adjustments
+        Sneak -> skills.sneak - getCurrentAdjustment SpeedSneak adjustments
+        Fight -> skills.fight + getCurrentAdjustment FightWill adjustments
+        Will  -> skills.will  - getCurrentAdjustment FightWill adjustments
+        Lore  -> skills.lore  + getCurrentAdjustment LoreLuck adjustments
+        Luck  -> skills.luck  - getCurrentAdjustment LoreLuck adjustments

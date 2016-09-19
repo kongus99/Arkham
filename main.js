@@ -10279,59 +10279,58 @@ var _elm_lang$core$Random$cmdMap = F2(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Random'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Random$init, onEffects: _elm_lang$core$Random$onEffects, onSelfMsg: _elm_lang$core$Random$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Random$cmdMap};
 
-var _elm_lang$elm_architecture_tutorial$Skills$getSkillValue = F2(
-	function (skill, _p0) {
-		var _p1 = _p0;
-		var _p4 = _p1._0;
-		var _p3 = _p1._1;
-		var _p2 = skill;
-		switch (_p2.ctor) {
-			case 'Speed':
-				return _p4.speed + _p3.speedSneak;
-			case 'Sneak':
-				return _p4.sneak - _p3.speedSneak;
-			case 'Fight':
-				return _p4.fight + _p3.fightWill;
-			case 'Will':
-				return _p4.will - _p3.fightWill;
-			case 'Lore':
-				return _p4.lore + _p3.loreLuck;
-			default:
-				return _p4.luck - _p3.loreLuck;
-		}
+var _elm_lang$elm_architecture_tutorial$Skills$approveSkills = function (adjustments) {
+	return _elm_lang$core$Native_Utils.update(
+		adjustments,
+		{
+			futureAdjustments: _eeue56$elm_all_dict$AllDict$empty(_elm_lang$core$Basics$toString),
+			currentAdjustments: A2(_eeue56$elm_all_dict$AllDict$union, adjustments.futureAdjustments, adjustments.currentAdjustments)
+		});
+};
+var _elm_lang$elm_architecture_tutorial$Skills$getUsedFocus = F2(
+	function (future, current) {
+		var getDiff = function (key) {
+			var cValue = A2(
+				_elm_lang$core$Maybe$withDefault,
+				0,
+				A2(_eeue56$elm_all_dict$AllDict$get, key, current));
+			var fValue = A2(
+				_elm_lang$core$Maybe$withDefault,
+				0,
+				A2(_eeue56$elm_all_dict$AllDict$get, key, future));
+			return _elm_lang$core$Basics$abs(fValue - cValue);
+		};
+		var futureKeys = _eeue56$elm_all_dict$AllDict$keys(future);
+		return A3(
+			_elm_lang$core$List$foldl,
+			F2(
+				function (x, y) {
+					return x + y;
+				}),
+			0,
+			A2(_elm_lang$core$List$map, getDiff, futureKeys));
 	});
 var _elm_lang$elm_architecture_tutorial$Skills$adjustSkill = F2(
-	function (_p6, _p5) {
-		var _p7 = _p6;
-		var _p11 = _p7._1;
-		var _p8 = _p5;
-		var _p10 = _p8._1;
-		var updateAdjustment = function (oldVal) {
-			return (_elm_lang$core$Native_Utils.cmp(
-				_elm_lang$core$Basics$abs(oldVal - _p11),
-				_p8._0.skills.focus) > 0) ? oldVal : _p11;
-		};
-		var _p9 = _p7._0;
-		switch (_p9.ctor) {
-			case 'SpeedSneak':
-				return _elm_lang$core$Native_Utils.update(
-					_p10,
-					{
-						speedSneak: updateAdjustment(_p10.speedSneak)
-					});
-			case 'FightWill':
-				return _elm_lang$core$Native_Utils.update(
-					_p10,
-					{
-						fightWill: updateAdjustment(_p10.fightWill)
-					});
-			default:
-				return _elm_lang$core$Native_Utils.update(
-					_p10,
-					{
-						loreLuck: updateAdjustment(_p10.loreLuck)
-					});
-		}
+	function (_p1, _p0) {
+		var _p2 = _p1;
+		var _p3 = _p0;
+		var _p4 = _p3._1;
+		var newFutureAdjustments = A3(_eeue56$elm_all_dict$AllDict$insert, _p2._0, _p2._1, _p4.futureAdjustments);
+		var usedFocus = A2(_elm_lang$elm_architecture_tutorial$Skills$getUsedFocus, newFutureAdjustments, _p4.currentAdjustments);
+		return (_elm_lang$core$Native_Utils.cmp(usedFocus, _p3._0.skills.focus) > 0) ? _elm_lang$core$Native_Utils.update(
+			_p4,
+			{futureAdjustments: newFutureAdjustments}) : _p4;
+	});
+var _elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment = F2(
+	function (skillSet, adjustments) {
+		var current = A2(
+			_elm_lang$core$Maybe$withDefault,
+			0,
+			A2(_eeue56$elm_all_dict$AllDict$get, skillSet, adjustments.currentAdjustments));
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			current,
+			A2(_eeue56$elm_all_dict$AllDict$get, skillSet, adjustments.futureAdjustments));
 	});
 var _elm_lang$elm_architecture_tutorial$Skills$Skills = F7(
 	function (a, b, c, d, e, f, g) {
@@ -10341,11 +10340,10 @@ var _elm_lang$elm_architecture_tutorial$Skills$initSkills = F7(
 	function (sp, sn, fi, wi, lo, lu, fo) {
 		return A7(_elm_lang$elm_architecture_tutorial$Skills$Skills, sp, sn, fi, wi, lo, lu, fo);
 	});
-var _elm_lang$elm_architecture_tutorial$Skills$SkillAdjustments = F3(
-	function (a, b, c) {
-		return {speedSneak: a, fightWill: b, loreLuck: c};
+var _elm_lang$elm_architecture_tutorial$Skills$SkillAdjustments = F2(
+	function (a, b) {
+		return {currentAdjustments: a, futureAdjustments: b};
 	});
-var _elm_lang$elm_architecture_tutorial$Skills$initialAdjustments = A3(_elm_lang$elm_architecture_tutorial$Skills$SkillAdjustments, 0, 0, 0);
 var _elm_lang$elm_architecture_tutorial$Skills$Luck = {ctor: 'Luck'};
 var _elm_lang$elm_architecture_tutorial$Skills$Lore = {ctor: 'Lore'};
 var _elm_lang$elm_architecture_tutorial$Skills$Will = {ctor: 'Will'};
@@ -10355,31 +10353,60 @@ var _elm_lang$elm_architecture_tutorial$Skills$Speed = {ctor: 'Speed'};
 var _elm_lang$elm_architecture_tutorial$Skills$LoreLuck = {ctor: 'LoreLuck'};
 var _elm_lang$elm_architecture_tutorial$Skills$FightWill = {ctor: 'FightWill'};
 var _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak = {ctor: 'SpeedSneak'};
+var _elm_lang$elm_architecture_tutorial$Skills$initialAdjustments = A2(
+	_elm_lang$elm_architecture_tutorial$Skills$SkillAdjustments,
+	A2(
+		_eeue56$elm_all_dict$AllDict$fromList,
+		_elm_lang$core$Basics$toString,
+		A2(
+			_elm_lang$core$List_ops['::'],
+			{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak, _1: 0},
+			A2(
+				_elm_lang$core$List_ops['::'],
+				{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Skills$FightWill, _1: 0},
+				A2(
+					_elm_lang$core$List_ops['::'],
+					{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Skills$LoreLuck, _1: 0},
+					_elm_lang$core$Native_List.fromArray(
+						[]))))),
+	_eeue56$elm_all_dict$AllDict$empty(_elm_lang$core$Basics$toString));
 var _elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustments = function (adjustments) {
 	return A2(
 		_elm_lang$core$List_ops['::'],
-		{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak, _1: adjustments.speedSneak},
+		{
+			ctor: '_Tuple2',
+			_0: _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak,
+			_1: A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak, adjustments)
+		},
 		A2(
 			_elm_lang$core$List_ops['::'],
-			{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Skills$FightWill, _1: adjustments.fightWill},
+			{
+				ctor: '_Tuple2',
+				_0: _elm_lang$elm_architecture_tutorial$Skills$FightWill,
+				_1: A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak, adjustments)
+			},
 			A2(
 				_elm_lang$core$List_ops['::'],
-				{ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$Skills$LoreLuck, _1: adjustments.loreLuck},
+				{
+					ctor: '_Tuple2',
+					_0: _elm_lang$elm_architecture_tutorial$Skills$LoreLuck,
+					_1: A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak, adjustments)
+				},
 				_elm_lang$core$Native_List.fromArray(
 					[]))));
 };
 var _elm_lang$elm_architecture_tutorial$Skills$getPossibleAdjustments = function (adjustments) {
-	var generateUnselected = function (_p12) {
-		var _p13 = _p12;
+	var generateUnselected = function (_p5) {
+		var _p6 = _p5;
 		return A2(
 			_elm_lang$core$List$map,
 			function (n) {
-				return {ctor: '_Tuple2', _0: _p13._0, _1: n};
+				return {ctor: '_Tuple2', _0: _p6._0, _1: n};
 			},
 			A2(
 				_elm_lang$core$List$filter,
 				function (n) {
-					return !_elm_lang$core$Native_Utils.eq(n, _p13._1);
+					return !_elm_lang$core$Native_Utils.eq(n, _p6._1);
 				},
 				_elm_lang$core$Native_List.fromArray(
 					[0, 1, 2, 3])));
@@ -10390,6 +10417,27 @@ var _elm_lang$elm_architecture_tutorial$Skills$getPossibleAdjustments = function
 			generateUnselected,
 			_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustments(adjustments)));
 };
+var _elm_lang$elm_architecture_tutorial$Skills$getSkillValue = F2(
+	function (skill, _p7) {
+		var _p8 = _p7;
+		var _p11 = _p8._0;
+		var _p10 = _p8._1;
+		var _p9 = skill;
+		switch (_p9.ctor) {
+			case 'Speed':
+				return _p11.speed + A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak, _p10);
+			case 'Sneak':
+				return _p11.sneak - A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak, _p10);
+			case 'Fight':
+				return _p11.fight + A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$FightWill, _p10);
+			case 'Will':
+				return _p11.will - A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$FightWill, _p10);
+			case 'Lore':
+				return _p11.lore + A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$LoreLuck, _p10);
+			default:
+				return _p11.luck - A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$LoreLuck, _p10);
+		}
+	});
 
 var _elm_lang$elm_architecture_tutorial$BoardData$placeOrder = function (p) {
 	return _elm_lang$core$Basics$toString(p);
@@ -12838,6 +12886,25 @@ var _elm_lang$elm_architecture_tutorial$Investigators$showCheckDetails = F2(
 			},
 			model);
 	});
+var _elm_lang$elm_architecture_tutorial$Investigators$approveSkillAdjustments = function (model) {
+	return _elm_lang$core$Native_Utils.update(
+		model,
+		{
+			investigatorList: A3(
+				_elm_lang$elm_architecture_tutorial$Selection$update,
+				function (s) {
+					return true;
+				},
+				function (s) {
+					return _elm_lang$core$Native_Utils.update(
+						s,
+						{
+							adjustments: _elm_lang$elm_architecture_tutorial$Skills$approveSkills(s.adjustments)
+						});
+				},
+				model.investigatorList)
+		});
+};
 var _elm_lang$elm_architecture_tutorial$Investigators$adjustSkills = F2(
 	function (skillData, model) {
 		return _elm_lang$core$Native_Utils.update(
@@ -13156,18 +13223,32 @@ var _elm_lang$elm_architecture_tutorial$MainModule$update = F2(
 				var x = A2(_elm_lang$core$Debug$log, 'clicked', _p6._0);
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'EndTurn':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							phase: _elm_lang$elm_architecture_tutorial$BoardData$nextPhase(model.phase)
-						}),
-					_1: A2(
-						_elm_lang$core$Platform_Cmd$map,
-						_elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck,
-						_elm_lang$elm_architecture_tutorial$Investigators$prepareChecks(model.investigators))
-				};
+				var _p7 = model.phase;
+				if (_p7.ctor === 'Upkeep') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								investigators: _elm_lang$elm_architecture_tutorial$Investigators$approveSkillAdjustments(model.investigators),
+								phase: _elm_lang$elm_architecture_tutorial$BoardData$nextPhase(model.phase)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								phase: _elm_lang$elm_architecture_tutorial$BoardData$nextPhase(model.phase)
+							}),
+						_1: A2(
+							_elm_lang$core$Platform_Cmd$map,
+							_elm_lang$elm_architecture_tutorial$MainModule$ResolveDiceCheck,
+							_elm_lang$elm_architecture_tutorial$Investigators$prepareChecks(model.investigators))
+					};
+				}
 			case 'Click':
 				return {
 					ctor: '_Tuple2',
@@ -13208,15 +13289,15 @@ var _elm_lang$elm_architecture_tutorial$MainModule$skillMsg = F2(
 			[]);
 	});
 var _elm_lang$elm_architecture_tutorial$MainModule$msgForLocationClick = F2(
-	function (place, _p7) {
-		var _p8 = _p7;
+	function (place, _p8) {
+		var _p9 = _p8;
 		return _elm_lang$core$Json_Decode$succeed(
 			_elm_lang$elm_architecture_tutorial$MainModule$Click(
 				_elm_lang$elm_architecture_tutorial$MainModule$ClickData(
 					A2(
 						_elm_lang$elm_architecture_tutorial$MainModule$locationClick,
 						place,
-						{ctor: '_Tuple2', _0: _p8._1, _1: _p8._0}))));
+						{ctor: '_Tuple2', _0: _p9._1, _1: _p9._0}))));
 	});
 var _elm_lang$elm_architecture_tutorial$MainModule$onLocationClick = function (p) {
 	return A2(
@@ -13369,7 +13450,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$main = {
 			init: {ctor: '_Tuple2', _0: _elm_lang$elm_architecture_tutorial$MainModule$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
 			view: _elm_lang$elm_architecture_tutorial$MainModule$view,
 			update: _elm_lang$elm_architecture_tutorial$MainModule$update,
-			subscriptions: function (_p9) {
+			subscriptions: function (_p10) {
 				return _elm_lang$core$Platform_Sub$none;
 			}
 		})

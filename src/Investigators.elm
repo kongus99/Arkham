@@ -1,4 +1,4 @@
-module Investigators exposing (move, select, Model, initialModel, showCheckDetails, prepareChecks, resolveChecks, investigatorBoardView, checkersView, investigatorSideView, adjustSkills)
+module Investigators exposing (move, select, Model, initialModel, showCheckDetails, prepareChecks, resolveChecks, investigatorBoardView, checkersView, investigatorSideView, adjustSkills, approveSkillAdjustments)
 
 import BoardData exposing (..)
 import Selection exposing (Selection)
@@ -53,6 +53,9 @@ select investigator model =
 
 adjustSkills skillData model =
      {model | investigatorList = Selection.map (\s -> {s | adjustments = Skills.adjustSkill skillData (s.investigator, s.adjustments)}) (Just identity) model.investigatorList }
+
+approveSkillAdjustments model =
+    {model | investigatorList = Selection.update (\s -> True) (\s -> {s | adjustments = Skills.approveSkills s.adjustments}) model.investigatorList }
 
 showCheckDetails msg model =
     updateSelectedMovement (\s -> Movement.update msg s.movement) model
