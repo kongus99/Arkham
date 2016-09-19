@@ -10317,7 +10317,7 @@ var _elm_lang$elm_architecture_tutorial$Skills$adjustSkill = F2(
 		var _p4 = _p3._1;
 		var newFutureAdjustments = A3(_eeue56$elm_all_dict$AllDict$insert, _p2._0, _p2._1, _p4.futureAdjustments);
 		var usedFocus = A2(_elm_lang$elm_architecture_tutorial$Skills$getUsedFocus, newFutureAdjustments, _p4.currentAdjustments);
-		return (_elm_lang$core$Native_Utils.cmp(usedFocus, _p3._0.skills.focus) > 0) ? _elm_lang$core$Native_Utils.update(
+		return (_elm_lang$core$Native_Utils.cmp(usedFocus, _p3._0.skills.focus) < 1) ? _elm_lang$core$Native_Utils.update(
 			_p4,
 			{futureAdjustments: newFutureAdjustments}) : _p4;
 	});
@@ -10383,14 +10383,14 @@ var _elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustments = function 
 			{
 				ctor: '_Tuple2',
 				_0: _elm_lang$elm_architecture_tutorial$Skills$FightWill,
-				_1: A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak, adjustments)
+				_1: A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$FightWill, adjustments)
 			},
 			A2(
 				_elm_lang$core$List_ops['::'],
 				{
 					ctor: '_Tuple2',
 					_0: _elm_lang$elm_architecture_tutorial$Skills$LoreLuck,
-					_1: A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$SpeedSneak, adjustments)
+					_1: A2(_elm_lang$elm_architecture_tutorial$Skills$getCurrentAdjustment, _elm_lang$elm_architecture_tutorial$Skills$LoreLuck, adjustments)
 				},
 				_elm_lang$core$Native_List.fromArray(
 					[]))));

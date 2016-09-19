@@ -26,8 +26,8 @@ getCurrentAdjustment skillSet adjustments =
         Maybe.withDefault current <| AllDict.get skillSet adjustments.futureAdjustments
 
 getCurrentAdjustments adjustments = (SpeedSneak, getCurrentAdjustment SpeedSneak adjustments)
-                                  ::(FightWill, getCurrentAdjustment SpeedSneak adjustments)
-                                  ::(LoreLuck, getCurrentAdjustment SpeedSneak adjustments)
+                                  ::(FightWill, getCurrentAdjustment FightWill adjustments)
+                                  ::(LoreLuck, getCurrentAdjustment LoreLuck adjustments)
                                   ::[]
 
 getPossibleAdjustments adjustments =
@@ -42,7 +42,7 @@ adjustSkill (set, value) (inv, adj) =
         newFutureAdjustments = AllDict.insert set value adj.futureAdjustments
         usedFocus = getUsedFocus newFutureAdjustments adj.currentAdjustments
     in
-        if usedFocus > inv.skills.focus then {adj | futureAdjustments = newFutureAdjustments} else adj
+        if usedFocus <= inv.skills.focus then {adj | futureAdjustments = newFutureAdjustments} else adj
 
 getUsedFocus future current =
     let
