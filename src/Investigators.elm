@@ -52,7 +52,7 @@ select investigator model =
     {model | investigatorList = Selection.selectNew (\s -> s.investigator == investigator) model.investigatorList }
 
 adjustSkills skillData model =
-     {model | investigatorList = Selection.map (\s -> {s | adjustments = Skills.adjustSkill skillData (s.investigator, s.adjustments)}) (Just identity) model.investigatorList }
+     {model | investigatorList = Selection.map (\s -> {s | adjustments = Skills.adjustSkill skillData (s.investigator.skills.focus, s.adjustments)}) (Just identity) model.investigatorList }
 
 approveSkillAdjustments model =
     {model | investigatorList = Selection.update (\s -> True) (\s -> {s | adjustments = Skills.approveSkills s.adjustments}) model.investigatorList }

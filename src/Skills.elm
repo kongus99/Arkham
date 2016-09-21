@@ -25,11 +25,12 @@ getCurrentAdjustment skillSet adjustments =
     in
         Maybe.withDefault current <| AllDict.get skillSet adjustments.futureAdjustments
 
+getCurrentAdjustments : SkillAdjustments -> List (SkillSet, Int)
 getCurrentAdjustments adjustments = (SpeedSneak, getCurrentAdjustment SpeedSneak adjustments)
                                   ::(FightWill, getCurrentAdjustment FightWill adjustments)
                                   ::(LoreLuck, getCurrentAdjustment LoreLuck adjustments)
                                   ::[]
-
+getPossibleAdjustments : SkillAdjustments -> List (SkillSet, Int)
 getPossibleAdjustments adjustments =
     let
         generateUnselected (set, number) =
@@ -37,12 +38,13 @@ getPossibleAdjustments adjustments =
     in
         List.concat <| List.map generateUnselected <| getCurrentAdjustments adjustments
 
-adjustSkill (set, value) (inv, adj) =
+adjustSkill : (SkillSet, Int) -> (Int, SkillAdjustments) -> SkillAdjustments
+adjustSkill (set, value) (focus, adj) =
     let
         newFutureAdjustments = AllDict.insert set value adj.futureAdjustments
         usedFocus = getUsedFocus newFutureAdjustments adj.currentAdjustments
     in
-        if usedFocus <= inv.skills.focus then {adj | futureAdjustments = newFutureAdjustments} else adj
+        if usedFocus <= focus then {adj | futureAdjustments = newFutureAdjustments} else adj
 
 getUsedFocus future current =
     let
@@ -56,9 +58,11 @@ getUsedFocus future current =
     in
         List.foldl (+) 0 (List.map getDiff futureKeys)
 
+approveSkills : SkillAdjustments -> SkillAdjustments
 approveSkills adjustments =
     {adjustments | futureAdjustments = AllDict.empty toString, currentAdjustments = AllDict.union adjustments.futureAdjustments adjustments.currentAdjustments }
 
+getSkillValue : Skill -> (Skills, SkillAdjustments) -> Int
 getSkillValue skill (skills, adjustments) =
     case skill of
         Speed -> skills.speed + getCurrentAdjustment SpeedSneak adjustments

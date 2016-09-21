@@ -10317,7 +10317,7 @@ var _elm_lang$elm_architecture_tutorial$Skills$adjustSkill = F2(
 		var _p4 = _p3._1;
 		var newFutureAdjustments = A3(_eeue56$elm_all_dict$AllDict$insert, _p2._0, _p2._1, _p4.futureAdjustments);
 		var usedFocus = A2(_elm_lang$elm_architecture_tutorial$Skills$getUsedFocus, newFutureAdjustments, _p4.currentAdjustments);
-		return (_elm_lang$core$Native_Utils.cmp(usedFocus, _p3._0.skills.focus) < 1) ? _elm_lang$core$Native_Utils.update(
+		return (_elm_lang$core$Native_Utils.cmp(usedFocus, _p3._0) < 1) ? _elm_lang$core$Native_Utils.update(
 			_p4,
 			{futureAdjustments: newFutureAdjustments}) : _p4;
 	});
@@ -12929,7 +12929,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$adjustSkills = F2(
 								adjustments: A2(
 									_elm_lang$elm_architecture_tutorial$Skills$adjustSkill,
 									skillData,
-									{ctor: '_Tuple2', _0: s.investigator, _1: s.adjustments})
+									{ctor: '_Tuple2', _0: s.investigator.skills.focus, _1: s.adjustments})
 							});
 					},
 					_elm_lang$core$Maybe$Just(_elm_lang$core$Basics$identity),
