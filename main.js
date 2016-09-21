@@ -10450,9 +10450,9 @@ var _elm_lang$elm_architecture_tutorial$BoardData$ThrowResult = F2(
 	function (a, b) {
 		return {dices: a, wasSuccess: b};
 	});
-var _elm_lang$elm_architecture_tutorial$BoardData$Investigator = F4(
-	function (a, b, c, d) {
-		return {name: a, start: b, skills: c, card: d};
+var _elm_lang$elm_architecture_tutorial$BoardData$Investigator = F6(
+	function (a, b, c, d, e, f) {
+		return {name: a, start: b, sanity: c, stamina: d, skills: e, card: f};
 	});
 var _elm_lang$elm_architecture_tutorial$BoardData$Evade = {ctor: 'Evade'};
 var _elm_lang$elm_architecture_tutorial$BoardData$Movement = {ctor: 'Movement'};
@@ -10620,66 +10620,82 @@ var _elm_lang$elm_architecture_tutorial$BoardData$Bank_of_Arkham = {ctor: 'Bank_
 var _elm_lang$elm_architecture_tutorial$BoardData$Arkham_Asylum = {ctor: 'Arkham_Asylum'};
 var _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators = A2(
 	_elm_lang$core$List_ops['::'],
-	A4(
+	A6(
 		_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 		'Amanda Sharpe',
 		_elm_lang$elm_architecture_tutorial$BoardData$Bank_of_Arkham,
+		5,
+		5,
 		A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 1, 4, 1, 4, 1, 4, 3),
 		'assets/investigators/AmandaSharpe.png'),
 	A2(
 		_elm_lang$core$List_ops['::'],
-		A4(
+		A6(
 			_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 			'Ashcan Pete',
 			_elm_lang$elm_architecture_tutorial$BoardData$River_Docks,
+			4,
+			6,
 			A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 0, 6, 2, 5, 0, 3, 1),
 			'assets/investigators/AshcanPete.png'),
 		A2(
 			_elm_lang$core$List_ops['::'],
-			A4(
+			A6(
 				_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 				'Bob Jenkins',
 				_elm_lang$elm_architecture_tutorial$BoardData$General_Store,
+				4,
+				6,
 				A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 2, 3, 1, 6, 0, 4, 1),
 				'assets/investigators/BobJenkins.png'),
 			A2(
 				_elm_lang$core$List_ops['::'],
-				A4(
+				A6(
 					_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 					'Carolyn Fern',
 					_elm_lang$elm_architecture_tutorial$BoardData$Arkham_Asylum,
+					6,
+					4,
 					A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 0, 3, 1, 4, 2, 5, 2),
 					'assets/investigators/CarolynFern.png'),
 				A2(
 					_elm_lang$core$List_ops['::'],
-					A4(
+					A6(
 						_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 						'Darell Simmons',
 						_elm_lang$elm_architecture_tutorial$BoardData$Newspaper,
+						4,
+						6,
 						A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 2, 3, 2, 4, 0, 4, 2),
 						'assets/investigators/DarrellSimmons.png'),
 					A2(
 						_elm_lang$core$List_ops['::'],
-						A4(
+						A6(
 							_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 							'Dexter Drake',
 							_elm_lang$elm_architecture_tutorial$BoardData$Ye_Olde_Magick_Shoppe,
+							5,
+							5,
 							A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 2, 4, 1, 3, 2, 3, 2),
 							'assets/investigators/DexterDrake.png'),
 						A2(
 							_elm_lang$core$List_ops['::'],
-							A4(
+							A6(
 								_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 								'Gloria Goldberg',
 								_elm_lang$elm_architecture_tutorial$BoardData$Velma$s_Diner,
+								6,
+								4,
 								A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 1, 3, 0, 5, 1, 5, 2),
 								'assets/investigators/GloriaGoldberg.png'),
 							A2(
 								_elm_lang$core$List_ops['::'],
-								A4(
+								A6(
 									_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 									'Harvey Walters',
 									_elm_lang$elm_architecture_tutorial$BoardData$Administration_Building,
+									7,
+									3,
 									A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 0, 5, 0, 3, 3, 4, 2),
 									'assets/investigators/HarveyWalters.png'),
 								_elm_lang$core$Native_List.fromArray(
