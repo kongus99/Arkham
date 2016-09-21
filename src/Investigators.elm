@@ -18,15 +18,15 @@ import Skills
 
 investigatorColors = ["red", "green", "blue", "pink", "violet", "yellow", "black", "orange"]
 
-type alias InvestigatorState = { movement : Movement.Model,  color : Color, adjustments : Skills.SkillAdjustments, investigator : Investigator}
+type alias InvestigatorData = { movement : Movement.Model,  color : Color, adjustments : Skills.SkillAdjustments, investigator : Investigator}
 
-type alias Model = { investigatorList : List (Selection InvestigatorState) }
+type alias Model = { investigatorList : List (Selection InvestigatorData) }
 
-initState (c, i) = InvestigatorState (Movement.initialModel i.start) c Skills.initialAdjustments i
+initData (c, i) = InvestigatorData (Movement.initialModel i.start) c Skills.initialAdjustments i
 
-initialState = List.map initState <| Lists.zip investigatorColors allInvestigators
+initialData = List.map initData <| Lists.zip investigatorColors allInvestigators
 
-initialModel = Model (List.map Selection.NotSelected initialState)
+initialModel = Model (List.map Selection.NotSelected initialData)
 
 ---------------------------------------------
 resolveChecks : (Investigator, List ResolvedCheck) -> Model -> Model
@@ -36,11 +36,11 @@ resolveChecks (investigator, checks) model =
 prepareChecks : Model -> Cmd (Investigator, List ResolvedCheck)
 prepareChecks model =
     let
-        cmdGenerator selectedState =
+        cmdGenerator selectedData =
             let
-                state = Selection.unpack selectedState
+                data = Selection.unpack selectedData
             in
-                Cmd.map (\c -> (state.investigator, c)) <| Movement.prepareEvades state.movement
+                Cmd.map (\c -> (data.investigator, c)) <| Movement.prepareEvades data.movement
 
     in
         Cmd.batch <| List.map cmdGenerator model.investigatorList
@@ -60,13 +60,13 @@ approveSkillAdjustments model =
 showCheckDetails msg model =
     updateSelectedMovement (\s -> Movement.update msg s.movement) model
 
-updateSelectedMovement : (InvestigatorState -> Movement.Model) -> Model -> Model
-updateSelectedMovement stateUpdater model =
-    {model | investigatorList = Selection.map (\s -> {s | movement = stateUpdater s}) (Just identity) model.investigatorList}
+updateSelectedMovement : (InvestigatorData -> Movement.Model) -> Model -> Model
+updateSelectedMovement dataUpdater model =
+    {model | investigatorList = Selection.map (\s -> {s | movement = dataUpdater s}) (Just identity) model.investigatorList}
 
-updateInvestigatorMovement : Investigator -> (InvestigatorState -> Movement.Model) -> Model -> Model
-updateInvestigatorMovement investigator stateUpdater model =
-    {model | investigatorList = Selection.update (\s -> s.investigator == investigator) (\s -> {s | movement = stateUpdater s}) model.investigatorList}
+updateInvestigatorMovement : Investigator -> (InvestigatorData -> Movement.Model) -> Model -> Model
+updateInvestigatorMovement investigator dataUpdater model =
+    {model | investigatorList = Selection.update (\s -> s.investigator == investigator) (\s -> {s | movement = dataUpdater s}) model.investigatorList}
 
 ---------------------------------------------
 investigatorSideView : ((Skills.SkillSet, Int) -> List (Attribute a)) -> (Investigator -> Attribute a) -> Model -> List (Svg a)
@@ -80,16 +80,16 @@ investigatorSideView skillSetSelection invSelection model =
 investigatorBoardView :Model -> List (Svg a)
 investigatorBoardView model =
     let
-        states = List.map Selection.unpack model.investigatorList
-        startPair state =
-            (state.movement.start, state.color)
-        endPair state =
-            (Movement.pathEnd state.movement, state.color)
-        linePairs state =
-            List.map (\p -> (p, state.color)) <| zip (state.movement.start :: state.movement.path) state.movement.path
-        startPositions = groupList <| List.map startPair states
-        endPositions = groupList <| List.map endPair states
-        linePositions = groupList <| List.concat <| List.map linePairs states
+        data = List.map Selection.unpack model.investigatorList
+        startPair data =
+            (data.movement.start, data.color)
+        endPair data =
+            (Movement.pathEnd data.movement, data.color)
+        linePairs data =
+            List.map (\p -> (p, data.color)) <| zip (data.movement.start :: data.movement.path) data.movement.path
+        startPositions = groupList <| List.map startPair data
+        endPositions = groupList <| List.map endPair data
+        linePositions = groupList <| List.concat <| List.map linePairs data
     in
         List.concat <| List.concat [(List.map Positions.start startPositions), (List.map Positions.end endPositions), (List.map Positions.connections linePositions)]
 
@@ -107,5 +107,5 @@ checkersView : (DiceChecker.Msg -> a) -> Model -> List (Svg a)
 checkersView msgGenerator model =
     Maybe.withDefault [] <| Maybe.map (\s -> checkersViewDraw msgGenerator <| Selection.unpack s) <| Lists.find Selection.isSelected model.investigatorList
 
-checkersViewDraw msgGenerator state =
-    List.map (App.map msgGenerator) (DiceChecker.view state.color state.movement.evadeTests)
+checkersViewDraw msgGenerator data =
+    List.map (App.map msgGenerator) (DiceChecker.view data.color data.movement.evadeTests)
