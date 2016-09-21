@@ -10,7 +10,7 @@ import DiceChecker exposing (..)
 import MonsterBowl exposing (Monster)
 
 type alias Model = { start : Place, path : List Place, evadeTests : DiceChecker.Model}
-initialModel = Model (Locale Train_Station) [] DiceChecker.initialChecks
+initialModel location = Model (Locale location) [] DiceChecker.initialChecks
 
 update : DiceChecker.Msg -> Model -> Model
 update msg model = {model | evadeTests = DiceChecker.update msg model.evadeTests}

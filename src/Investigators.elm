@@ -22,7 +22,7 @@ type alias InvestigatorState = { movement : Movement.Model,  color : Color, adju
 
 type alias Model = { investigatorList : List (Selection InvestigatorState) }
 
-initState (c, i) = InvestigatorState Movement.initialModel c Skills.initialAdjustments i
+initState (c, i) = InvestigatorState (Movement.initialModel i.start) c Skills.initialAdjustments i
 
 initialState = List.map initState <| Lists.zip investigatorColors allInvestigators
 
