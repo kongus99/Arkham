@@ -91,7 +91,7 @@ wholeBoard model =
            ,svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView (skillMsg model.phase) investigatorMsg model.investigators)]]
 --, on "click" (Json.map UnspecifiedClick offsetPosition)
 boardImage =
-  image [xlinkHref "board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height][]
+  image [xlinkHref "assets/board.jpg", x "0", y "0", width <| toString boardDim.width, height <| toString boardDim.height][]
 
 --Msg generators
 localeMsg : Phase -> Location -> List(Attribute Msg)

@@ -10460,56 +10460,56 @@ var _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators = A2(
 		_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 		'Amanda Sharpe',
 		A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 1, 4, 1, 4, 1, 4, 3),
-		'AmandaSharpe.png'),
+		'assets/investigators/AmandaSharpe.png'),
 	A2(
 		_elm_lang$core$List_ops['::'],
 		A3(
 			_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 			'Ashcan Pete',
 			A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 0, 6, 2, 5, 0, 3, 1),
-			'AshcanPete.png'),
+			'assets/investigators/AshcanPete.png'),
 		A2(
 			_elm_lang$core$List_ops['::'],
 			A3(
 				_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 				'Bob Jenkins',
 				A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 2, 3, 1, 6, 0, 4, 1),
-				'BobJenkins.png'),
+				'assets/investigators/BobJenkins.png'),
 			A2(
 				_elm_lang$core$List_ops['::'],
 				A3(
 					_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 					'Carolyn Fern',
 					A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 0, 3, 1, 4, 2, 5, 2),
-					'CarolynFern.png'),
+					'assets/investigators/CarolynFern.png'),
 				A2(
 					_elm_lang$core$List_ops['::'],
 					A3(
 						_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 						'Darell Simmons',
 						A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 2, 3, 2, 4, 0, 4, 2),
-						'DarrellSimmons.png'),
+						'assets/investigators/DarrellSimmons.png'),
 					A2(
 						_elm_lang$core$List_ops['::'],
 						A3(
 							_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 							'Dexter Drake',
 							A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 2, 4, 1, 3, 2, 3, 2),
-							'DexterDrake.png'),
+							'assets/investigators/DexterDrake.png'),
 						A2(
 							_elm_lang$core$List_ops['::'],
 							A3(
 								_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 								'Gloria Goldberg',
 								A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 1, 3, 0, 5, 1, 5, 2),
-								'GloriaGoldberg.png'),
+								'assets/investigators/GloriaGoldberg.png'),
 							A2(
 								_elm_lang$core$List_ops['::'],
 								A3(
 									_elm_lang$elm_architecture_tutorial$BoardData$Investigator,
 									'Harvey Walters',
 									A7(_elm_lang$elm_architecture_tutorial$Skills$initSkills, 0, 5, 0, 3, 3, 4, 2),
-									'HarveyWalters.png'),
+									'assets/investigators/HarveyWalters.png'),
 								_elm_lang$core$Native_List.fromArray(
 									[])))))))));
 var _elm_lang$elm_architecture_tutorial$BoardData$Evade = {ctor: 'Evade'};
@@ -11823,11 +11823,11 @@ var _elm_lang$elm_architecture_tutorial$Graphics$drawBoardOverlay = F3(
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$drawResolvedDiceCheck = F2(
 	function (generator, check) {
-		return check.wasSuccess ? A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'ok.jpg', generator) : A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'notOk.png', generator);
+		return check.wasSuccess ? A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'assets/ok.jpg', generator) : A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'assets/notOk.png', generator);
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$drawDiceCheck = F2(
 	function (generator, check) {
-		return A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'sneak.png', generator);
+		return A3(_elm_lang$elm_architecture_tutorial$Graphics$icon, check, 'assets/sneak.png', generator);
 	});
 var _elm_lang$elm_architecture_tutorial$Graphics$createRectangle = F5(
 	function (width, height, leftMargin, topMargin, _p1) {
@@ -13107,7 +13107,7 @@ var _elm_lang$elm_architecture_tutorial$MainModule$boardImage = A2(
 	_elm_lang$svg$Svg$image,
 	_elm_lang$core$Native_List.fromArray(
 		[
-			_elm_lang$svg$Svg_Attributes$xlinkHref('board.jpg'),
+			_elm_lang$svg$Svg_Attributes$xlinkHref('assets/board.jpg'),
 			_elm_lang$svg$Svg_Attributes$x('0'),
 			_elm_lang$svg$Svg_Attributes$y('0'),
 			_elm_lang$svg$Svg_Attributes$width(

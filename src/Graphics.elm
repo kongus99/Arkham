@@ -81,10 +81,10 @@ calculateCheckerPositions number =
         List.map (createRectangle checkDim.width checkDim.height leftMargin topMargin) topLeftPoints
 
 drawDiceCheck : (UnresolvedCheck -> Attribute a) -> UnresolvedCheck -> Svg a
-drawDiceCheck generator check = icon check "sneak.png" generator
+drawDiceCheck generator check = icon check "assets/sneak.png" generator
 
 drawResolvedDiceCheck : (ResolvedCheck -> Attribute a) -> ResolvedCheck -> Svg a
-drawResolvedDiceCheck generator check = if check.wasSuccess then icon check "ok.jpg" generator else icon check "notOk.png" generator
+drawResolvedDiceCheck generator check = if check.wasSuccess then icon check "assets/ok.jpg" generator else icon check "assets/notOk.png" generator
 
 drawSelectedCheck : Color -> (LocationCheck b a -> Attribute c) -> List (b -> List (Svg c)) -> LocationCheck b a -> List (Svg c)
 drawSelectedCheck color msgGenerator textGenerators check =

@@ -22,14 +22,14 @@ type alias ResolvedCheck = LocationCheck ThrowResult {wasSuccess : WasSuccess}
 
 type alias Investigator = { name : String, skills : Skills, card : String}
 
-allInvestigators = Investigator "Amanda Sharpe"  (initSkills 1 4 1 4 1 4 3) "AmandaSharpe.png"
-                :: Investigator "Ashcan Pete"    (initSkills 0 6 2 5 0 3 1) "AshcanPete.png"
-                :: Investigator "Bob Jenkins"    (initSkills 2 3 1 6 0 4 1) "BobJenkins.png"
-                :: Investigator "Carolyn Fern"   (initSkills 0 3 1 4 2 5 2) "CarolynFern.png"
-                :: Investigator "Darell Simmons" (initSkills 2 3 2 4 0 4 2) "DarrellSimmons.png"
-                :: Investigator "Dexter Drake"   (initSkills 2 4 1 3 2 3 2) "DexterDrake.png"
-                :: Investigator "Gloria Goldberg"(initSkills 1 3 0 5 1 5 2) "GloriaGoldberg.png"
-                :: Investigator "Harvey Walters" (initSkills 0 5 0 3 3 4 2) "HarveyWalters.png"
+allInvestigators = Investigator "Amanda Sharpe"  (initSkills 1 4 1 4 1 4 3) "assets/investigators/AmandaSharpe.png"
+                :: Investigator "Ashcan Pete"    (initSkills 0 6 2 5 0 3 1) "assets/investigators/AshcanPete.png"
+                :: Investigator "Bob Jenkins"    (initSkills 2 3 1 6 0 4 1) "assets/investigators/BobJenkins.png"
+                :: Investigator "Carolyn Fern"   (initSkills 0 3 1 4 2 5 2) "assets/investigators/CarolynFern.png"
+                :: Investigator "Darell Simmons" (initSkills 2 3 2 4 0 4 2) "assets/investigators/DarrellSimmons.png"
+                :: Investigator "Dexter Drake"   (initSkills 2 4 1 3 2 3 2) "assets/investigators/DexterDrake.png"
+                :: Investigator "Gloria Goldberg"(initSkills 1 3 0 5 1 5 2) "assets/investigators/GloriaGoldberg.png"
+                :: Investigator "Harvey Walters" (initSkills 0 5 0 3 3 4 2) "assets/investigators/HarveyWalters.png"
                 :: []
 
 type Neighborhood = Downtown | Easttown | French_Hill |
