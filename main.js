@@ -12728,11 +12728,11 @@ var _elm_lang$elm_architecture_tutorial$Movement$initialModel = function (locati
 };
 
 var _elm_lang$elm_architecture_tutorial$Investigators$checkersViewDraw = F2(
-	function (msgGenerator, state) {
+	function (msgGenerator, data) {
 		return A2(
 			_elm_lang$core$List$map,
 			_elm_lang$html$Html_App$map(msgGenerator),
-			A2(_elm_lang$elm_architecture_tutorial$DiceChecker$view, state.color, state.movement.evadeTests));
+			A2(_elm_lang$elm_architecture_tutorial$DiceChecker$view, data.color, data.movement.evadeTests));
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$checkersView = F2(
 	function (msgGenerator, model) {
@@ -12795,35 +12795,35 @@ var _elm_lang$elm_architecture_tutorial$Investigators$groupList = function (pair
 		grouped);
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$investigatorBoardView = function (model) {
-	var linePairs = function (state) {
+	var linePairs = function (data) {
 		return A2(
 			_elm_lang$core$List$map,
 			function (p) {
-				return {ctor: '_Tuple2', _0: p, _1: state.color};
+				return {ctor: '_Tuple2', _0: p, _1: data.color};
 			},
 			A2(
 				_elm_community$list_extra$List_Extra$zip,
-				A2(_elm_lang$core$List_ops['::'], state.movement.start, state.movement.path),
-				state.movement.path));
+				A2(_elm_lang$core$List_ops['::'], data.movement.start, data.movement.path),
+				data.movement.path));
 	};
-	var endPair = function (state) {
+	var endPair = function (data) {
 		return {
 			ctor: '_Tuple2',
-			_0: _elm_lang$elm_architecture_tutorial$Movement$pathEnd(state.movement),
-			_1: state.color
+			_0: _elm_lang$elm_architecture_tutorial$Movement$pathEnd(data.movement),
+			_1: data.color
 		};
 	};
-	var startPair = function (state) {
-		return {ctor: '_Tuple2', _0: state.movement.start, _1: state.color};
+	var startPair = function (data) {
+		return {ctor: '_Tuple2', _0: data.movement.start, _1: data.color};
 	};
-	var states = A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Selection$unpack, model.investigatorList);
+	var data = A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Selection$unpack, model.investigatorList);
 	var startPositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
-		A2(_elm_lang$core$List$map, startPair, states));
+		A2(_elm_lang$core$List$map, startPair, data));
 	var endPositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
-		A2(_elm_lang$core$List$map, endPair, states));
+		A2(_elm_lang$core$List$map, endPair, data));
 	var linePositions = _elm_lang$elm_architecture_tutorial$Investigators$groupList(
 		_elm_lang$core$List$concat(
-			A2(_elm_lang$core$List$map, linePairs, states)));
+			A2(_elm_lang$core$List$map, linePairs, data)));
 	return _elm_lang$core$List$concat(
 		_elm_lang$core$List$concat(
 			_elm_lang$core$Native_List.fromArray(
@@ -12866,7 +12866,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$investigatorSideView = F3(
 			A2(_elm_lang$elm_architecture_tutorial$Graphics_Investigators$characterCard, skillSetSelection, selectedInvestigator));
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$updateInvestigatorMovement = F3(
-	function (investigator, stateUpdater, model) {
+	function (investigator, dataUpdater, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
@@ -12879,14 +12879,14 @@ var _elm_lang$elm_architecture_tutorial$Investigators$updateInvestigatorMovement
 						return _elm_lang$core$Native_Utils.update(
 							s,
 							{
-								movement: stateUpdater(s)
+								movement: dataUpdater(s)
 							});
 					},
 					model.investigatorList)
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$updateSelectedMovement = F2(
-	function (stateUpdater, model) {
+	function (dataUpdater, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
@@ -12896,7 +12896,7 @@ var _elm_lang$elm_architecture_tutorial$Investigators$updateSelectedMovement = F
 						return _elm_lang$core$Native_Utils.update(
 							s,
 							{
-								movement: stateUpdater(s)
+								movement: dataUpdater(s)
 							});
 					},
 					_elm_lang$core$Maybe$Just(_elm_lang$core$Basics$identity),
@@ -12980,14 +12980,14 @@ var _elm_lang$elm_architecture_tutorial$Investigators$move = F3(
 			model);
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$prepareChecks = function (model) {
-	var cmdGenerator = function (selectedState) {
-		var state = _elm_lang$elm_architecture_tutorial$Selection$unpack(selectedState);
+	var cmdGenerator = function (selectedData) {
+		var data = _elm_lang$elm_architecture_tutorial$Selection$unpack(selectedData);
 		return A2(
 			_elm_lang$core$Platform_Cmd$map,
 			function (c) {
-				return {ctor: '_Tuple2', _0: state.investigator, _1: c};
+				return {ctor: '_Tuple2', _0: data.investigator, _1: c};
 			},
-			_elm_lang$elm_architecture_tutorial$Movement$prepareEvades(state.movement));
+			_elm_lang$elm_architecture_tutorial$Movement$prepareEvades(data.movement));
 	};
 	return _elm_lang$core$Platform_Cmd$batch(
 		A2(_elm_lang$core$List$map, cmdGenerator, model.investigatorList));
@@ -13005,29 +13005,29 @@ var _elm_lang$elm_architecture_tutorial$Investigators$resolveChecks = F2(
 	});
 var _elm_lang$elm_architecture_tutorial$Investigators$investigatorColors = _elm_lang$core$Native_List.fromArray(
 	['red', 'green', 'blue', 'pink', 'violet', 'yellow', 'black', 'orange']);
-var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState = F4(
+var _elm_lang$elm_architecture_tutorial$Investigators$InvestigatorData = F4(
 	function (a, b, c, d) {
 		return {movement: a, color: b, adjustments: c, investigator: d};
 	});
-var _elm_lang$elm_architecture_tutorial$Investigators$initState = function (_p6) {
+var _elm_lang$elm_architecture_tutorial$Investigators$initData = function (_p6) {
 	var _p7 = _p6;
 	var _p8 = _p7._1;
 	return A4(
-		_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorState,
+		_elm_lang$elm_architecture_tutorial$Investigators$InvestigatorData,
 		_elm_lang$elm_architecture_tutorial$Movement$initialModel(_p8.start),
 		_p7._0,
 		_elm_lang$elm_architecture_tutorial$Skills$initialAdjustments,
 		_p8);
 };
-var _elm_lang$elm_architecture_tutorial$Investigators$initialState = A2(
+var _elm_lang$elm_architecture_tutorial$Investigators$initialData = A2(
 	_elm_lang$core$List$map,
-	_elm_lang$elm_architecture_tutorial$Investigators$initState,
+	_elm_lang$elm_architecture_tutorial$Investigators$initData,
 	A2(_elm_community$list_extra$List_Extra$zip, _elm_lang$elm_architecture_tutorial$Investigators$investigatorColors, _elm_lang$elm_architecture_tutorial$BoardData$allInvestigators));
 var _elm_lang$elm_architecture_tutorial$Investigators$Model = function (a) {
 	return {investigatorList: a};
 };
 var _elm_lang$elm_architecture_tutorial$Investigators$initialModel = _elm_lang$elm_architecture_tutorial$Investigators$Model(
-	A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Selection$NotSelected, _elm_lang$elm_architecture_tutorial$Investigators$initialState));
+	A2(_elm_lang$core$List$map, _elm_lang$elm_architecture_tutorial$Selection$NotSelected, _elm_lang$elm_architecture_tutorial$Investigators$initialData));
 
 var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode_ops[':='], 'keyCode', _elm_lang$core$Json_Decode$int);
 var _elm_lang$html$Html_Events$targetChecked = A2(
