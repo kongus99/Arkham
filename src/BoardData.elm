@@ -28,7 +28,7 @@ allInvestigators = Investigator "Amanda Sharpe" Bank_of_Arkham           5 5 (in
                 :: Investigator "Carolyn Fern" Arkham_Asylum             6 4 (initSkills 0 3 1 4 2 5 2) "assets/investigators/CarolynFern.png"
                 :: Investigator "Darell Simmons" Newspaper               4 6 (initSkills 2 3 2 4 0 4 2) "assets/investigators/DarrellSimmons.png"
                 :: Investigator "Dexter Drake" Ye_Olde_Magick_Shoppe     5 5 (initSkills 2 4 1 3 2 3 2) "assets/investigators/DexterDrake.png"
-                :: Investigator "Gloria Goldberg" Velma's_Diner          6 4 (initSkills 1 3 0 5 1 5 2) "assets/investigators/GloriaGoldberg.png"
+                :: Investigator "Gloria Goldberg" Velma_Diner          6 4 (initSkills 1 3 0 5 1 5 2) "assets/investigators/GloriaGoldberg.png"
                 :: Investigator "Harvey Walters" Administration_Building 7 3 (initSkills 0 5 0 3 3 4 2) "assets/investigators/HarveyWalters.png"
                 :: []
 
@@ -38,24 +38,24 @@ type Neighborhood = Downtown | Easttown | French_Hill |
 allNeighborhood = [Downtown, Easttown, French_Hill, Merchant_District, Miskatonic_University, Northside, Rivertown, Southside, Uptown]
 
 type Location =  Arkham_Asylum | Bank_of_Arkham | Independence_Square |
-                 Hibb's_Roadhouse | Police_Station | Velma's_Diner |
+                 Hibb_Roadhouse | Police_Station | Velma_Diner |
                  Inner_Sanctum | Silver_Twilight_Lodge | The_Witch_House |
                  River_Docks | The_Unnamable | Unvisited_Isle |
                  Administration_Building | Library | Science_Building |
                  Curiositie_Shoppe | Newspaper | Train_Station |
                  Black_Cave | General_Store | Graveyard |
-                 Historical_Society | Ma's_Boarding_House | South_Church |
-                 St_Mary's_Hospital | Woods | Ye_Olde_Magick_Shoppe
+                 Historical_Society | Ma_Boarding_House | South_Church |
+                 St_Mary_Hospital | Woods | Ye_Olde_Magick_Shoppe
 
 allLocation = [Arkham_Asylum, Bank_of_Arkham, Independence_Square,
-               Hibb's_Roadhouse, Police_Station, Velma's_Diner,
+               Hibb_Roadhouse, Police_Station, Velma_Diner,
                Inner_Sanctum, Silver_Twilight_Lodge, The_Witch_House,
                River_Docks, The_Unnamable, Unvisited_Isle,
                Administration_Building, Library, Science_Building,
                Curiositie_Shoppe, Newspaper, Train_Station,
                Black_Cave, General_Store, Graveyard,
-               Historical_Society, Ma's_Boarding_House, South_Church,
-               St_Mary's_Hospital, Woods, Ye_Olde_Magick_Shoppe]
+               Historical_Society, Ma_Boarding_House, South_Church,
+               St_Mary_Hospital, Woods, Ye_Olde_Magick_Shoppe]
 
 type Place = Street Neighborhood | Locale Location
 
@@ -91,9 +91,9 @@ parent l =
         Arkham_Asylum -> Downtown
         Bank_of_Arkham -> Downtown
         Independence_Square -> Downtown
-        Hibb's_Roadhouse -> Easttown
+        Hibb_Roadhouse -> Easttown
         Police_Station-> Easttown
-        Velma's_Diner-> Easttown
+        Velma_Diner-> Easttown
         Inner_Sanctum -> French_Hill
         Silver_Twilight_Lodge -> French_Hill
         The_Witch_House -> French_Hill
@@ -110,9 +110,9 @@ parent l =
         General_Store -> Rivertown
         Graveyard -> Rivertown
         Historical_Society -> Southside
-        Ma's_Boarding_House -> Southside
+        Ma_Boarding_House -> Southside
         South_Church -> Southside
-        St_Mary's_Hospital -> Uptown
+        St_Mary_Hospital -> Uptown
         Woods -> Uptown
         Ye_Olde_Magick_Shoppe -> Uptown
 
@@ -120,14 +120,14 @@ consistsOf : Neighborhood -> List Location
 consistsOf n =
     case n of
     Downtown -> [Arkham_Asylum, Bank_of_Arkham, Independence_Square]
-    Easttown -> [Hibb's_Roadhouse, Police_Station, Velma's_Diner]
+    Easttown -> [Hibb_Roadhouse, Police_Station, Velma_Diner]
     French_Hill -> [Inner_Sanctum, Silver_Twilight_Lodge, The_Witch_House]
     Merchant_District -> [River_Docks, The_Unnamable, Unvisited_Isle]
     Miskatonic_University -> [Administration_Building, Library, Science_Building]
     Northside -> [Curiositie_Shoppe, Newspaper, Train_Station]
     Rivertown -> [Black_Cave, General_Store, Graveyard]
-    Southside -> [Historical_Society, Ma's_Boarding_House, South_Church]
-    Uptown -> [St_Mary's_Hospital, Woods, Ye_Olde_Magick_Shoppe]
+    Southside -> [Historical_Society, Ma_Boarding_House, South_Church]
+    Uptown -> [St_Mary_Hospital, Woods, Ye_Olde_Magick_Shoppe]
 
 
 

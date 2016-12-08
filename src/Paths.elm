@@ -29,10 +29,10 @@ pathExpand data visitedWithParent unvisitedWithParent =
     case unvisitedWithParent of
         [] -> []
         x :: xs ->
-            if snd x == data.goal then x :: visitedWithParent else
+            if Tuple.second x == data.goal then x :: visitedWithParent else
             let
-                currentNode = snd x
-                allUsed = map snd (append visitedWithParent unvisitedWithParent)
+                currentNode = Tuple.second x
+                allUsed = map Tuple.second (append visitedWithParent unvisitedWithParent)
                 isUnused x = not (member x (append data.excluded allUsed))
                 unused = filter isUnused (data.adjacent currentNode)
                 unusedWithParent = map (\n -> (Just currentNode, n)) unused

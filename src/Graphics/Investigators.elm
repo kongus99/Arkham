@@ -3,7 +3,7 @@ module Graphics.Investigators exposing (start, end, connections, minimalData, ch
 import BoardData exposing(..)
 import Selection exposing (Selection)
 import Graphics.Common exposing (..)
-import Svg exposing (Svg, path, circle, line, rect, text', text, Attribute, image, ellipse)
+import Svg exposing (Svg, path, circle, line, rect, text_, text, Attribute, image, ellipse)
 import Svg.Attributes exposing (d, fill, cx, cy, r, strokeWidth, stroke, strokeDasharray, fillOpacity, x1, x2, y1, y2, strokeLinecap, x , y, width, height, textAnchor, fontFamily, fontSize, xlinkHref, rx, ry)
 import String
 import Skills
@@ -20,7 +20,7 @@ minimalData msgGenerator index selection =
         middle = rectangleMiddle outline
         investigatorInfo = String.concat [investigator.name, " ", toString movesLeft]
     in
-        text' [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "15"][text investigatorInfo]
+        text_ [textAnchor "middle", x <| toString <| middle.x, y <| toString <| middle.y, fontFamily "Verdana", fontSize "15"][text investigatorInfo]
         :: rect [x <| toString <| outline.x, y <| toString <| outline.y, width <| toString outline.width, height <| toString outline.height, stroke color, strokeWidth "3", strokeDasharray dashArray, fillOpacity "0.0", msgGenerator investigator][]
         ::[]
 

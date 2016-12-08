@@ -37,7 +37,7 @@ moveTo place monsters skillData model =
     let
         currentEnd = pathEnd model
         newPath = if model.start == place then []
-                  else if List.member place model.path then List.append (fst <| Lists.break (\x -> x == place) model.path) [place]
+                  else if List.member place model.path then List.append (Tuple.first <| Lists.break (\x -> x == place) model.path) [place]
                   else if isAdjacent currentEnd place then
                     List.append model.path [place]
                   else
@@ -74,7 +74,7 @@ prepareEvades model =
         cmd = DiceChecker.runCheck model.evadeTests
      in
         if cmd == Cmd.none then
-            Task.perform (\e -> []) (\s -> []) <| Task.succeed []
+            Task.perform (\s -> []) <| Task.succeed []
         else
             cmd
 

@@ -5,7 +5,7 @@ import Graphics.Common exposing (Color)
 import String
 import Random
 import List.Extra as Lists
-import Svg exposing (Svg,svg, text', text, tspan)
+import Svg exposing (Svg,svg, text, tspan)
 import Svg.Attributes exposing (height, width, fill, fontWeight)
 import Svg.Events exposing (onClick)
 import Graphics

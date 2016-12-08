@@ -7,11 +7,10 @@ import MonsterBowl exposing (Monster)
 import AllDict exposing (AllDict)
 import Html exposing (Html, span, button, div)
 import Svg exposing (svg, image, Attribute, Svg, text)
-import Svg.Attributes exposing (width, height, xlinkHref, x, y, class, type')
+import Svg.Attributes exposing (width, height, xlinkHref, x, y, class, type_)
 import Html.Events exposing (on, onDoubleClick, onClick)
-import Json.Decode as Json exposing ((:=), bool, andThen, object2)
+import Json.Decode as Json exposing (field, bool, andThen, int)
 import Investigators
-import Html.App as App
 import DiceChecker
 import Skills
 
@@ -87,7 +86,7 @@ wholeBoard model =
                                                     , Investigators.checkersView msgForCheckerClick model.investigators
                                                     ])
          , div[][
-            div[][button[type' "button", onClick EndTurn][text "End Turn"], span[][text <| toString model.phase]]
+            div[][button[type_ "button", onClick EndTurn][text "End Turn"], span[][text <| toString model.phase]]
            ,svg [ width <| toString sideDim.width , height <| toString sideDim.height] (Investigators.investigatorSideView (skillMsg model.phase) investigatorMsg model.investigators)]]
 --, on "click" (Json.map UnspecifiedClick offsetPosition)
 boardImage =
@@ -112,7 +111,7 @@ skillMsg phase skillData =
 
 --Msg generator helpers
 onLocationClick : Place -> Attribute Msg
-onLocationClick p =  on "click" ((object2(,)("ctrlKey" := bool)("shiftKey" := bool)) `andThen` msgForLocationClick p)
+onLocationClick p =  on "click" ((Json.map2(,)(field "ctrlKey" bool)(field "shiftKey" bool)) |> andThen (msgForLocationClick p))
 
 msgForLocationClick : Place -> ( Bool, Bool ) -> Json.Decoder Msg
 msgForLocationClick place (ctrl, shift) =
@@ -125,7 +124,7 @@ msgForCheckerClick msg =
 -- mouse position
 offsetPosition : Json.Decoder Point
 offsetPosition =
-    Json.object2 Point ("offsetX" := Json.int) ("offsetY" := Json.int)
+    Json.map2 Point (field "offsetX" int) (field "offsetY" int)
 
 main =
-    App.program { init = ( initialModel, Cmd.none ), view = view, update = update, subscriptions = \_ -> Sub.none }
+    Html.program { init = ( initialModel, Cmd.none ), view = view, update = update, subscriptions = \_ -> Sub.none }

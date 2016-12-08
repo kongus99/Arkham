@@ -37,8 +37,8 @@ locationCircle location =
          Bank_of_Arkham ->         Circle  487  112 64
          Arkham_Asylum ->          Circle  706  112 64
          Newspaper ->              Circle  126  286 64
-         Hibb's_Roadhouse ->       Circle  927  356 64
-         Velma's_Diner ->          Circle 1148  351 64
+         Hibb_Roadhouse ->       Circle  927  356 64
+         Velma_Diner ->          Circle 1148  351 64
          Curiositie_Shoppe ->      Circle  125  473 64
          Unvisited_Isle ->         Circle  124  759 64
          Police_Station ->         Circle 1148  551 64
@@ -52,8 +52,8 @@ locationCircle location =
          Silver_Twilight_Lodge ->  Circle  936 1383 64
          Library ->                Circle  447 1382 64
          Administration_Building ->Circle  243 1450 64
-         St_Mary's_Hospital ->     Circle  122 1701 64
-         Ma's_Boarding_House ->    Circle 1149 1640 64
+         St_Mary_Hospital ->     Circle  122 1701 64
+         Ma_Boarding_House ->    Circle 1149 1640 64
          South_Church ->           Circle 1058 1901 64
          Historical_Society ->     Circle  816 1976 64
          Woods ->                  Circle  562 1976 64

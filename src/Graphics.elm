@@ -39,7 +39,7 @@ monsterSquare (place, monsters) =
         textY = rectY + 38
     in
         rect [x <| toString <| rectX, y <| toString <| rectY, width <| toString side, height <| toString side, fill "red"][]
-      ::text' [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString <| List.length monsters)]
+      ::text_ [textAnchor "middle", x <| toString <| textX, y <| toString <| textY][text (toString <| List.length monsters)]
       ::[]
 
 leftOffsets number maxWidth tileWidth maxInRow =
@@ -116,7 +116,7 @@ info rowNumber maxRows content rectangle =
         posY = middlePoint.y - checkDim.height // 2 + rowNumber * checkDim.height // ( maxRows + 1)
         length = 5 * checkDim.width // 6
     in
-        text' [x <| toString posX, y <| toString posY, textLength <| toString length, lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
+        text_ [x <| toString posX, y <| toString posY, textLength <| toString length, lengthAdjust "spacingAndGlyphs", fontFamily "Verdana", textAnchor "middle"] content
 
 icon check link generator =
      let

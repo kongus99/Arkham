@@ -11,7 +11,7 @@ import Graphics.Common exposing (Color)
 import Graphics.Investigators as Positions
 import Svg.Attributes exposing (class)
 import List.Extra exposing (zip)
-import Html.App as App
+import Html
 import List.Extra as Lists
 import AllDict
 import Skills
@@ -97,9 +97,9 @@ groupList : List ( a, b ) -> List ( a, List b )
 groupList pairsToGroup =
     let
         sorted = List.sortBy (\(p, _) -> toString p) <| List.map (\(k, v) -> (k, [v])) pairsToGroup
-        grouped = Lists.groupWhile (\f->\s-> fst f == fst s) sorted
+        grouped = Lists.groupWhile (\f->\s-> Tuple.first f == Tuple.first s) sorted
         mergePairs pair1 pair2 =
-            (fst pair1, List.append (snd pair1) (snd pair2))
+            (Tuple.first pair1, List.append (Tuple.second pair1) (Tuple.second pair2))
     in
         List.filterMap (Lists.foldl1 mergePairs) grouped
 
@@ -108,4 +108,4 @@ checkersView msgGenerator model =
     Maybe.withDefault [] <| Maybe.map (\s -> checkersViewDraw msgGenerator <| Selection.unpack s) <| Lists.find Selection.isSelected model.investigatorList
 
 checkersViewDraw msgGenerator data =
-    List.map (App.map msgGenerator) (DiceChecker.view data.color data.movement.evadeTests)
+    List.map (Html.map msgGenerator) (DiceChecker.view data.color data.movement.evadeTests)
